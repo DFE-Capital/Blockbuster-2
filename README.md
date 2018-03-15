@@ -1,5 +1,3 @@
-  # DEPRECIATED
-
   This package represents the most current version of the Blockbuster model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
 
   # blockbuster
