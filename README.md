@@ -1,4 +1,4 @@
-  This package represents the most current version of the Blockbuster model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
+ This package represents the most current version of the Blockbuster model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
 
   # blockbuster
 
@@ -28,14 +28,14 @@
   Launch an R session as normal and run the following (again setting the arguments as required):
 
     ```
-  library(blockbuster)
+  library(Blockbuster)
   ```
   The beauty of package development is that the business knowledge is enshrined in the package, with the code and documentation in one place. To familiarise yourself after install you can work through the blockbuster vignette which will provide typical uses.
 
   You can also use the extensive R help which explains the input arguments and output values of all functions by prefixing a function with a *?*.
 
   ```
-  ?blockbuster()
+  ?Blockbuster
   ```
   ### Project goal
 
