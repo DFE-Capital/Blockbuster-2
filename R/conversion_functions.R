@@ -3,7 +3,7 @@
 # undocumented/checked.
 
 
-# #' Convert a block_tibble into a row per component.
+#' Convert a block_tibble into a row per component.
 #'
 #' @param block_tibble
 #'
