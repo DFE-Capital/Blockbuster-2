@@ -20,12 +20,12 @@ Description: This R package allows you to simulate the deterioration of school
     simulated with simple decision making about what to rebuild/repair at each
     timestep.
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.1),
+    dplyr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-    dplyr,
     readr
 RoxygenNote: 6.0.1
 Suggests: knitr,
