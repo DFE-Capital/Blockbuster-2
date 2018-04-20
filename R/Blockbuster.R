@@ -82,7 +82,10 @@
 #' components at each timestep, with the initial conditions stored in the first
 #' list entry.
 #'
-#' @examples TODO
+#' @export
+#'
+#' @examples
+#' # TODO
 Blockbuster <- function(element.data, block.data = NULL,
                         forecast.horizon = 1,
                         rebuild.money = 0,
@@ -97,7 +100,7 @@ Blockbuster <- function(element.data, block.data = NULL,
                         grade.order = c("D", "C", "B")
 ){
 
-  # input integrity checks
+  # input integrity checks ----
   message ("Checking inputs...")
   input_checks(element.data, block.data,
                forecast.horizon,
@@ -129,18 +132,18 @@ Blockbuster <- function(element.data, block.data = NULL,
     output[[1]]$block <- block.data
   }
 
-  # start loop
+  # LOOP ----
   for (i in 1:forecast.horizon){
-    # deteriorate
+    # deteriorate ----
     message(paste0("Deteriorating at time step ", i,"."))
     element.data <- Deteriorate(element.data = element.data)
 
-    # update repair costs
+    # update repair costs ----
     message("Updating element repair totals.")
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
-    # inflate all repair/rebuild costs
+    # inflate all repair/rebuild costs ----
     message("Inflating rebuild and repair costs.")
     block.data <- InflateRebuild(block.data = block.data,
                                  inflation = inflation[i])
@@ -151,27 +154,28 @@ Blockbuster <- function(element.data, block.data = NULL,
     element.data <- InflateRepairElement(element.data = element.data,
                                          inflation = inflation[i])
 
-    # rebuild
+    # rebuild ----
     message("Rebuilding blocks.")
     element.data <- Rebuild(element.data = element.data,
                             block.data = block.data,
                             rebuild.money = rebuild.money[i])
 
-    # update repair costs
+    # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
-    # repair
+    # repair ----
     message("Repairing blocks.")
     element.data <- Repair(element.data = element.data,
                            block.data = block.data,
                            repair.money = repair.money[i],
                            grade.order = grade.order)
 
-    # update repair costs
+    # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
+    # save current state ----
     if(save){
       message(paste0("Saving state at timestep ", i, " to file."))
       # save current state
@@ -182,10 +186,11 @@ Blockbuster <- function(element.data, block.data = NULL,
       output[[i + 1]]$block <- block.data
     }
 
-    # end loop
+    # LOOP END ----
 
   }
 
+  # OUTPUT ----
   if(save){
     # collate states, save (a backup!)
     message(paste0("Saving output to file ", path, filelabel, "_output.rds"))
@@ -202,9 +207,10 @@ Blockbuster <- function(element.data, block.data = NULL,
   return(output)
   }
 
+# TODO - this needs to be able to modify the output folder.
 #' Run Blockbuster simulations on a variety of spending strategies.
 #'
-#' Given a data.frame with of spending scenarios, run the scenario with the
+#' Given a data.frame of spending scenarios, run the scenario with the
 #' \code{strat} argument in the strategy column.  This function is useful for
 #' passing to lapply with a list of strategy names as the first argument.
 #'
