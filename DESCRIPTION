@@ -29,5 +29,8 @@ Imports:
     readr
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    data.table,
+    ggplt2,
+    tidyr
 VignetteBuilder: knitr
