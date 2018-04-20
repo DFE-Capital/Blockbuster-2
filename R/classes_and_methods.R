@@ -219,22 +219,22 @@ is.blockbuster <- function(x){
   inherits(x, "blockbuster")
 }
 
-is.repair.backlog <- function(x){
-  inherits(x, "repair.backlog")
-}
+# is.repair.backlog <- function(x){
+#   inherits(x, "repair.backlog")
+# }
+#
+# is.area <- function(x){
+#   inherits(x, "area")
+# }
 
-is.area <- function(x){
-  inherits(x, "area")
-}
-
-is.element.backlog <- function(x){
-  inherits(x, "element.backlog")
-}
-
-as.element.list <- function(x){
-  x <- lapply(x, ElementLevel)
-  x <- ElementLevelList(x)
-}
+# is.element.backlog <- function(x){
+#   inherits(x, "element.backlog")
+# }
+#
+# as.element.list <- function(x){
+#   x <- lapply(x, ElementLevel)
+#   x <- ElementLevelList(x)
+# }
 
 filter.element <- function(...){
   dplyr:::filter.tbl_df(...) %>% ElementLevel
@@ -244,6 +244,9 @@ slice.element <- function(...){
   dplyr:::slice.tbl_df(...) %>% ElementLevel
 }
 
+select.element <- function(...){
+  dplyr:::select.tbl_df(...) %>% ElementLevel
+}
 
 `[.element` <- function(...){
   r <- NextMethod("[")
@@ -262,6 +265,10 @@ filter.block <- function(...){
 
 slice.block <- function(...){
   dplyr:::slice.tbl_df(...) %>% BlockLevel
+}
+
+select.block <- function(...){
+  dplyr:::select.tbl_df(...) %>% BlockLevel
 }
 
 `[.block` <- function(...){

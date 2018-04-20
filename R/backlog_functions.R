@@ -173,7 +173,7 @@ GenerateArea <- function(element.data){
 LongArea <- function(element.data){
 
   if(is.blockbuster(element.data)) element.data <- PullElementData(element.data)
-  if(is.element(element.data)){
+   if(is.element(element.data)){
     element.data <- ElementLevelList(list(element.data))
   }
   if(!is.element.list(element.data)) stop("LongArea requires either a

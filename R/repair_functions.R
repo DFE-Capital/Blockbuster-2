@@ -20,88 +20,88 @@
 #'
 #' @return An \code{\link{element}} class object with relevant components
 #' repaired, i.e. set to grade A.
-RepairOld <- function(element.data, block.data, repair.money){
-
-  # Check integrity of inputs.
-  if (!is.element(element.data)) stop("The element.data argument needs to be an
-                                      element class data table.")
-  if (!is.block(block.data)) stop("The block.data argument needs to be a
-                                      block class data table.")
-  if (!is.numeric(repair.money)) stop("The repair money must be a number.")
-  if (length(repair.money) > 1) warning("Only the first value in repair.money
-                                        will be used.")
-
-  # If there is no money then no need to repair.
-  if (repair.money == 0) return(element.data)
-
-  number.of.blocks <- nrow(block.data)
-
-  # identify blocks with zero cost to speed things up
-  zero.cost.blocks <- block.data$buildingid[
-    (block.data$B.block.repair.cost + block.data$C.block.repair.cost +
-    block.data$D.block.repair.cost + block.data$E.block.repair.cost) == 0]
-
-  blocks.to.repair <- setdiff(block.data$buildingid, zero.cost.blocks)
-  number.of.blocks <- length(blocks.to.repair)
-
-  # To speed decision making, blocks where everything is in budget are repaired
-  # first.
-
-  # vector of buildingids where repairing everything is in budget with non-zero
-  # cost
-  repaired.blocks   <- block.data$buildingid[
-    (block.data$B.block.repair.cost + block.data$C.block.repair.cost +
-       block.data$D.block.repair.cost + block.data$E.block.repair.cost) <= (repair.money / number.of.blocks)
-    ]
-  repaired.blocks <- setdiff(repaired.blocks, zero.cost.blocks) # remove zeroes
-
-  # cost of repairing in-budget blocks
-  cost <- block.data %>%
-    filter(buildingid %in% repaired.blocks) %>% # use only block in budget
-    ungroup %>% # ungroup to avoid summarise problems if data is already grouped
-    summarise(cost = sum(B.block.repair.cost + C.block.repair.cost +
-                         D.block.repair.cost + E.block.repair.cost)) # total repair cost of blocks
-
-  # repair everything in blocks where it is within budget
-  in.budget.element.data <- element.data %>%
-    filter(buildingid %in% repaired.blocks) %>%
-    # the following sets all B,C,D grade proportions to 0 and adds them to A
-    mutate(A = A + B + C + D, B = 0, C = 0, D = 0, E = 0)
-
-  # adjust money available to other blocks
-  repair.money <- as.numeric(repair.money - cost)
-
-  blocks.to.repair <- setdiff(blocks.to.repair, repaired.blocks)
-  number.of.blocks <- length(blocks.to.repair)
-
-  # Other blocks are sent to RepairBlock to make decisions about what components
-  # to repair.
-
-  # repair in other blocks
-  out.of.budget.element.data <- element.data %>%
-    # filter out repaired blocks and zero cost
-    filter(!buildingid %in% repaired.blocks) %>%
-    filter(!buildingid %in% zero.cost.blocks)
-
-  # need to send separately to RepairBlock or lapply depending on number of
-  # blocks
-  if (number.of.blocks == 1){
-    out.of.budget.element.data <- out.of.budget.element.data %>%
-      ElementLevel %>%
-      RepairBlock(., repair.money)
-  } else {
-  out.of.budget.element.data <- out.of.budget.element.data %>%
-    split(.$buildingid) %>% # split by block
-    as.element.list %>% # set class
-    lapply(., RepairBlock, repair.money / number.of.blocks) # repair
-  }
-
-  # recombine the two repaired sections into one.
-  element.data <- bind_rows(in.budget.element.data, out.of.budget.element.data)
-  element.data <- ElementLevel(element.data) # set class
-  return(element.data) # Note that repair costs haven't been updated.
-}
-
+# RepairOld <- function(element.data, block.data, repair.money){
+#
+#   # Check integrity of inputs.
+#   if (!is.element(element.data)) stop("The element.data argument needs to be an
+#                                       element class data table.")
+#   if (!is.block(block.data)) stop("The block.data argument needs to be a
+#                                       block class data table.")
+#   if (!is.numeric(repair.money)) stop("The repair money must be a number.")
+#   if (length(repair.money) > 1) warning("Only the first value in repair.money
+#                                         will be used.")
+#
+#   # If there is no money then no need to repair.
+#   if (repair.money == 0) return(element.data)
+#
+#   number.of.blocks <- nrow(block.data)
+#
+#   # identify blocks with zero cost to speed things up
+#   zero.cost.blocks <- block.data$buildingid[
+#     (block.data$B.block.repair.cost + block.data$C.block.repair.cost +
+#     block.data$D.block.repair.cost + block.data$E.block.repair.cost) == 0]
+#
+#   blocks.to.repair <- setdiff(block.data$buildingid, zero.cost.blocks)
+#   number.of.blocks <- length(blocks.to.repair)
+#
+#   # To speed decision making, blocks where everything is in budget are repaired
+#   # first.
+#
+#   # vector of buildingids where repairing everything is in budget with non-zero
+#   # cost
+#   repaired.blocks   <- block.data$buildingid[
+#     (block.data$B.block.repair.cost + block.data$C.block.repair.cost +
+#        block.data$D.block.repair.cost + block.data$E.block.repair.cost) <= (repair.money / number.of.blocks)
+#     ]
+#   repaired.blocks <- setdiff(repaired.blocks, zero.cost.blocks) # remove zeroes
+#
+#   # cost of repairing in-budget blocks
+#   cost <- block.data %>%
+#     filter(buildingid %in% repaired.blocks) %>% # use only block in budget
+#     ungroup %>% # ungroup to avoid summarise problems if data is already grouped
+#     summarise(cost = sum(B.block.repair.cost + C.block.repair.cost +
+#                          D.block.repair.cost + E.block.repair.cost)) # total repair cost of blocks
+#
+#   # repair everything in blocks where it is within budget
+#   in.budget.element.data <- element.data %>%
+#     filter(buildingid %in% repaired.blocks) %>%
+#     # the following sets all B,C,D grade proportions to 0 and adds them to A
+#     mutate(A = A + B + C + D, B = 0, C = 0, D = 0, E = 0)
+#
+#   # adjust money available to other blocks
+#   repair.money <- as.numeric(repair.money - cost)
+#
+#   blocks.to.repair <- setdiff(blocks.to.repair, repaired.blocks)
+#   number.of.blocks <- length(blocks.to.repair)
+#
+#   # Other blocks are sent to RepairBlock to make decisions about what components
+#   # to repair.
+#
+#   # repair in other blocks
+#   out.of.budget.element.data <- element.data %>%
+#     # filter out repaired blocks and zero cost
+#     filter(!buildingid %in% repaired.blocks) %>%
+#     filter(!buildingid %in% zero.cost.blocks)
+#
+#   # need to send separately to RepairBlock or lapply depending on number of
+#   # blocks
+#   if (number.of.blocks == 1){
+#     out.of.budget.element.data <- out.of.budget.element.data %>%
+#       ElementLevel %>%
+#       RepairBlock(., repair.money)
+#   } else {
+#   out.of.budget.element.data <- out.of.budget.element.data %>%
+#     split(.$buildingid) %>% # split by block
+#     as.element.list %>% # set class
+#     lapply(., RepairBlock, repair.money / number.of.blocks) # repair
+#   }
+#
+#   # recombine the two repaired sections into one.
+#   element.data <- bind_rows(in.budget.element.data, out.of.budget.element.data)
+#   element.data <- ElementLevel(element.data) # set class
+#   return(element.data) # Note that repair costs haven't been updated.
+# }
+#
 
 #' Repair components in element data when there is not enough money to repair
 #' them all.
@@ -123,124 +123,124 @@ RepairOld <- function(element.data, block.data, repair.money){
 #'
 #' @return An \code{\link{element}} class object with the grade proportions
 #' amended accordingly.
-RepairBlock <- function(element.data, repair.money){
-
-
-  # input integrity checks
-  if (!is.element(element.data)) stop("The element.data argument needs to be an
-                                      element class data table.")
-  if (!is.numeric(repair.money)) stop("The repair money must be a number.")
-  if (length(repair.money) > 1) warning("Only the first value in repair.money
-                                        will be used.")
-
-  # If there is no money then no need to repair
-  if(repair.money == 0) return(element.data)
-
-  funds <- repair.money
-
-  # repair D grade first
-
-  # order elements according to D grade repair cost
-  element.data <- element.data %>%
-    arrange(desc(D.repair.total))
-  ind <- which(element.data$D.repair.total > 0)
-
-  if (length(ind) > 0){ #repair grade D only if there is something to repair
-
-    cost <- element.data[ind, ]$D.repair.total
-    min.cost <- min(cost)
-    i <- 1
-
-    # A while loop is used instead of a for loop to save time when we cannot
-    # afford to repair anything else
-    while (funds > min(cost)){
-
-      if(funds >= cost[i]){ # if we can afford to repair...
-
-        # add D grade to A grade
-        element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
-          element.data[ind[i], "D"]
-        # set D grade to zero
-        element.data[ind[i], "D"] <- 0
-
-        # update funds
-        funds <- funds - element.data[ind[i], "D.repair.total"]
-      }
-      # move onto the next row
-      ifelse(i == length(cost), break, i <- i + 1)
-    }
-  }
-
-  # repair C grade
-
-  # order elements according to C grade repair cost
-  element.data <- element.data %>%
-    arrange(desc(C.repair.total))
-  ind <- which(element.data$C.repair.total > 0)
-
-  if (length(ind) > 0){ #repair grade C only if there is something to repair
-
-    cost <- element.data[ind, ]$C.repair.total
-    min.cost <- min(cost)
-    i <- 1
-
-    # A while loop is used instead of a for loop to save time when we cannot
-    # afford to repair anything else
-    while (funds > min(cost)){
-
-      if(funds >= cost[i]){ # if we can afford to repair...
-
-        # add C grade to A grade
-        element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
-          element.data[ind[i], "C"]
-        # set C grade to zero
-        element.data[ind[i], "C"] <- 0
-
-        # update funds
-        funds <- funds - element.data[ind[i], "C.repair.total"]
-      }
-      # move onto the next row
-      ifelse(i == length(cost), break, i <- i + 1)
-    }
-
-  }
-
-  # repair B grade
-
-  # order elements according to B grade repair cost
-  element.data <- element.data %>%
-    arrange(desc(B.repair.total))
-  ind <- which(element.data$B.repair.total > 0)
-
-  if (length(ind) > 0){ #repair grade B only if there is something to repair
-
-    cost <- element.data[ind, ]$B.repair.total
-    min.cost <- min(cost)
-    i <- 1
-
-    # A while loop is used instead of a for loop to save time when we cannot
-    # afford to repair anything else
-    while (funds > min(cost)){
-
-      if(funds >= cost[i]){ # if we can afford to repair...
-
-        # add B grade to A grade
-        element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
-                                              element.data[ind[i], "B"]
-        # set B grade to zero
-        element.data[ind[i], "B"] <- 0
-
-        # update funds
-        funds <- funds - element.data[ind[i], "B.repair.total"]
-      }
-      # move onto the next row
-      ifelse(i == length(cost), break, i <- i + 1)
-    }
-
-  }
-  element.data <- ElementLevel(element.data) # set class
-  return(element.data)
-}
+# RepairBlock <- function(element.data, repair.money){
+#
+#
+#   # input integrity checks
+#   if (!is.element(element.data)) stop("The element.data argument needs to be an
+#                                       element class data table.")
+#   if (!is.numeric(repair.money)) stop("The repair money must be a number.")
+#   if (length(repair.money) > 1) warning("Only the first value in repair.money
+#                                         will be used.")
+#
+#   # If there is no money then no need to repair
+#   if(repair.money == 0) return(element.data)
+#
+#   funds <- repair.money
+#
+#   # repair D grade first
+#
+#   # order elements according to D grade repair cost
+#   element.data <- element.data %>%
+#     arrange(desc(D.repair.total))
+#   ind <- which(element.data$D.repair.total > 0)
+#
+#   if (length(ind) > 0){ #repair grade D only if there is something to repair
+#
+#     cost <- element.data[ind, ]$D.repair.total
+#     min.cost <- min(cost)
+#     i <- 1
+#
+#     # A while loop is used instead of a for loop to save time when we cannot
+#     # afford to repair anything else
+#     while (funds > min(cost)){
+#
+#       if(funds >= cost[i]){ # if we can afford to repair...
+#
+#         # add D grade to A grade
+#         element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
+#           element.data[ind[i], "D"]
+#         # set D grade to zero
+#         element.data[ind[i], "D"] <- 0
+#
+#         # update funds
+#         funds <- funds - element.data[ind[i], "D.repair.total"]
+#       }
+#       # move onto the next row
+#       ifelse(i == length(cost), break, i <- i + 1)
+#     }
+#   }
+#
+#   # repair C grade
+#
+#   # order elements according to C grade repair cost
+#   element.data <- element.data %>%
+#     arrange(desc(C.repair.total))
+#   ind <- which(element.data$C.repair.total > 0)
+#
+#   if (length(ind) > 0){ #repair grade C only if there is something to repair
+#
+#     cost <- element.data[ind, ]$C.repair.total
+#     min.cost <- min(cost)
+#     i <- 1
+#
+#     # A while loop is used instead of a for loop to save time when we cannot
+#     # afford to repair anything else
+#     while (funds > min(cost)){
+#
+#       if(funds >= cost[i]){ # if we can afford to repair...
+#
+#         # add C grade to A grade
+#         element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
+#           element.data[ind[i], "C"]
+#         # set C grade to zero
+#         element.data[ind[i], "C"] <- 0
+#
+#         # update funds
+#         funds <- funds - element.data[ind[i], "C.repair.total"]
+#       }
+#       # move onto the next row
+#       ifelse(i == length(cost), break, i <- i + 1)
+#     }
+#
+#   }
+#
+#   # repair B grade
+#
+#   # order elements according to B grade repair cost
+#   element.data <- element.data %>%
+#     arrange(desc(B.repair.total))
+#   ind <- which(element.data$B.repair.total > 0)
+#
+#   if (length(ind) > 0){ #repair grade B only if there is something to repair
+#
+#     cost <- element.data[ind, ]$B.repair.total
+#     min.cost <- min(cost)
+#     i <- 1
+#
+#     # A while loop is used instead of a for loop to save time when we cannot
+#     # afford to repair anything else
+#     while (funds > min(cost)){
+#
+#       if(funds >= cost[i]){ # if we can afford to repair...
+#
+#         # add B grade to A grade
+#         element.data[ind[i], "A"] <- element.data[ind[i], "A"] +
+#                                               element.data[ind[i], "B"]
+#         # set B grade to zero
+#         element.data[ind[i], "B"] <- 0
+#
+#         # update funds
+#         funds <- funds - element.data[ind[i], "B.repair.total"]
+#       }
+#       # move onto the next row
+#       ifelse(i == length(cost), break, i <- i + 1)
+#     }
+#
+#   }
+#   element.data <- ElementLevel(element.data) # set class
+#   return(element.data)
+# }
 
 #' Repair elements in a block
 #'
