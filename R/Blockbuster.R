@@ -82,7 +82,8 @@
 #' components at each timestep, with the initial conditions stored in the first
 #' list entry.
 #'
-#' @examples TODO
+#' @examples
+#' # TODO
 Blockbuster <- function(element.data, block.data = NULL,
                         forecast.horizon = 1,
                         rebuild.money = 0,
