@@ -276,10 +276,10 @@ Repair <- function(element.data, block.data, repair.money,
                    grade.order = c("D", "C", "B")){
 
   # Check integrity of inputs.
-  if (!is.element(element.data)) stop("The element.data argument needs to be an
-                                      element class data table.")
-  if (!is.block(block.data)) stop("The block.data argument needs to be a
-                                  block class data table.")
+  #if (!is.element(element.data)) stop("The element.data argument needs to be an
+  #                                    element class data table.")
+  #if (!is.block(block.data)) stop("The block.data argument needs to be a
+  #                                block class data table.")
   if (!is.numeric(repair.money)) stop("The repair money must be a number.")
   if (length(repair.money) > 1) warning("Only the first value in repair.money
                                         will be used.")
@@ -303,7 +303,7 @@ Repair <- function(element.data, block.data, repair.money,
   result <- repairGrade(element.data, repair.money, grade = grade.order[3])
   element.data <- result$element.data
 
-  element.data <- ElementLevel(element.data) # set class
+ # element.data <- ElementLevel(element.data) # set class
   return(element.data) # Note that repair costs haven't been updated.
 }
 
