@@ -55,13 +55,10 @@ of the output data.
 Check you have these packages installed and then load them into memory using
 `library()` `require()`.
 
-<!-- ```{r warning=FALSE, message=FALSE, error=FALSE} -->
-<!-- #  You could load tidyverse or you can load the individual packages, one-at-a-time. -->
-<!-- library(dplyr)  #  need pipe %>% -->
-<!-- library(ggplot2)  #  for visualisation -->
-<!-- library(ggthemes)  #  Make pretty output with little effort. -->
-<!-- library(Blockbuster) -->
-<!-- ``` -->
+```{r warning=FALSE, message=FALSE, error=FALSE, eval = FALSE}
+#  You could load tidyverse or you can load the individual packages, one-at-a-time.
+library(Blockbuster)
+```
 
 <!-- ## Inputs and Outputs Overview -->
 
