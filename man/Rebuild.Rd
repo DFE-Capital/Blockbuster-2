@@ -7,7 +7,11 @@
 Rebuild(element.data, block.data, rebuild.money)
 }
 \arguments{
-\item{rebuild.money}{}
+\item{element.data}{An \code{\link{element}} class object}
+
+\item{block.data}{A \code{\link{block}} class object}
+
+\item{rebuild.money}{A number}
 }
 \value{
 An \code{\link{element}} object with updated grade proportions for

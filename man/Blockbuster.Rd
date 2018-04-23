@@ -109,5 +109,5 @@ The \code{rebuild.money} and \code{repair.money} arguments provide the
 budgets for rebuilding and repairing during each timestep respectively.
 }
 \examples{
-TODO
+# TODO
 }

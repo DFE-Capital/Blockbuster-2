@@ -17,6 +17,11 @@ LoadBlockbusterOutput(forecast.horizon, filelabel = "blockbuster_output",
 \value{
 A \code{\link{blockbuster}} object.
 }
+\description{
+Create a \code{\link{blockbuster}}, \code{\link{element.list}} or
+\code{\link{block.list}} object from the files saved during a call to
+\code{\link{Blockbuster}}.
+}
 \details{
 The files are expected to end in "_element_i" and "block_i", with i being the
 timestep plus one. If the data input to \code{\link{Blockbuster}} is large

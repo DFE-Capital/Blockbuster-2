@@ -29,9 +29,11 @@ depends on the component as well as other complexities. This should be addressed
 improvements of the \code{\link{blockbuster}}.
 }
 \examples{
+\dontrun{
 x <- blockcoster_lookup(
 blockbuster_pds[1:10, ]$elementid,
  blockbuster_pds[1:10, ]$grade)
+ }
 }
 \seealso{
 \code{\link{blockbuster_pds_repair_costs}}

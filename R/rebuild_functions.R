@@ -21,9 +21,9 @@
 #' enough funds.  This continues until either there are no blocks left to
 #' rebuild or not enough money to rebuild any remaining blocks.
 #'
-#' @param element.data
-#' @param block.data
-#' @param rebuild.money
+#' @param element.data An \code{\link{element}} class object
+#' @param block.data A \code{\link{block}} class object
+#' @param rebuild.money A number
 #'
 #' @return An \code{\link{element}} object with updated grade proportions for
 #' rebuilt blocks.  Note that repair costs are not updated, nor the
