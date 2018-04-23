@@ -38,13 +38,14 @@ test_that("Blockbuster models correct timespan", {
 
   # run simulations for a variety of years and check the output is the same length
   # (plus one for the original input)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 1) %>% length, 1 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 2) %>% length, 2 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 3) %>% length, 3 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 4) %>% length, 4 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 5) %>% length, 5 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 10) %>% length, 10 + 1)
-  expect_equal(Blockbuster(random_elements, forecast.horizon = 20) %>% length, 20 + 1)
+  # warnings are suppressed as the input checks throw warnings as they recycle default inputs over each year
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 1)) %>% length, 1 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 2)) %>% length, 2 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 3)) %>% length, 3 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 4)) %>% length, 4 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 5)) %>% length, 5 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 10)) %>% length, 10 + 1)
+  expect_equal(suppressWarnings(Blockbuster(random_elements, forecast.horizon = 20)) %>% length, 20 + 1)
 
 })
 
