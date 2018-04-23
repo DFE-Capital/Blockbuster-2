@@ -1,20 +1,21 @@
+input_checks <- function(element.data = NULL,
+                         block.data = NULL,
+                         forecast.horizon = NULL,
+                         rebuild.money = NULL,
+                         repair.money = NULL,
+                         block.rebuild.cost = NULL,
+                         inflation = NULL
+                         ){
 
-
-
-
-
-
-input_checks <- function(...){
-
-  if(!is.element(element.data)) stop("The element.data argument must be an element
-                                     object.")
+#    if(!is.element(element.data)) stop("The element.data argument must be an element
+ #                                    object.")
 
   if(length(block.data) < 1){
     message("Constructing block summary from element.data.")
     block.data <- ConvertPdsToBlock(element.data, block.rebuild.cost)
   }
-  if(!is.block(block.data)) stop("The block.data argument must be a block
-                                 object.")
+#  if(!is.block(block.data)) stop("The block.data argument must be a block
+#                                 object.")
   if(!is.numeric(forecast.horizon)) stop("The forecast horizon must be number.")
   if(forecast.horizon < 1) stop("The forecast horizon must be a positive
                                 number.")
@@ -72,4 +73,13 @@ input_checks <- function(...){
     warning("You have provided inflation rates for years outside the forecast
             horizon.  The extra values will be ignored.")
   }
-}
+  return(list(element.data = element.data,
+              block.data = block.data,
+              forecast.horizon = forecast.horizon,
+              rebuild.money = rebuild.money,
+              repair.money = repair.money,
+              block.rebuild.cost = block.rebuild.cost,
+              inflation = inflation)
+  )
+  }
+

@@ -10,7 +10,7 @@
 UpdateElementRepairs <- function(element.data){
 
   # input integrity
-  if(!is.element(element.data)) stop("Argument needs to be an element object.")
+  #if(!is.element(element.data)) stop("Argument needs to be an element object.")
 
   # update element.data with the new repair totals.
   element.data <- element.data %>%
@@ -19,7 +19,7 @@ UpdateElementRepairs <- function(element.data){
            D.repair.total = unit_area * D * D.repair.cost,
            E.repair.total = unit_area * E * E.repair.cost)
 
-  return(ElementLevel(element.data))
+  #return(ElementLevel(element.data))
 }
 
 
@@ -41,8 +41,8 @@ UpdateElementRepairs <- function(element.data){
 UpdateBlockRepairs <- function(block.data, element.data){
 
   # Input integrity
-  if(!is.block(block.data)) stop("block.data argument needs to be a block object.")
-  if(!is.element(element.data)) stop("element.data argument needs to be an element object.")
+  #if(!is.block(block.data)) stop("block.data argument needs to be a block object.")
+  #if(!is.element(element.data)) stop("element.data argument needs to be an element object.")
 
   # total repair costs for each building at each grade.
   repairs <- element.data %>%
@@ -62,8 +62,8 @@ UpdateBlockRepairs <- function(block.data, element.data){
            ratio = case_when(block.rebuild.cost == 0 ~ 0,
                              TRUE ~ (C + D + E) / block.rebuild.cost)) %>%
     select(-B, -C, -D, -E)
-
-  return(BlockLevel(block.data))
+  block.data <- BlockLevel(block.data)
+  return(block.data)
 }
 
 #' A lookup table for repair cost rate given a building component and its grade.

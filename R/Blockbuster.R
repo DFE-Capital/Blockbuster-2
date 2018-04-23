@@ -92,8 +92,8 @@ Blockbuster <- function(element.data, block.data = NULL,
                         repair.money = 0,
                         block.rebuild.cost = 2000,
                         inflation = 1,
-                        block.det.data = blockbuster_det_data,
-                        block.repair.costs = blockbuster_pds_repair_costs,
+                        #block.det.data = blockbuster_det_data,
+                        #block.repair.costs = blockbuster_pds_repair_costs,
                         save = TRUE,
                         filelabel = "blockbuster_output",
                         path = "./output/",
@@ -102,18 +102,20 @@ Blockbuster <- function(element.data, block.data = NULL,
 
   # input integrity checks ----
   message ("Checking inputs...")
-  input_checks(element.data, block.data,
-               forecast.horizon,
-               rebuild.money,
-               repair.money,
-               block.rebuild.cost,
-               inflation,
-               block.det.data,
-               block.repair.costs,
-               save,
-               filelabel,
-               path,
-               grade.order)
+  inputs <- input_checks(element.data,
+                         block.data,
+                         forecast.horizon,
+                         rebuild.money,
+                         repair.money,
+                         block.rebuild.cost,
+                         inflation)
+  # inputs_checks may have changed some inputs (e.g. repeating single values)
+  block.data <- inputs$block.data
+  rebuild.money <- inputs$rebuild.money
+  repair.money <- inputs$repair.money
+  inflation <- inputs$inflation
+
+
 
   if(save){
     message("Saving initial state to file.")
@@ -197,53 +199,54 @@ Blockbuster <- function(element.data, block.data = NULL,
     output <- LoadBlockbusterOutput(forecast.horizon = forecast.horizon,
                                     filelabel = filelabel,
                                     path = path)
-    output <- BlockbusterOutput(output)
+    #output <- BlockbusterOutput(output)
     saveRDS(output, file = paste0(path, filelabel, "_output.rds"))
   } else {
     message("Preparing output.")
-    output <- BlockbusterOutput(output)
+    #output <- BlockbusterOutput(output)
   }
 
   return(output)
-  }
-
-# TODO - this needs to be able to modify the output folder.
-#' Run Blockbuster simulations on a variety of spending strategies.
-#'
-#' Given a data.frame of spending scenarios, run the scenario with the
-#' \code{strat} argument in the strategy column.  This function is useful for
-#' passing to lapply with a list of strategy names as the first argument.
-#'
-#' @param strat Character.  A single character string corresponding with one
-#' of the entries in the strategy column of \code{scenarios}.
-#' @param scenarios Data frame. Strategies are named in the last column and each
-#' strategy is associated with two rows, the first containing the rebuild budget,
-#' the second containing the repair budget.
-#' @param element.data An \code{\link{element}} object containing the initial
-#' state.
-#' @param block.data A \code{\link{block}} object containing the initial state.
-#' @param forecast.horizon A number indicating the number of timesteps to
-#' simulate.
-#' @param inflation  A vector of numbers indicating the inflation rate to apply
-#' to repair and rebuild costs each timestep.  If a vector of length one is
-#' supplied it will be used as the inflation rate for all timesteps.
-#' @param block.rebuild.cost The unit cost (per m^2^) of rebuilding blocks.
-#'
-#' @return NULL.  This function does not return an object, but instead saves all
-#' outputs (and interim states) to files in the "./output/" folder.
-MultiBlockbuster <- function(strat, scenarios, element.data, block.data,
-                             forecast.horizon, inflation, block.rebuild.cost){
-
-  # pull the appropriate spending scenario for the given strategy
-  monies <- scenarios %>% filter(strategy == strat)
-
-  # Run blockbuster with the given spending
-  Blockbuster(element.data = element.data,
-              block.data = block.data,
-              forecast.horizon = forecast.horizon,
-              rebuild.money = monies[1, ],
-              repair.money = monies[2, ],
-              block.rebuild.cost = block.rebuild.cost,
-              inflation = inflation,
-              filelabel = strat)
 }
+
+#'
+#' # TODO - this needs to be able to modify the output folder.
+#' #' Run Blockbuster simulations on a variety of spending strategies.
+#' #'
+#' #' Given a data.frame of spending scenarios, run the scenario with the
+#' #' \code{strat} argument in the strategy column.  This function is useful for
+#' #' passing to lapply with a list of strategy names as the first argument.
+#' #'
+#' #' @param strat Character.  A single character string corresponding with one
+#' #' of the entries in the strategy column of \code{scenarios}.
+#' #' @param scenarios Data frame. Strategies are named in the last column and each
+#' #' strategy is associated with two rows, the first containing the rebuild budget,
+#' #' the second containing the repair budget.
+#' #' @param element.data An \code{\link{element}} object containing the initial
+#' #' state.
+#' #' @param block.data A \code{\link{block}} object containing the initial state.
+#' #' @param forecast.horizon A number indicating the number of timesteps to
+#' #' simulate.
+#' #' @param inflation  A vector of numbers indicating the inflation rate to apply
+#' #' to repair and rebuild costs each timestep.  If a vector of length one is
+#' #' supplied it will be used as the inflation rate for all timesteps.
+#' #' @param block.rebuild.cost The unit cost (per m^2^) of rebuilding blocks.
+#' #'
+#' #' @return NULL.  This function does not return an object, but instead saves all
+#' #' outputs (and interim states) to files in the "./output/" folder.
+#' MultiBlockbuster <- function(strat, scenarios, element.data, block.data,
+#'                              forecast.horizon, inflation, block.rebuild.cost){
+#'
+#'   # pull the appropriate spending scenario for the given strategy
+#'   monies <- scenarios %>% filter(strategy == strat)
+#'
+#'   # Run blockbuster with the given spending
+#'   Blockbuster(element.data = element.data,
+#'               block.data = block.data,
+#'               forecast.horizon = forecast.horizon,
+#'               rebuild.money = monies[1, ],
+#'               repair.money = monies[2, ],
+#'               block.rebuild.cost = block.rebuild.cost,
+#'               inflation = inflation,
+#'               filelabel = strat)
+#' }

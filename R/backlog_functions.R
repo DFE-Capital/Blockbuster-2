@@ -9,8 +9,8 @@
 PullBlockData <- function(blockbuster){
 
   # Check input integrity
-  if (!is.blockbuster(blockbuster)) stop("PullBlockData requires a blockbuster
-                                         class input.")
+  #if (!is.blockbuster(blockbuster)) stop("PullBlockData requires a blockbuster
+  #                                       class input.")
 
   # initialize output
   block.data.list <- vector("list", length(blockbuster))
@@ -21,7 +21,7 @@ PullBlockData <- function(blockbuster){
   }
 
   # set class and return
-  block.data.list <- BlockLevelList(block.data.list)
+  #block.data.list <- BlockLevelList(block.data.list)
   return(block.data.list)
 }
 
@@ -37,8 +37,8 @@ PullBlockData <- function(blockbuster){
 PullElementData <- function(blockbuster){
 
   # Check input integrity
-  if (!is.blockbuster(blockbuster)) stop("PullElementData requires a blockbuster
-                                         class input.")
+  #if (!is.blockbuster(blockbuster)) stop("PullElementData requires a blockbuster
+  #                                       class input.")
 
   # initialize output object
   element.data.list <- vector("list", length(blockbuster))
@@ -49,7 +49,7 @@ PullElementData <- function(blockbuster){
   }
 
   # set class and return
-  element.data.list <- ElementLevelList(element.data.list)
+  #element.data.list <- ElementLevelList(element.data.list)
   return(element.data.list)
 }
 
@@ -137,11 +137,11 @@ BacklogE <- function(block.data)
 GenerateRepairBacklog <- function(blockbuster){
 
   # check input integrity and modify blockbuster object if necessary.
-  if (is.blockbuster(blockbuster)) blockbuster <- PullBlockData(blockbuster)
-  if (is.block(blockbuster)) blockbuster <- BlockLevelList(list(blockbuster))
-  if (!is.block.list(blockbuster)) stop("GenerateRepairBacklog requires either
-                                        a blockbuster, a block.list, or a block
-                                        class object as an input.")
+  #if (is.blockbuster(blockbuster)) blockbuster <- PullBlockData(blockbuster)
+  #if (is.block(blockbuster)) blockbuster <- BlockLevelList(list(blockbuster))
+  #if (!is.block.list(blockbuster)) stop("GenerateRepairBacklog requires either
+  #                                      a blockbuster, a block.list, or a block
+  #                                      class object as an input.")
 
   # compute backlogs for each grade
   B <- sapply(blockbuster, BacklogB) %>% unlist
@@ -157,8 +157,8 @@ GenerateRepairBacklog <- function(blockbuster){
 PercentageAtGrade <- function(element.data){
 
   # check input integrity
-  if (!is.element(element.data)) stop("PercentageAtGrade requires an element
-                                      class object.")
+  #if (!is.element(element.data)) stop("PercentageAtGrade requires an element
+  #                                    class object.")
 
   element.data %>%
     dplyr::ungroup %>%
@@ -178,12 +178,12 @@ PercentageAtGrade <- function(element.data){
 GeneratePercentageAtGrade <- function(input){
 
   # if input is a blockbuster object then pull the element-level data from it.
-  if (is.blockbuster(input)){
-    input <- PullElementData(input)
-  }
+  #if (is.blockbuster(input)){
+  #  input <- PullElementData(input)
+  #}
 
-  if (!is.element.list(input)) stop("GeneratePercentageAtGrade requires either
-                                    an element.list object or blockbuster object")
+  #if (!is.element.list(input)) stop("GeneratePercentageAtGrade requires either
+  #                                  an element.list object or blockbuster object")
 
   # compute percentage at each timestep and output
   t(sapply(input, PercentageAtGrade)) %>%
@@ -194,17 +194,17 @@ GeneratePercentageAtGrade <- function(input){
 LongRepairBacklog <- function(block.data){
 
   # Input integrity
-  if (is.blockbuster(block.data)) block.data <- PullBlockData(block.data)
-  if (is.block(block.data)) block.data <- BlockLevelList(list(block.data))
-  if (!is.block.list(block.data)) stop("LongRepairBacklog requires either
-                                        a blockbuster, a block.list, or a block
-                                        class object as an input.")
+  #if (is.blockbuster(block.data)) block.data <- PullBlockData(block.data)
+  #if (is.block(block.data)) block.data <- BlockLevelList(list(block.data))
+  #if (!is.block.list(block.data)) stop("LongRepairBacklog requires either
+  #                                      a blockbuster, a block.list, or a block
+  #                                      class object as an input.")
 
   block.data <- GenerateRepairBacklog(block.data) %>%
     tidyr::gather(grade, backlog, c("B", "C", "D")) %>%
     dplyr::mutate(timestep = as.integer(rep(1:length(block.data) - 1, 3)))
 
-  block.data <- RepairBacklogClass(block.data)
+  #block.data <- RepairBacklogClass(block.data)
   return(block.data)
 }
 
@@ -221,24 +221,24 @@ GenerateArea <- function(element.data){
 
 LongArea <- function(element.data){
 
-  if(is.blockbuster(element.data)) element.data <- PullElementData(element.data)
-   if(is.element(element.data)){
-    element.data <- ElementLevelList(list(element.data))
-  }
-  if(!is.element.list(element.data)) stop("LongArea requires either a
-                                          blockuster, element or element.list
-                                          class object as an input.")
+  #if(is.blockbuster(element.data)) element.data <- PullElementData(element.data)
+   #if(is.element(element.data)){
+  #  element.data <- ElementLevelList(list(element.data))
+  #}
+  #if(!is.element.list(element.data)) stop("LongArea requires either a
+  #                                        blockuster, element or element.list
+  #                                        class object as an input.")
 
   res <- lapply(element.data, GenerateArea) %>%
     bind_rows %>%
     mutate(timestep = as.integer(rep(1:length(element.data) - 1, 1,
-                                     each = 4))) %>%
-    AreaClass
+                                     each = 4)))# %>%
+   #AreaClass
 }
 
 
 GenerateElementBacklog <- function(element){
-  if(!is.element(element)) stop("Input should be an element class object.")
+  #if(!is.element(element)) stop("Input should be an element class object.")
 
   element <- element %>%
     tidyr::gather(grade, backlog, c("B.repair.total", "C.repair.total",
@@ -254,20 +254,20 @@ GenerateElementBacklog <- function(element){
 CreateElementBacklog <- function(element.data){
   # accepts blockbuster, element.list and element
   # TODO make it accept blockbuster element
-  if(is.blockbuster(element.data)) element.data <- PullElementData(element.data)
-  if(is.element(element.data)){
-    element.data <- ElementLevelList(list(element.data))
-  }
-  if(!is.element.list(element.data)) stop("LongArea requires either a
-                                          blockuster, element or element.list
-                                          class object as an input.")
+  #if(is.blockbuster(element.data)) element.data <- PullElementData(element.data)
+  #if(is.element(element.data)){
+  #  element.data <- ElementLevelList(list(element.data))
+  #}
+  #if(!is.element.list(element.data)) stop("LongArea requires either a
+  #                                        blockuster, element or element.list
+  #                                        class object as an input.")
 
   res <- lapply(element.data, GenerateElementBacklog)
   len <- nrow(res[[1]])
   res <- res %>%
     bind_rows %>%
     mutate(timestep = as.integer(rep(1:length(element.data) - 1, 1,
-                                     each = len))) %>%
-    ElementBacklog
+                                     each = len)))# %>%
+   # ElementBacklog
 }
 

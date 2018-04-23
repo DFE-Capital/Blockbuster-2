@@ -109,7 +109,7 @@ ConvertPdsToBlock <- function(pds, block.rebuild.cost){
               C.block.repair.cost = sum(C.repair.total),
               D.block.repair.cost = sum(D.repair.total),
               E.block.repair.cost = sum(E.repair.total),
-              ratio = (B.block.repair.cost + C.block.repair.cost + D.block.repair.cost + E.block.repair.cost) / block.rebuild.cost) %>%
-    BlockLevel
+              ratio = (B.block.repair.cost + C.block.repair.cost + D.block.repair.cost + E.block.repair.cost) / block.rebuild.cost) #%>%
+   # BlockLevel
 }
 

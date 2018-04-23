@@ -13,7 +13,7 @@ areafy2 <- function(blockbuster_initial_state, unit_area_methods = "PDS", input_
                                          from the Property Data Survey.")
 
     message('Checking blockbuster_initial_state is a data.frame or tibble...')
-    if (!is.data.frame(blockbuster_initial_state)) stop("blockbuster_initial_state must be a data.frame")
+    #if (!is.data.frame(blockbuster_initial_state)) stop("blockbuster_initial_state must be a data.frame")
 
     # Check necessary building component columns exist for unit_area method specification
 

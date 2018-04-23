@@ -1,28 +1,23 @@
 context("Checking backlog computations.")
 
-
-# Sample 5 random blocks ----------------------------------------------------
-
-block_number <- sample(unique(PDS.block$buildingid), 5)
-random_block <- PDS.block %>%
-  filter(buildingid %in% block_number)
-
-# Create simulated block --------------------------------------------------
-
-simulated_elements <- parameter.table %>% mutate(buildingid = 1)
-simulated_block <- tibble(buildingid = 1:5,
-                          block.rebuild.cost = 1:5,
-                          B.block.repair.cost = c(1, 0, 0, 0, 1),
-                          C.block.repair.cost = c(0, 1, 0, 0, 1),
-                          D.block.repair.cost = c(0, 0, 1, 0, 1),
-                          E.block.repair.cost = c(0, 0, 0, 1, 1),
-                          ratio = c(1, 1/2, 1/3, 1/4, 4/5)
-                          )
-
-
-# checking backlog computation ----
 test_that("Backlog functions return correct value",
           {
+            # random blocks
+            block_number <- sample(unique(PDS.block$buildingid), 5)
+            random_block <- PDS.block %>%
+              filter(buildingid %in% block_number)
+
+            # simulated block
+            simulated_elements <- parameter.table %>% mutate(buildingid = 1)
+            simulated_block <- tibble(buildingid = 1:5,
+                                      block.rebuild.cost = 1:5,
+                                      B.block.repair.cost = c(1, 0, 0, 0, 1),
+                                      C.block.repair.cost = c(0, 1, 0, 0, 1),
+                                      D.block.repair.cost = c(0, 0, 1, 0, 1),
+                                      E.block.repair.cost = c(0, 0, 0, 1, 1),
+                                      ratio = c(1, 1/2, 1/3, 1/4, 4/5)
+            )
+
             # one block
             expect_equal(BacklogB(simulated_block[1, ]), 1)
             expect_equal(BacklogB(simulated_block[2, ]), 0)

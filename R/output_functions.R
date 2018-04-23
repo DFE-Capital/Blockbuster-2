@@ -55,33 +55,33 @@ LoadBlockbusterOutput <- function(forecast.horizon,
       output[[i + 1]]$element <- readRDS(paste0(path, "/", filelabel, "_element_", i, ".rds"))
       output[[i + 1]]$block <- readRDS(paste0(path, "/", filelabel, "_block_", i, ".rds"))
       #check integrity
-      if (!is.element(output[[i + 1]]$element)){
-        stop(paste0(path,filelabel, "_element_", i, ".rds is not an element object."))
-      }
-      if (!is.block(output[[i + 1]]$block)){
-        stop(paste0(path,filelabel, "_block_", i, ".rds is not a block object."))
-      }
+      #if (!is.element(output[[i + 1]]$element)){
+      #  stop(paste0(path,filelabel, "_element_", i, ".rds is not an element object."))
+      #}
+      #if (!is.block(output[[i + 1]]$block)){
+      #  stop(paste0(path,filelabel, "_block_", i, ".rds is not a block object."))
+      #}
     }
 
     if(type == "element" | type == "element.list"){
       output[[i+1]] <- readRDS(paste0(path, "/", filelabel, "_element_", i, ".rds"))
       #check integrity
-      if (!is.element(output[[i + 1]])){
-        stop(paste0(path,filelabel, "_element_", i, ".rds is not an element object."))
-      }
+      #if (!is.element(output[[i + 1]])){
+      #  stop(paste0(path,filelabel, "_element_", i, ".rds is not an element object."))
+      #}
     }
     if(type == "block" | type == "block.list"){
       output[[i+1]] <- readRDS(paste0(path, "/", filelabel, "_block_", i, ".rds"))
-      if (!is.block(output[[i + 1]])){
-        stop(paste0(path,filelabel, "_block_", i, ".rds is not a block object."))
-      }
+      #if (!is.block(output[[i + 1]])){
+       # stop(paste0(path,filelabel, "_block_", i, ".rds is not a block object."))
+      #}
     }
   }
 
   # set class and return
-  if (type == "blockbuster") output <- BlockbusterOutput(output)
-  if(type == "element" | type == "element.list") output <- ElementLevelList(output)
-  if(type == "block" | type == "block.list") output <- BlockLevelList(output)
+  #if (type == "blockbuster") output <- BlockbusterOutput(output)
+  #if(type == "element" | type == "element.list") output <- ElementLevelList(output)
+  #if(type == "block" | type == "block.list") output <- BlockLevelList(output)
   return(output)
 }
 
