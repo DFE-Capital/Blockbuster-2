@@ -82,6 +82,8 @@
 #' components at each timestep, with the initial conditions stored in the first
 #' list entry.
 #'
+#' @export
+#'
 #' @examples
 #' # TODO
 Blockbuster <- function(element.data, block.data = NULL,
@@ -98,74 +100,20 @@ Blockbuster <- function(element.data, block.data = NULL,
                         grade.order = c("D", "C", "B")
 ){
 
-  # input integrity checks
+  # input integrity checks ----
   message ("Checking inputs...")
-  if(!is.element(element.data)) stop("The element.data argument must be an element
-                                     object.")
-
-  if(length(block.data) < 1){
-    message("Constructing block summary from element.data.")
-    block.data <- ConvertPdsToBlock(element.data, block.rebuild.cost)
-  }
-  if(!is.block(block.data)) stop("The block.data argument must be a block
-                                 object.")
-  if(!is.numeric(forecast.horizon)) stop("The forecast horizon must be number.")
-  if(forecast.horizon < 1) stop("The forecast horizon must be a positive
-                                number.")
-
-  if(!is.numeric(rebuild.money)) stop ("The rebuild.money argument must be
-                                       numeric.")
-  if(length(rebuild.money) == 1 & forecast.horizon != 1){
-    warning("You have only provided a single value for rebuild.money. It will be
-            used as the available funds for each forecast timestep.")
-    rebuild.money <- rep(rebuild.money, forecast.horizon)
-  }
-  if(length(rebuild.money) < forecast.horizon){
-    stop("The length of the vector passed to rebuild.money must match the
-         number passed to forecast.horizon.")
-  }
-  if(length(rebuild.money) > forecast.horizon) {
-    warning("You have provided rebuild money for years outside the forecast
-            horizon.  The extra values will be ignored.")
-  }
-  if(any(rebuild.money < 0)) stop("You have supplied negative values for the
-                                  rebuild budget.")
-
-  if(!is.numeric(repair.money)) stop ("The repair.money argument must be
-                                      numeric.")
-  if(length(repair.money) == 1 & forecast.horizon != 1){
-    warning("You have only provided a single value for repair.money. It will be
-            used as the available funds for each forecast timestep.")
-    repair.money <- rep(repair.money, forecast.horizon)
-  }
-  if(length(repair.money) < forecast.horizon){
-    stop("The length of the vector passed to repair.money must match the
-         number passed to forecast.horizon.")
-  }
-  if(length(repair.money) > forecast.horizon) {
-    warning("You have provided repair money for years outside the forecast
-            horizon.  The extra values will be ignored.")
-  }
-  if(any(repair.money < 0)) stop("You have supplied negative values for the
-                                 repair budget.")
-  if(!is.numeric(block.rebuild.cost)) stop("block.rebuild.cost must be a number.")
-  if(any(block.rebuild.cost < 0)) stop("You have supplied negative values for the
-                                       unit block rebuild cost.")
-  if(length(block.rebuild.cost) > 1) warning("Only the first value entered for
-                                             block.rebuild.cost will be used.")
-  if(!is.numeric(inflation)) stop("Inflation should be numeric.")
-  if(length(inflation) == 1 & forecast.horizon != 1){
-    inflation <- rep(inflation, forecast.horizon)
-    warning("Inflation will be applied as a constant rate each timestep")
-  }
-  if(length(inflation) < forecast.horizon){
-    stop("The inflation argument should be a single number or a vector with a
-         value for each timestep.")
-  }
-  if(length(inflation) > forecast.horizon) {
-    warning("You have provided inflation rates for years outside the forecast
-            horizon.  The extra values will be ignored.")
-  }
+  input_checks(element.data, block.data,
+               forecast.horizon,
+               rebuild.money,
+               repair.money,
+               block.rebuild.cost,
+               inflation,
+               block.det.data,
+               block.repair.costs,
+               save,
+               filelabel,
+               path,
+               grade.order)
 
   if(save){
     message("Saving initial state to file.")
@@ -184,18 +132,18 @@ Blockbuster <- function(element.data, block.data = NULL,
     output[[1]]$block <- block.data
   }
 
-  # start loop
+  # LOOP ----
   for (i in 1:forecast.horizon){
-    # deteriorate
+    # deteriorate ----
     message(paste0("Deteriorating at time step ", i,"."))
     element.data <- Deteriorate(element.data = element.data)
 
-    # update repair costs
+    # update repair costs ----
     message("Updating element repair totals.")
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
-    # inflate all repair/rebuild costs
+    # inflate all repair/rebuild costs ----
     message("Inflating rebuild and repair costs.")
     block.data <- InflateRebuild(block.data = block.data,
                                  inflation = inflation[i])
@@ -206,27 +154,28 @@ Blockbuster <- function(element.data, block.data = NULL,
     element.data <- InflateRepairElement(element.data = element.data,
                                          inflation = inflation[i])
 
-    # rebuild
+    # rebuild ----
     message("Rebuilding blocks.")
     element.data <- Rebuild(element.data = element.data,
                             block.data = block.data,
                             rebuild.money = rebuild.money[i])
 
-    # update repair costs
+    # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
-    # repair
+    # repair ----
     message("Repairing blocks.")
     element.data <- Repair(element.data = element.data,
                            block.data = block.data,
                            repair.money = repair.money[i],
                            grade.order = grade.order)
 
-    # update repair costs
+    # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
     block.data <- UpdateBlockRepairs(block.data, element.data)
 
+    # save current state ----
     if(save){
       message(paste0("Saving state at timestep ", i, " to file."))
       # save current state
@@ -237,10 +186,11 @@ Blockbuster <- function(element.data, block.data = NULL,
       output[[i + 1]]$block <- block.data
     }
 
-    # end loop
+    # LOOP END ----
 
   }
 
+  # OUTPUT ----
   if(save){
     # collate states, save (a backup!)
     message(paste0("Saving output to file ", path, filelabel, "_output.rds"))
@@ -257,9 +207,10 @@ Blockbuster <- function(element.data, block.data = NULL,
   return(output)
   }
 
+# TODO - this needs to be able to modify the output folder.
 #' Run Blockbuster simulations on a variety of spending strategies.
 #'
-#' Given a data.frame with of spending scenarios, run the scenario with the
+#' Given a data.frame of spending scenarios, run the scenario with the
 #' \code{strat} argument in the strategy column.  This function is useful for
 #' passing to lapply with a list of strategy names as the first argument.
 #'
