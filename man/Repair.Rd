@@ -9,22 +9,48 @@ Repair(element.data, block.data, repair.money, grade.order = c("D", "C", "B"))
 \arguments{
 \item{element.data}{An \code{\link{element}} class object.}
 
-\item{repair.money}{A number.}
+\item{block.data}{A \code{\link{block}} class object.}
+
+\item{repair.money}{A number}
 
 \item{grade.order}{(Optional) A list of the three character strings \code{"D"},
 \code{"C"} and \code{"B"} in any order.  This determines the priority for
 repairs.  The first character gives the first grade that will be repaired.
 By default, D is repaired first, then C, then B.}
+
+\item{element.data}{An \code{\link{element}} class object.}
+
+\item{repair.money}{A number.}
+
+\item{element.data}{An \code{\link{element}} class object.}
+
+\item{repair.money}{A number.}
 }
 \value{
+An \code{\link{element}} class object with relevant components
+repaired, i.e. set to grade A.
+Repair components in element data when there is not enough money to repair
+them all.
+
+This function is called by \code{\link{Repair}} when it needs to make
+decisions about what to spend money on repairing.  Despite the name, it can
+be applied to element-level data that contains components from more than one
+block. A greedy algorithm is applied to spend the available repair money.
+Components are repaired in order of descending cost by grade, starting with
+grade D, then C, then B.
+
+This function does NOT update the repair costs, only the grade proportions.
+Therefore \code{\link{UpdateElementRepairs}} and
+\code{\link{UpdateBlockRepairs}} should be called on the element- and block-
+level objects afterwards to ensure the repair costs and totals are correct.
+
 An \code{\link{element}} class object with the grade proportions
 amended accordingly.
-}
-\description{
+Repair elements in a block
+
 Given the current state of the buildings, this function outputs the element-
 level status after repairing components within budget.
-}
-\details{
+
 The repairing gives priority to repairing those components at greatest risk
 of being grade D, then grade C, then grade B. It calls the same
 \code{\link{RecursiveBudgeting}} recursive algorithm used by
@@ -35,6 +61,25 @@ The argument \code{block.data} is deprecated and not used in this function.
 It is left in for modularity purposes as at a later data it may be that
 several repair decision algorithms are selectable and some may require
 the block-level information.
+
+This function does NOT update the repair costs, only the grade proportions.
+Therefore \code{\link{UpdateElementRepairs}} and
+\code{\link{UpdateBlockRepairs}} should be called on the element- and block-
+level objects afterwards to ensure the repair costs and totals are correct.
+
+An \code{\link{element}} class object with the grade proportions
+amended accordingly.
+}
+\description{
+Given the current state of the buildings, this function outputs the element-
+level status after repairing components within budget.
+}
+\details{
+The available funding for repairs, input as \code{repair.money}, is split
+evenly between blocks.  Within each block the components are repaired in
+descending order of cost. Note that this method can result in a large amount
+of wasted fund allocation.  For example, a block with only N or A grade
+components will be allocated a proportion of the funds, but needs none.
 
 This function does NOT update the repair costs, only the grade proportions.
 Therefore \code{\link{UpdateElementRepairs}} and

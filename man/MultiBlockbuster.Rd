@@ -34,7 +34,7 @@ NULL.  This function does not return an object, but instead saves all
 outputs (and interim states) to files in the "./output/" folder.
 }
 \description{
-Given a data.frame with of spending scenarios, run the scenario with the
+Given a data.frame of spending scenarios, run the scenario with the
 \code{strat} argument in the strategy column.  This function is useful for
 passing to lapply with a list of strategy names as the first argument.
 }
