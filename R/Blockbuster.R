@@ -100,7 +100,7 @@ Blockbuster <- function(element.data, block.data = NULL,
                         grade.order = c("D", "C", "B")
 ){
 
-  # input integrity checks ----
+  # input integrity checks -------------------------------------------------
   message ("Checking inputs...")
   inputs <- input_checks(element.data,
                          block.data,
@@ -115,7 +115,12 @@ Blockbuster <- function(element.data, block.data = NULL,
   repair.money <- inputs$repair.money
   inflation <- inputs$inflation
 
+  # set filepath
+  savefile <- file.path(path, filelabel)
 
+
+
+  # save initial state ------------------------------------------------------
 
   if(save){
     message("Saving initial state to file.")
@@ -124,8 +129,8 @@ Blockbuster <- function(element.data, block.data = NULL,
 
     # save initial state (this may seem odd since it is an input, but it is useful
     # to have the initial state saved as part of the complete output).
-    saveRDS(element.data, file = paste0(path, filelabel, "_element_0.rds"))
-    saveRDS(block.data, file = paste0(path, filelabel, "_block_0.rds"))
+    saveRDS(element.data, file = paste0(savefile, "_element_0.rds"))
+    saveRDS(block.data, file = paste0(savefile, "_block_0.rds"))
   } else {
     # set up output list.
     message("Setting up output.")
@@ -181,8 +186,8 @@ Blockbuster <- function(element.data, block.data = NULL,
     if(save){
       message(paste0("Saving state at timestep ", i, " to file."))
       # save current state
-      saveRDS(element.data, file = paste0(path, filelabel, "_element_", i, ".rds"))
-      saveRDS(block.data, file = paste0(path, filelabel, "_block_", i, ".rds"))
+      saveRDS(element.data, file = paste0(savefile, "_element_", i, ".rds"))
+      saveRDS(block.data, file = paste0(savefile, "_block_", i, ".rds"))
     } else {
       output[[i + 1]]$element <- element.data
       output[[i + 1]]$block <- block.data
@@ -195,12 +200,12 @@ Blockbuster <- function(element.data, block.data = NULL,
   # OUTPUT ----
   if(save){
     # collate states, save (a backup!)
-    message(paste0("Saving output to file ", path, filelabel, "_output.rds"))
+    message(paste0("Saving output to file ", savefile, "_output.rds"))
     output <- LoadBlockbusterOutput(forecast.horizon = forecast.horizon,
                                     filelabel = filelabel,
                                     path = path)
     #output <- BlockbusterOutput(output)
-    saveRDS(output, file = paste0(path, filelabel, "_output.rds"))
+    saveRDS(output, file = paste0(savefile, "_output.rds"))
   } else {
     message("Preparing output.")
     #output <- BlockbusterOutput(output)

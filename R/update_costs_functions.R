@@ -62,7 +62,7 @@ UpdateBlockRepairs <- function(block.data, element.data){
            ratio = case_when(block.rebuild.cost == 0 ~ 0,
                              TRUE ~ (C + D + E) / block.rebuild.cost)) %>%
     select(-B, -C, -D, -E)
-  block.data <- BlockLevel(block.data)
+  #block.data <- BlockLevel(block.data)
   return(block.data)
 }
 
