@@ -256,10 +256,10 @@ test_that("Blockbuster makes different repair decisions when the grade order is 
   C_sim <- Blockbuster(random_element, random_block,
                        repair.money = funds,
                        grade.order = c("C", "D", "B"))
-  C_backlog <- sum(C_sim[[2]]$block$B.block.repair.cost)
+  C_backlog <- sum(C_sim[[2]]$block$C.block.repair.cost)
   D_sim <- Blockbuster(random_element, random_block,
                        repair.money = funds,grade.order = c("D", "B", "C"))
-  D_backlog <- sum(D_sim[[2]]$block$B.block.repair.cost)
+  D_backlog <- sum(D_sim[[2]]$block$D.block.repair.cost)
 
   expect_lt(B_backlog, original_B_backlog)
   expect_lt(C_backlog, original_C_backlog)
@@ -285,7 +285,7 @@ test_that("Blockbuster works with single inputs by repeating values.",
             expect_warning(Blockbuster(random_element, random_block,
                                      forecast.horizon = 2, rebuild.money = c(0,0),
                                      repair.money = 0, inflation = c(1,1)))
-            expect_warning(Blockbuster(random_element, random_block,
+            expect_message(Blockbuster(random_element, random_block,
                                        forecast.horizon = 2, rebuild.money = c(0,0),
                                        repair.money = c(0, 0), inflation = 1))
           })
@@ -309,7 +309,7 @@ test_that("Incorrect inputs produce the appropriate warnings and errors",
                                      forecast.horizon = 1,
                                      rebuild.money = 100000,
                                      repair.money = 10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             #incorrect block.data
             expect_error(Blockbuster(element.data = random_element,
@@ -317,27 +317,27 @@ test_that("Incorrect inputs produce the appropriate warnings and errors",
                                      forecast.horizon = 1,
                                      rebuild.money = 100000,
                                      repair.money = 10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             # invalid forecast.horizon
             expect_error(Blockbuster(element.data = random_element,
                                      forecast.horizon = 0,
                                      rebuild.money = 100000,
                                      repair.money = 10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             # negative monies
             expect_error(Blockbuster(element.data = random_element,
                                      forecast.horizon = 1,
                                      rebuild.money = -100000,
                                      repair.money = 10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             expect_error(Blockbuster(element.data = random_element,
                                      forecast.horizon = 1,
                                      rebuild.money = 100000,
                                      repair.money = -10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             expect_error(Blockbuster(element.data = random_element,
                                      forecast.horizon = 1,
@@ -350,13 +350,13 @@ test_that("Incorrect inputs produce the appropriate warnings and errors",
                                      forecast.horizon = 1,
                                      rebuild.money = 1:10,
                                      repair.money = 1,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             expect_warning(Blockbuster(element.data = random_element,
                                      forecast.horizon = 1,
                                      rebuild.money = 100000,
                                      repair.money = 1:10000,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
             expect_warning(Blockbuster(element.data = random_element,
                                      forecast.horizon = 1,
@@ -368,14 +368,14 @@ test_that("Incorrect inputs produce the appropriate warnings and errors",
                                        forecast.horizon = 1,
                                        rebuild.money = 100000,
                                        repair.money = 10000,
-                                       block.rebuild.cost = 0,
+                                       block.rebuild.cost = 100,
                                        inflation = 1:10))
             # recycling inflation
-            expect_warning(Blockbuster(element.data = random_element,
+            expect_message(Blockbuster(element.data = random_element,
                                      forecast.horizon = 2,
                                      rebuild.money = 1:2,
                                      repair.money = 1:2,
-                                     block.rebuild.cost = 0,
+                                     block.rebuild.cost = 100,
                                      inflation = 1))
           })
 
