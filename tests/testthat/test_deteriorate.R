@@ -1,14 +1,10 @@
-context("Element deterioration")
+context("Testing Deterioration process")
 
 test_that("Deteriorate throws errors with incorrect inputs",
           {
-            test.data <- PDS.block
-            class(test.data) <- class(test.data)[1:3] # remove block class
-
             # incorrect inputs
             expect_error(Deteriorate(PDS.block))
             expect_error(Deteriorate(1))
-            expect_error(Deteriorate(test.data))
 
             # correct input
             expect_silent(Deteriorate(PDS.element))
@@ -16,27 +12,64 @@ test_that("Deteriorate throws errors with incorrect inputs",
 
 )
 
-test_that("Deteriorate returns the correct class",
-          {
-            expect_is(Deteriorate(PDS.element), "element")
-          })
-
-test_that("Random elements set to a specific grade deteriorate correctly through
+test_that("Elements deteriorate correctly through
           Deteriorate",
           {
-            test.data <- PDS.element[sample(1:nrow(PDS.element), 4), ]
-            test.data <- ElementLevel(test.data)
-            test.data$A <- c(1, 0, 0, 0)
-            test.data$B <- c(0, 1, 0, 0)
-            test.data$C <- c(0, 0, 1, 0)
-            test.data$D <- c(0, 0, 0, 1)
-            output <- Deteriorate(test.data) %>%
-              select(A, B, C, D) %>% as.matrix
+            # test data is five rows, each at a different grade
+            A <- c(1, 0, 0, 0, 0)
+            B <- c(0, 1, 0, 0, 0)
+            C <- c(0, 0, 1, 0, 0)
+            D <- c(0, 0, 0, 1, 0)
+            E <- c(0, 0, 0, 0, 1)
+            test_data <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5)
+            output <- Deteriorate(test_data) %>%
+              select(A, B, C, D, E)
 
-            expect_equivalent(output[1, ],  # grade A
-                         c(1 - test.data$ab[1], test.data$ab[1], 0, 0))
-            expect_equivalent(output[2, ],
-                         c(0, 1 - test.data$bc[2], test.data$bc[2], 0))
-            expect_equivalent(output[3, ],
-                         c(0, 0, 1 - test.data$cd[3], test.data$cd[3]))
+            #expected output (explicitly computed)
+            A <- c(1 - 0.8, 0, 0, 0, 0)
+            B <- c(0.8, 1 - 0.7, 0, 0, 0)
+            C <- c(0, 0.7, 1 - 0.6, 0, 0)
+            D <- c(0, 0, 0.6, 1 - 0.5, 0)
+            E <- c(0, 0, 0, 1 - 0.5, 1)
+            exp_output <- data.frame(A, B, C, D, E)
+
+            expect_equal(output, exp_output)
+
+            # test data is five rows, with different combinations of probabilities
+            # four pairs of probabilities
+            # one with equal probabilities over all grades
+            A <- c(0.5, 0.5, 0.5, 0.5, 0.2)
+            B <- c(0.5, 0, 0, 0, 0.2)
+            C <- c(0, 0.5, 0, 0.5, 0.2)
+            D <- c(0, 0, 0.5, 0, 0.2)
+            E <- c(0, 0, 0, 0.5, 0.2)
+            test_data <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5)
+            output <- Deteriorate(test_data) %>%
+              select(A, B, C, D, E)
+
+            #expected output
+            A <- c(0.5 * (1 - 0.8), 0.5 * (1 - 0.8), 0.5 * (1 - 0.8), 0.5 * (1 - 0.8), 0.2 * (1 - 0.8))
+            B <- c(0.5 * 0.8 + 0.5 * (1 - 0.7), 0.5 * 0.8, 0.5 * 0.8, 0.5 * 0.8, 0.2 * 0.8 + 0.2 * (1 - 0.7))
+            C <- c(0.5 * 0.7, 0.5 * (1 - 0.6), 0, 0.5 * (1 - 0.6), 0.2 * 0.7 + 0.2 * (1 - 0.6))
+            D <- c(0, 0.5 * 0.6, 0.5 * (1 - 0.5), 0.5 * 0.6, 0.2 * 0.6 + 0.2 * (1 - 0.5))
+            E <- c(0, 0, 0.5 * 0.5, 0.5, 0.2 * 0.5 + 0.2)
+            exp_output <- data.frame(A, B, C, D, E)
+
+            expect_equal(output, exp_output)
+
             })
+
+test_that("Setting de to 0 removes grade E from model (as long as there is no E grade originally)", {
+  # test data is five rows, with random probabilities but no grade E
+  A <- runif(5)
+  B <- runif(5)
+  C <- runif(5)
+  D <- runif(5)
+  E <- rep(0, 5)
+  test_data <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0)
+  output <- Deteriorate(test_data) %>%
+    select(A, B, C, D, E)
+
+  expect_equal(output$E, c(0, 0, 0, 0, 0))
+})
+

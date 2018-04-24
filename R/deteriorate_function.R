@@ -22,7 +22,7 @@ Deteriorate <- function(element.data){
   # rate. Since each computation affects the current grade and the grade below,
   # computations are performed in reverse order.
   element.data %>%
-    mutate(E = D* de + E,
+    mutate(E = D * de + E,
            D = C * cd + D * (1 - de),
            C = B * bc + C * (1 - cd),
            B = A * ab + B * (1 - bc),
