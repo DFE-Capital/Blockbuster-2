@@ -1,0 +1,13 @@
+^packrat/
+^\.Rprofile$
+^.*\.Rproj$
+^\.Rproj\.user$
+
+^excel_input\.R$
+^Excel_output\.R$
+^Excel_input\.R$
+^\.gitignore$
+^\\output$
+^\\data$
+^\.travis\.yml$
+^\\documentation$
