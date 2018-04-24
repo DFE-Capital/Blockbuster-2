@@ -1,66 +1,24 @@
-# Conversion tests
+context("Checking that summarising element-level data produces correct block-level summary")
 
-context("Converting element data into block data")
+test_that("ConvertPdsToBlock correctly summarises element-level data", {
 
-test_that("ConvertElementToBlock throws an error with the wrong input.",
-          {
-            expect_error(ConvertElementToBlock(1))
-          })
+  # toy data for two identical blocks, each with five components.  Four components
+  # have a backlog of one for exactly one of the grades each, the fifth has backlog five for all of the grades.
+  # The second building has twice the area so the rebuild cost should be doubled, but the backlog remains the same.
+  sim_elements <- data.frame(buildingid = c(1, 1, 1, 1, 1, 2, 2, 2, 2, 2),
+                             gifa = c(1, 1, 1, 1, 1, 2, 2, 2, 2, 2),
+                             B.repair.total = rep(c(5, 0, 0, 0, 1), 2),
+                             C.repair.total = rep(c(0, 5, 0, 0, 1), 2),
+                             D.repair.total = rep(c(0, 0, 5, 0, 1), 2),
+                             E.repair.total = rep(c(0, 0, 0, 5, 1), 2))
+  # expected output when block.rebuild.cost is 12.
+  sim_block <- data.frame(buildingid = c(1, 2),
+                          block.rebuild.cost = c(12, 24),
+                          B.block.repair.cost = c(6, 6),
+                          C.block.repair.cost = c(6, 6),
+                          D.block.repair.cost = c(6, 6),
+                          E.block.repair.cost = c(6, 6),
+                          ratio = c(2, 1))
 
-test_that("ConvertElementToBlock output is a block object",
-          {
-            expect_is(ConvertElementToBlock(PDS.element.data), "block")
-          })
-
-test_that("Number of rows in output matches number of unique buildingids in
-          input",
-          {
-            expect_equal(nrow(ConvertElementToBlock(PDS.element.data)),
-                         length(unique(PDS.element.data$buildingid)))
-          })
-
-test_that("Total block repair costs match the totals from the input",
-          {
-            expect_equal(sum(ConvertElementToBlock(PDS.element.data)$B.block.repair.cost),
-                         sum(PDS.element.data$B.repair.total))
-            expect_equal(sum(ConvertElementToBlock(PDS.element.data)$C.block.repair.cost),
-                         sum(PDS.element.data$C.repair.total))
-            expect_equal(sum(ConvertElementToBlock(PDS.element.data)$D.block.repair.cost),
-                         sum(PDS.element.data$D.repair.total))
-          })
-
-test_that("Converting PDS.element.data recreates PDS.block.data.  Note that the
-    PDS.block.data was created from the long format data so is a different route.")
-#context("Is the conversion from long to wide format working correctly")
-#
-#test_that("ConvertOutput combines rows of the same building/element into one row with the correct proportions",
-#         {
-#           # create object
-#           z <- runif(1)
-#           x <- blockbuster_pds[1:2, ]
-#           x$unit_area <- c(z, 1 - z)
-#           x$grade <- c("A", "B")
-#           x$elementid <- 1700
-#           y <- ConvertOutput(x)
-#           expect_equal(c(y$A, y$B), x$unit_area)
-#         })
-#
-#test_that("ConvertOutput combines rows of the same building/element into one row with the correct area",
-#          {
-#            # create object
-#            z <- runif(1)
-#            x <- blockbuster_pds[1:2, ]
-#            x$unit_area <- c(z, 1 - z)
-#            x$grade <- c("A", "B")
-#            x$elementid <- 1700
-#            y <- ConvertOutput(x)
-#            expect_equal(1, y$unit_area)
-#          })
-#
-#test_that("ConvertOutput proportions add to 1", {
-#          x <- blockbuster_pds %>%
-#            filter(buildingid %in% sample(unique(blockbuster_pds$buildingid), 1))
-#          y <- ConvertOutput(x)
-#          expect_equal(rep(1, nrow(y)), rowSums(y[, 4:9]))
-#          }
-#)
+  expect_equal(ConvertPdsToBlock(sim_elements, 12), sim_block)
+})
