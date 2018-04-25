@@ -1,97 +1,91 @@
-context("Rebuilding")
+context("Testing Rebuild function")
 
-# Note that the minimum rebuild in the 10% PDS sample is ?20,520
-# The total is $13,474,822,127 (13 trillion)
+# RebuildBlock tests
+# create block and element objects for testing
+# block should have ratio and block.rebuild.cost
+# element has buildingid, A, B, C, D, E
 
-# After one rebuild step:
-#
-# 1: ...the total repair cost must have gone down if blocks are rebuilt
-# 2: ...the total repair cost must not change if no blocks are rebuilt
-# 3: ...the number of N grade must increase
-blocks <- sample(unique(PDS.block$buildingid), 5)
-test.block <- PDS.block %>% filter(buildingid %in% blocks) %>%
-  BlockLevel
-test.element <- PDS.element %>% filter(buildingid %in% blocks) %>%
-  ElementLevel
-total <- sum(test.block$block.rebuild.cost)
-minimum <- min(test.block$block.rebuild.cost[test.block$block.rebuild.cost > 0])
-
-test_that("The total rebuild cost must have gone down if something is rebuilt",
+test_that("Check toy example for correct decisions",
           {
-            x <- Rebuild(test.element, test.block, minimum * 10) %>%
-              UpdateElementRepairs
-            x <- UpdateBlockRepairs(test.block, x)
-            expect_less_than(sum(x$B.block.repair.cost + x$C.block.repair.cost + x$D.block.repair.cost),
-                             sum(test.block$B.block.repair.cost + test.block$C.block.repair.cost + test.block$D.block.repair.cost))
+            # construct toy element
+            block <- data.frame(buildingid = 1:4,
+                                block.rebuild.cost = 0:3,
+                                ratio = 0:3)
+            element <- data.frame(buildingid = 1:4,
+                                  elementid = 1,
+                                  A = 9, # this value is never checked
+                                  B = 9,
+                                  C = 9,
+                                  D = 9,
+                                  E = 9)
+
+            expect_equal(Rebuild(element, block, 0), element) # no rebuild ( block 1 has no cost so is not eligble for rebuilding)
+            expect_equal(Rebuild(element, block, 1)$A, c(9, 1, 9, 9)) # block 2 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 2)$A, c(9, 9, 1, 9)) # block 3 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 3)$A, c(9, 9, 9, 1)) # block 4 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 4)$A, c(9, 1, 9, 1)) # block 2, 4 rebuilt (first affordable, can't afford 3, can afford 2)
+            expect_equal(Rebuild(element, block, 5)$A, c(9, 9, 1, 1)) # block 3, 4 rebuilt (first affordable, can afford 3, can't afford 2)
+            expect_equal(Rebuild(element, block, 6)$A, c(9, 1, 1, 1)) # block 2, 3, 4 rebuilt (afford 2, 3, and 4)
+            expect_equal(Rebuild(element, block, 7)$A, c(9, 1, 1, 1)) # block 2, 3, 4 rebuilt (even with more money, block 1 has no rebuild cost so is not rebuilt)
           })
 
-test_that("The total repair cost must not change when there is less money than the cheapest block",
+test_that("Check toy example with nothing to rebuild for correct decisions",
           {
-            x <- Rebuild(test.element, test.block, minimum / 2) %>%
-              UpdateElementRepairs
-            x <- UpdateBlockRepairs(test.block, x)
-            expect_equal(sum(x$B.block.repair.cost + x$C.block.repair.cost + x$D.block.repair.cost),
-                         sum(test.block$B.block.repair.cost + test.block$C.block.repair.cost + test.block$D.block.repair.cost))
+            # construct toy element
+            block <- data.frame(buildingid = 1:4,
+                                block.rebuild.cost = 0,
+                                ratio = 0:3)
+            element <- data.frame(buildingid = 1:4,
+                                  elementid = 1,
+                                  A = 9, # this value is never checked
+                                  B = 9,
+                                  C = 9,
+                                  D = 9,
+                                  E = 9)
+
+            expect_equal(Rebuild(element, block, 0), element) # no rebuild
+            expect_equal(Rebuild(element, block, 1), element) # no rebuild
+            expect_equal(Rebuild(element, block, 2), element) # no rebuild
+            expect_equal(Rebuild(element, block, 3), element) # no rebuild
+            expect_equal(Rebuild(element, block, 4), element) # no rebuild
+            expect_equal(Rebuild(element, block, 5), element) # no rebuild
+            expect_equal(Rebuild(element, block, 6), element) # no rebuild
+            expect_equal(Rebuild(element, block, 7), element) # no rebuild
           })
 
-test_that("Blocks are rebuilt in the element.data",
+test_that("Check toy example with two tied blocks - it should fix the one with the highest ratio first",
           {
-            x <- Rebuild(test.element, test.block, minimum * 10)
-            expect_more_than(sum(x$A), sum(test.element$A))
+            # construct toy element
+            block <- data.frame(buildingid = 1:2,
+                                block.rebuild.cost = 1,
+                                ratio = c(2, 1))
+            element <- data.frame(buildingid = 1:2,
+                                  elementid = 1,
+                                  A = 9, # this value is never checked
+                                  B = 9,
+                                  C = 9,
+                                  D = 9,
+                                  E = 9)
+
+            expect_equal(Rebuild(element, block, 0), element) # no rebuild
+            expect_equal(Rebuild(element, block, 1)$A, c(1, 9)) # rebuild 1 as it has higest ratio
+            expect_equal(Rebuild(element, block, 2)$A, c(1, 1)) # rebuild 2 and 1
           })
 
-test_that("Blocks are not rebuilt in the element.data when there isn't enough money",
-          {
-            x <- Rebuild(test.element, test.block, minimum / 2)
-            expect_equal(sum(x$A), sum(test.element$A))
-          })
+context("Testing RebuildBlock")
 
-test_that("Areas are consistent after rebuild",
-          {
-           expect_equal(sum(Rebuild(test.element, test.block, minimum / 2)$unit_area), sum(test.element$unit_area))
-           expect_equal(sum(Rebuild(test.element, test.block, minimum * 10)$unit_area), sum(test.element$unit_area))
-           expect_equal(sum(Rebuild(test.element, test.block, total)$unit_area), sum(test.element$unit_area))
-          })
+test_that("RebuildBlock correctly updates the appropriate block", {
+  element <- data.frame(buildingid = 1:2,
+                        A = 9, B = 9, C = 9, D = 9, E = 9)
 
-context("RebuildBlock updates the data in the correct way.")
-
-test_that("RebuildBlock changes only the appropriate block.",
-          {
-            to.rebuild <- test.element %>%
-              filter(buildingid == blocks[1])
-            not.rebuild <- test.element %>%
-              filter(buildingid %in% blocks[2:5])
-            rebuilt <- RebuildBlock(test.element, blocks[1])
-            done <- rebuilt %>% filter(buildingid == blocks[1])
-            not.done <- rebuilt %>% filter(buildingid %in% blocks[2:5])
-            expect_equal(done$A, rep(1, nrow(to.rebuild)))
-            expect_equal(done$B, rep(0, nrow(to.rebuild)))
-            expect_equal(done$C, rep(0, nrow(to.rebuild)))
-            expect_equal(done$D, rep(0, nrow(to.rebuild)))
-            expect_equal(not.done$A, not.rebuild$A)
-            expect_equal(not.done$B, not.rebuild$B)
-            expect_equal(not.done$C, not.rebuild$C)
-            expect_equal(not.done$D, not.rebuild$D)
-            })
-
-test_that("RebuildBlock changes only the appropriate blocks.",
-          {
-            to.rebuild <- test.element %>%
-              filter(buildingid %in% blocks[1:2])
-            not.rebuild <- test.element %>%
-              filter(buildingid %in% blocks[3:5])
-            rebuilt <- RebuildBlock(test.element, blocks[1:2])
-            done <- rebuilt %>% filter(buildingid %in% blocks[1:2])
-            not.done <- rebuilt %>% filter(buildingid %in% blocks[3:5])
-            expect_equal(done$A, rep(1, nrow(to.rebuild)))
-            expect_equal(done$B, rep(0, nrow(to.rebuild)))
-            expect_equal(done$C, rep(0, nrow(to.rebuild)))
-            expect_equal(done$D, rep(0, nrow(to.rebuild)))
-            expect_equal(not.done$A, not.rebuild$A)
-            expect_equal(not.done$B, not.rebuild$B)
-            expect_equal(not.done$C, not.rebuild$C)
-            expect_equal(not.done$D, not.rebuild$D)
-            })
+  expect_equal(RebuildBlock(element, 0), element) # no change as building not in data
+  expect_equal(RebuildBlock(element, 1),
+               data.frame(buildingid = 1:2, A = c(1, 9), B = c(0, 9), C = c(0, 9), D = c(0, 9), E = c(0,9))) # rebuilds building 1 only
+  expect_equal(RebuildBlock(element, 2),
+               data.frame(buildingid = 1:2, A = c(9, 1), B = c(9, 0), C = c(9, 0), D = c(9, 0), E = c(9, 0))) # rebuilds building 1 only
+  expect_equal(RebuildBlock(element, 1:2),
+               data.frame(buildingid = 1:2, A = 1, B = 0, C = 0, D = 0, E = 0)) # rebuilds both buildings
+})
 
 context("Recursive rebuilding identifier")
 
@@ -111,4 +105,75 @@ test_that("RecursiveBudgeting correctly identifies blocks to rebuild.",
             expect_equal(RecursiveBudgeting(5:1, 1:5, 8)$state, c(1,3))
             expect_equal(RecursiveBudgeting(5:1, 1:5, 10)$state, c(1,2,5))
             expect_lt(length(RecursiveBudgeting(1:5, 1:5, 0)$state), 1)
+          })
+
+
+# run tests on random blocks from PDS.data
+context("Testing rebuilding on randomly sampled blocks")
+
+test_that("Nothing is rebuilt there is less money than the cheapest block",
+          {
+            # sample 5 blocks
+            block_numbers <- sample(unique(PDS.block$buildingid), 5)
+            element <- PDS.element %>% filter(buildingid %in% block_numbers)
+            block <- PDS.block %>% filter(buildingid %in% block_numbers)
+
+            expect_equal(Rebuild(element, block, 0), element)
+            expect_equal(Rebuild(element, block, min(block$block.rebuild.cost) - 1), element)
+            })
+
+test_that("Blocks are rebuilt in the element.data",
+          {
+            # sample 5 blocks
+            block_numbers <- sample(unique(PDS.block$buildingid), 5)
+            element <- PDS.element %>% filter(buildingid %in% block_numbers)
+            block <- PDS.block %>% filter(buildingid %in% block_numbers)
+            funds <- max(block$block.rebuild.cost) # enough to rebuild at least one block
+
+            # function to count number of elements that are at grade A (i.e. have
+            # been rebuilt)
+            count_grade <- function(element, grade){
+              grade <- enquo(grade)
+              element %>% filter(UQ(grade) == 1) %>% nrow
+            }
+
+            expect_gte(count_grade(Rebuild(element, block, funds), "A"),
+                       count_grade(element, "A"))
+            expect_lte(count_grade(Rebuild(element, block, funds), "B"),
+                       count_grade(element, "B"))
+            expect_lte(count_grade(Rebuild(element, block, funds), "C"),
+                       count_grade(element, "C"))
+            expect_lte(count_grade(Rebuild(element, block, funds), "D"),
+                       count_grade(element, "D"))
+            expect_lte(count_grade(Rebuild(element, block, funds), "E"),
+                       count_grade(element, "E"))
+
+          })
+
+test_that("Blocks are not rebuilt in the element.data when there isn't enough money",
+          {
+            # sample 5 blocks
+            block_numbers <- sample(unique(PDS.block$buildingid), 5)
+            element <- PDS.element %>% filter(buildingid %in% block_numbers)
+            block <- PDS.block %>% filter(buildingid %in% block_numbers)
+            funds <- min(block$block.rebuild.cost) - 1 # not enough to rebuild any block
+
+            # function to count number of elements that are at grade A (i.e. have
+            # been rebuilt)
+            count_grade <- function(element, grade){
+              grade <- enquo(grade)
+              element %>% filter(UQ(grade) == 1) %>% nrow
+            }
+
+            expect_equal(count_grade(Rebuild(element, block, funds), "A"),
+                       count_grade(element, "A"))
+            expect_equal(count_grade(Rebuild(element, block, funds), "B"),
+                       count_grade(element, "B"))
+            expect_equal(count_grade(Rebuild(element, block, funds), "C"),
+                       count_grade(element, "C"))
+            expect_equal(count_grade(Rebuild(element, block, funds), "D"),
+                       count_grade(element, "D"))
+            expect_equal(count_grade(Rebuild(element, block, funds), "E"),
+                       count_grade(element, "E"))
+
           })
