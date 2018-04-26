@@ -111,52 +111,53 @@ test_that("RecursiveBudgeting correctly identifies blocks to rebuild.",
 # run tests on random blocks from PDS.data
 context("Testing rebuilding on randomly sampled blocks")
 
-test_that("Nothing is rebuilt there is less money than the cheapest block",
+test_that("Nothing is rebuilt when there is less money than the cheapest block",
           {
-            # sample 5 blocks
-            block_numbers <- sample(unique(PDS.block$buildingid), 5)
-            element <- PDS.element %>% filter(buildingid %in% block_numbers)
-            block <- PDS.block %>% filter(buildingid %in% block_numbers)
+            # 1 block
+            A <- c(1, 0, 0, 0, 0)
+            B <- c(0, 1, 0, 0, 0)
+            C <- c(0, 0, 1, 0, 0)
+            D <- c(0, 0, 0, 1, 0)
+            E <- c(0, 0, 0, 0, 1)
+            element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
+                                  B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                                  B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
+                                  gifa = 1, unit_area = 1)
+
+            block <- data.frame(buildingid = 1,
+                                block.rebuild.cost = 10,
+                                B.block.repair.cost = 1,
+                                C.block.repair.cost = 2,
+                                D.block.repair.cost = 3,
+                                E.block.repair.cost = 4,
+                                ratio = 1)
 
             expect_equal(Rebuild(element, block, 0), element)
-            expect_equal(Rebuild(element, block, min(block$block.rebuild.cost) / 2), element)
+            expect_equal(Rebuild(element, block, 5), element)
             })
 
 test_that("Blocks are rebuilt in the element.data",
           {
-            # sample 5 blocks
-            block_numbers <- sample(unique(PDS.block$buildingid), 5)
-            element <- PDS.element %>% filter(buildingid %in% block_numbers)
-            block <- PDS.block %>% filter(buildingid %in% block_numbers)
-            funds <- max(block$block.rebuild.cost) # enough to rebuild at least one block
+            # 1 block
+            A <- c(1, 0, 0, 0, 0)
+            B <- c(0, 1, 0, 0, 0)
+            C <- c(0, 0, 1, 0, 0)
+            D <- c(0, 0, 0, 1, 0)
+            E <- c(0, 0, 0, 0, 1)
+            element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
+                                  B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                                  B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
+                                  gifa = 1, unit_area = 1)
 
-            # function to count number of elements that are at grade A (i.e. have
-            # been rebuilt)
-            count_grade <- function(element, grade){
-              grade <- enquo(grade)
-              element %>% filter(UQ(grade) == 1) %>% nrow
-            }
+            block <- data.frame(buildingid = 1,
+                                block.rebuild.cost = 10,
+                                B.block.repair.cost = 1,
+                                C.block.repair.cost = 2,
+                                D.block.repair.cost = 3,
+                                E.block.repair.cost = 4,
+                                ratio = 1)
 
-            expect_gte(count_grade(Rebuild(element, block, funds), "A"),
-                       count_grade(element, "A"))
-            expect_lte(count_grade(Rebuild(element, block, funds), "B"),
-                       count_grade(element, "B"))
-            expect_lte(count_grade(Rebuild(element, block, funds), "C"),
-                       count_grade(element, "C"))
-            expect_lte(count_grade(Rebuild(element, block, funds), "D"),
-                       count_grade(element, "D"))
-            expect_lte(count_grade(Rebuild(element, block, funds), "E"),
-                       count_grade(element, "E"))
-
-          })
-
-test_that("Blocks are not rebuilt in the element.data when there isn't enough money",
-          {
-            # sample 5 blocks
-            block_numbers <- sample(unique(PDS.block$buildingid), 5)
-            element <- PDS.element %>% filter(buildingid %in% block_numbers)
-            block <- PDS.block %>% filter(buildingid %in% block_numbers)
-            funds <- min(block$block.rebuild.cost) - 1 # not enough to rebuild any block
+            funds <- 10 # enough to rebuild block
 
             # function to count number of elements that are at grade A (i.e. have
             # been rebuilt)
@@ -166,14 +167,56 @@ test_that("Blocks are not rebuilt in the element.data when there isn't enough mo
             }
 
             expect_equal(count_grade(Rebuild(element, block, funds), "A"),
-                       count_grade(element, "A"))
+                         5) # all elements rebuilt
             expect_equal(count_grade(Rebuild(element, block, funds), "B"),
-                       count_grade(element, "B"))
+                         0)
             expect_equal(count_grade(Rebuild(element, block, funds), "C"),
-                       count_grade(element, "C"))
+                         0)
             expect_equal(count_grade(Rebuild(element, block, funds), "D"),
-                       count_grade(element, "D"))
+                         0)
             expect_equal(count_grade(Rebuild(element, block, funds), "E"),
-                       count_grade(element, "E"))
+                         0)
+
+          })
+
+test_that("Blocks are not rebuilt in the element.data when there isn't enough money",
+          {
+            # 1 block
+            A <- c(1, 0, 0, 0, 0)
+            B <- c(0, 1, 0, 0, 0)
+            C <- c(0, 0, 1, 0, 0)
+            D <- c(0, 0, 0, 1, 0)
+            E <- c(0, 0, 0, 0, 1)
+            element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
+                                  B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                                  B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
+                                  gifa = 1, unit_area = 1)
+
+            block <- data.frame(buildingid = 1,
+                                block.rebuild.cost = 10,
+                                B.block.repair.cost = 1,
+                                C.block.repair.cost = 2,
+                                D.block.repair.cost = 3,
+                                E.block.repair.cost = 4,
+                                ratio = 1)
+
+            funds <- 5 # not enough to rebuild block
+            # function to count number of elements that are at grade A (i.e. have
+            # been rebuilt)
+            count_grade <- function(element, grade){
+              grade <- enquo(grade)
+              element %>% filter(UQ(grade) == 1) %>% nrow
+            }
+
+            expect_equal(count_grade(Rebuild(element, block, funds), "A"),
+                         1)
+            expect_equal(count_grade(Rebuild(element, block, funds), "B"),
+                         1)
+            expect_equal(count_grade(Rebuild(element, block, funds), "C"),
+                         1)
+            expect_equal(count_grade(Rebuild(element, block, funds), "D"),
+                         1)
+            expect_equal(count_grade(Rebuild(element, block, funds), "E"),
+                         1)
 
           })

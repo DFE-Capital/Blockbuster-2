@@ -16,9 +16,29 @@ test_that("Incorrect inputs cause errors", {
   #'
   #' @return The return from the input_check call.
   check_input_checks <- function(input, value){
+
+    # 1 block
+    A <- c(1, 0, 0, 0, 0)
+    B <- c(0, 1, 0, 0, 0)
+    C <- c(0, 0, 1, 0, 0)
+    D <- c(0, 0, 0, 1, 0)
+    E <- c(0, 0, 0, 0, 1)
+    element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
+                          B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                          B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
+                          gifa = 1, unit_area = 1)
+
+    block <- data.frame(buildingid = 1,
+                        block.rebuild.cost = 10,
+                        B.block.repair.cost = 1,
+                        C.block.repair.cost = 2,
+                        D.block.repair.cost = 3,
+                        E.block.repair.cost = 4,
+                        ratio = 1)
+
     # valid arguments for input_checks
-    args <- list(element.data = PDS.element[1:5, ],
-                 block.data = PDS.block[1:2, ],
+    args <- list(element.data = element,
+                 block.data = block,
                  forecast.horizon = 10,
                  rebuild.money = rep(1, 10),
                  repair.money = rep(1, 10),
@@ -43,8 +63,18 @@ test_that("Incorrect inputs cause errors", {
   zero <- 0
   neg_num <- -10
   char <- "a"
-  element <- PDS.element[1:5, ]
-  block <- PDS.block[1, ]
+  element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                        B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
+                        gifa = 1, unit_area = 1)
+
+  block <- data.frame(buildingid = 1,
+                      block.rebuild.cost = 10,
+                      B.block.repair.cost = 1,
+                      C.block.repair.cost = 2,
+                      D.block.repair.cost = 3,
+                      E.block.repair.cost = 4,
+                      ratio = 1)
 
   # TESTS
 
