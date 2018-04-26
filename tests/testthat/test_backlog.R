@@ -2,13 +2,7 @@ context("Checking backlog computations.")
 
 test_that("Backlog functions return correct value",
           {
-            # random blocks
-            block_number <- sample(unique(PDS.block$buildingid), 5)
-            random_block <- PDS.block %>%
-              filter(buildingid %in% block_number)
-
             # simulated block
-            simulated_elements <- parameter.table %>% mutate(buildingid = 1)
             simulated_block <- tibble(buildingid = 1:5,
                                       block.rebuild.cost = 1:5,
                                       B.block.repair.cost = c(1, 0, 0, 0, 1),
@@ -39,15 +33,6 @@ test_that("Backlog functions return correct value",
             expect_equal(backlog(simulated_block[1, ]), 1)
             expect_equal(backlog(simulated_block[5, ]), 4)
 
-            expect_equal(backlog(random_block[1, ], "B"), random_block$B.block.repair.cost[1])
-            expect_equal(backlog(random_block[1, ], "C"), random_block$C.block.repair.cost[1])
-            expect_equal(backlog(random_block[1, ], "D"), random_block$D.block.repair.cost[1])
-            expect_equal(backlog(random_block[1, ], "E"), random_block$E.block.repair.cost[1])
-            expect_equal(backlog(random_block[1, ]),
-                         sum(random_block$B.block.repair.cost[1] +
-                               random_block$C.block.repair.cost[1] +
-                               random_block$D.block.repair.cost[1] +
-                               random_block$E.block.repair.cost[1]))
 
             # five blocks
             expect_equal(BacklogB(simulated_block), 2)
@@ -61,15 +46,6 @@ test_that("Backlog functions return correct value",
             expect_equal(backlog(simulated_block, "E"), 2)
             expect_equal(backlog(simulated_block), 8)
 
-            expect_equal(backlog(random_block, "B"), sum(random_block$B.block.repair.cost))
-            expect_equal(backlog(random_block, "C"), sum(random_block$C.block.repair.cost))
-            expect_equal(backlog(random_block, "D"), sum(random_block$D.block.repair.cost))
-            expect_equal(backlog(random_block, "E"), sum(random_block$E.block.repair.cost))
-            expect_equal(backlog(random_block),
-                         sum(random_block$B.block.repair.cost +
-                               random_block$C.block.repair.cost +
-                               random_block$D.block.repair.cost +
-                               random_block$E.block.repair.cost))
           }
 )
 #
