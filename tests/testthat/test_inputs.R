@@ -51,7 +51,7 @@ test_that("Incorrect inputs cause errors", {
     # include user-defined argument in input
     `[[`(inputs, input) <- value
     #run input_checks
-    do.call(input_checks, inputs)
+    do.call("input_checks", inputs)
   }
 
   # input types to test

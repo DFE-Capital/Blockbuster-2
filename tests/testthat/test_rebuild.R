@@ -208,15 +208,15 @@ test_that("Blocks are not rebuilt in the element.data when there isn't enough mo
               element %>% filter(UQ(grade) == 1) %>% nrow
             }
 
-            expect_equal(count_grade(Rebuild(element, block, funds), "A"),
+            expect_equal(count_grade(Rebuild(element, block, funds), A),
                          1)
-            expect_equal(count_grade(Rebuild(element, block, funds), "B"),
+            expect_equal(count_grade(Rebuild(element, block, funds), B),
                          1)
-            expect_equal(count_grade(Rebuild(element, block, funds), "C"),
+            expect_equal(count_grade(Rebuild(element, block, funds), C),
                          1)
-            expect_equal(count_grade(Rebuild(element, block, funds), "D"),
+            expect_equal(count_grade(Rebuild(element, block, funds), D),
                          1)
-            expect_equal(count_grade(Rebuild(element, block, funds), "E"),
+            expect_equal(count_grade(Rebuild(element, block, funds), E),
                          1)
 
           })

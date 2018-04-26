@@ -26,23 +26,20 @@ test_that("Blockbuster creates block data  when not supplied", {
   D <- c(0, 0, 0, 1, 0)
   E <- c(0, 0, 0, 0, 1)
   element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:5, buildingid = 1,
-                        B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
                         B.repair.total = 1, C.repair.total = 2, D.repair.total = 3, E.repair.total = 4,
                         gifa = 1, unit_area = 1)
 
   block <- data.frame(buildingid = 1,
-                      B.block.repair.cost = 1,
-                      C.block.repair.cost = 2,
-                      D.block.repair.cost = 3,
-                      E.block.repair.cost = 4)
-
-  # run Blockbuster so it generates initial block data (saved in the first list
-  #  element of the output and called `block``)
-  simulated_block <- Blockbuster(element)[[1]]$block %>%
-    select(-block.rebuild.cost, -ratio) # removing these as they should not really be in stored data in the first place - they depend on the block rebuild cost passed to the function
+                      block.rebuild.cost = 2000,
+                      B.block.repair.cost = 5,
+                      C.block.repair.cost = 10,
+                      D.block.repair.cost = 15,
+                      E.block.repair.cost = 20,
+                      ratio = 0.025)
 
   # The simulated block should be the same as the original.
-  expect_equal(simulated_block,
+  expect_equal(Blockbuster(element)[[1]]$block,
                block)
   })
 
