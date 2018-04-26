@@ -119,7 +119,7 @@ test_that("Nothing is rebuilt there is less money than the cheapest block",
             block <- PDS.block %>% filter(buildingid %in% block_numbers)
 
             expect_equal(Rebuild(element, block, 0), element)
-            expect_equal(Rebuild(element, block, min(block$block.rebuild.cost) - 1), element)
+            expect_equal(Rebuild(element, block, min(block$block.rebuild.cost) / 2), element)
             })
 
 test_that("Blocks are rebuilt in the element.data",
