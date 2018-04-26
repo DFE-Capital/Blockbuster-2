@@ -108,8 +108,6 @@ test_that("RecursiveBudgeting correctly identifies blocks to rebuild.",
           })
 
 
-# run tests on random blocks from PDS.data
-context("Testing rebuilding on randomly sampled blocks")
 
 test_that("Nothing is rebuilt when there is less money than the cheapest block",
           {
@@ -166,18 +164,19 @@ test_that("Blocks are rebuilt in the element.data",
               element %>% filter(UQ(grade) == 1) %>% nrow
             }
 
-            expect_equal(count_grade(Rebuild(element, block, funds), "A"),
+            expect_equal(count_grade(Rebuild(element, block, funds), A),
                          5) # all elements rebuilt
-            expect_equal(count_grade(Rebuild(element, block, funds), "B"),
+            expect_equal(count_grade(Rebuild(element, block, funds), B),
                          0)
-            expect_equal(count_grade(Rebuild(element, block, funds), "C"),
+            expect_equal(count_grade(Rebuild(element, block, funds), C),
                          0)
-            expect_equal(count_grade(Rebuild(element, block, funds), "D"),
+            expect_equal(count_grade(Rebuild(element, block, funds), D),
                          0)
-            expect_equal(count_grade(Rebuild(element, block, funds), "E"),
+            expect_equal(count_grade(Rebuild(element, block, funds), E),
                          0)
 
           })
+
 
 test_that("Blocks are not rebuilt in the element.data when there isn't enough money",
           {
