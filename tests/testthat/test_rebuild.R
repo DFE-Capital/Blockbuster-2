@@ -1,9 +1,5 @@
 context("Testing Rebuild function")
 
-# RebuildBlock tests
-# create block and element objects for testing
-# block should have ratio and block.rebuild.cost
-# element has buildingid, A, B, C, D, E
 
 test_that("Check toy example for correct decisions",
           {

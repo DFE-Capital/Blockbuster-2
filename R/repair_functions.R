@@ -265,15 +265,15 @@
 #'
 #' @param element.data An \code{\link{element}} class object.
 #' @param repair.money A number.
-#' @param grade.order (Optional) A list of the three character strings \code{"D"},
+#' @param grade.order (Optional) A vector of character strings from \code{"E"}, \code{"D"},
 #'  \code{"C"} and \code{"B"} in any order.  This determines the priority for
 #'  repairs.  The first character gives the first grade that will be repaired.
-#'  By default, D is repaired first, then C, then B.
+#'  By default, E is repaired first, then D, then C, then B.
 #'
 #' @return An \code{\link{element}} class object with the grade proportions
 #' amended accordingly.
-Repair <- function(element.data, block.data, repair.money,
-                   grade.order = c("D", "C", "B")){
+Repair <- function(element.data, repair.money,
+                   grade.order = c("E", "D", "C", "B")){
 
   # Check integrity of inputs.
   #if (!is.element(element.data)) stop("The element.data argument needs to be an
@@ -284,24 +284,15 @@ Repair <- function(element.data, block.data, repair.money,
   if (length(repair.money) > 1) warning("Only the first value in repair.money
                                         will be used.")
   # If there is no money then no need to repair.
-  if (repair.money == 0) return(element.data)
+  if (repair.money <= 0) return(element.data)
 
-  result <- repairGrade(element.data, repair.money, grade = grade.order[1])
-  element.data <- result$element.data
-  repair.money <- result$repair.money
+  attr(element.data, "repair_money") <- repair.money
 
-  # If there is no money then no need to repair.
-  if (repair.money == 0) return(element.data)
+  for(i in 1:length(grade.order)){
 
-  result <- repairGrade(element.data, repair.money, grade = grade.order[2])
-  element.data <- result$element.data
-  repair.money <- result$repair.money
+    element.data <- repairGrade(element.data, grade = grade.order[i])
 
-  # If there is no money then no need to repair.
-  if (repair.money == 0) return(element.data)
-
-  result <- repairGrade(element.data, repair.money, grade = grade.order[3])
-  element.data <- result$element.data
+  }
 
  # element.data <- ElementLevel(element.data) # set class
   return(element.data) # Note that repair costs haven't been updated.
@@ -318,32 +309,49 @@ Repair <- function(element.data, block.data, repair.money,
 #' Components are sorted by their proportion at the given grade.  They are then
 #' repaired in descending order until the money given by \code{budget} runs out.
 #'
-#' @param element.data An \code{\link{element}} object.
+#' @param element.data An \code{\link{element}} object, with a repair_money attribute indicating the money allowed for repairs
 #' @param budget Numeric. The amount of funds available for repair.
-#' @param grade Either \code{"B"}, \code{"C"} or \code{"D"}.  The grade to
+#' @param grade Either \code{"B"}, \code{"C"}, \code{"D"} or \code{"E"}.  The grade to
 #' repair
 #'
-#' @return A list containing the \code{\link{element}} object with repairs
-#' completed, and a numeric amount stating the remaining funds.
-repairGrade <- function(element.data, repair.money, grade){
-  # arrange by proportion at grade. compute total repair cost. repair
-  # everything at that grade (using the idea that there is a high probability
-  # this would need repairing.) possible.
-  keys <- which(element.data[grade] > 0)
-  ord <- order(element.data[grade] %>% pull %>% `[`(keys), decreasing = TRUE)
-  keys <- keys[ord]
-  total <- element.data$B.repair.total + element.data$C.repair.total + element.data$D.repair.total + element.data$E.repair.total
-  cost <- total[keys]
+#' @return The \code{\link{element}} object with repairs
+#' completed, and a numeric amount stating the remaining funds as an attribute.
+repairGrade <- function(element.data, grade){
 
-  # Use same recursive algorithm as Rebuild to select elements to repair.
-  repairing <- RecursiveBudgeting(cost, keys, repair.money)
-  ind <- repairing$state
-  element.data$A[ind] <- element.data$A[ind] + element.data$B[ind] + element.data$C[ind] + element.data$D[ind] + element.data$E[ind]
-  element.data$D[ind] <- 0
-  element.data$C[ind] <- 0
-  element.data$B[ind] <- 0
+  if(grade == "A") return(element.data) # no change as A isn't repaired
 
-  repair.money <- repairing$budget
-  return(list(element.data = element.data, repair.money = repair.money))
+  repair.money <- attr(element.data, "repair_money")
+
+  # no repairs needed if there is no money
+  if (repair.money <= 0) return(element.data)
+
+  # identify candidate rows (non zero probability)
+  candidates <- which(element.data[grade] > 0)
+  # compute expected repair cost (repair.cost * probability of grade)
+  cost <- (element.data[[grade]] * element.data[[paste0(grade, ".repair.cost")]] * element.data[["unit_area"]])[candidates]
+  # arrange row indices and costs in order of expected repair cost
+  ord <- order(cost, decreasing = TRUE)
+  cost <- cost[ord]
+  candidates <- candidates[ord]
+  # pass to function that identifies which will be repaired
+  repairing <- RecursiveBudgeting(cost, candidates, repair.money)
+  # update element.data with repairs by calling repairComponent
+  element.data <- repairComponent(element.data, repairing$state, grade)
+  attr(element.data, "repair_money") <- repairing$budget
+  return(element.data)
+}
+
+#' Repairs the component in the given rows at the given grade
+#'
+#' @param element.data
+#' @param row numeric.  A vector of row indices to update
+#' @param grade
+#'
+#' @return The updated element.data
+repairComponent <- function(element.data, rows, grade){
+  if(grade == "A") return(element.data) # no change as "A" isn't valid for repair
+  element.data[rows, ]$A <- element.data$A[rows] + element.data[[grade]][rows]
+  element.data[[grade]][rows] <- 0
+  return(element.data)
 }
 
