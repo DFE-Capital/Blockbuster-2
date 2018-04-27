@@ -174,7 +174,6 @@ Blockbuster <- function(element.data, block.data = NULL,
     # repair ----
     message("Repairing blocks.")
     element.data <- Repair(element.data = element.data,
-                           block.data = block.data,
                            repair.money = repair.money[i],
                            grade.order = grade.order)
 
