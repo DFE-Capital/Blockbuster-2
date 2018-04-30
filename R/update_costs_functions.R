@@ -19,7 +19,7 @@ UpdateElementRepairs <- function(element.data){
            D.repair.total = unit_area * D * D.repair.cost,
            E.repair.total = unit_area * E * E.repair.cost)
 
-  #return(ElementLevel(element.data))
+  return(element.data)
 }
 
 
@@ -58,47 +58,9 @@ UpdateBlockRepairs <- function(block.data, element.data){
            C.block.repair.cost = C,
            D.block.repair.cost = D,
            E.block.repair.cost = E,
-           # B repairs are not considered as they are not urgent.
            ratio = case_when(block.rebuild.cost == 0 ~ 0,
-                             TRUE ~ (C + D + E) / block.rebuild.cost)) %>%
+                             TRUE ~ (B + C + D + E) / block.rebuild.cost)) %>%
     select(-B, -C, -D, -E)
   #block.data <- BlockLevel(block.data)
   return(block.data)
-}
-
-#' A lookup table for repair cost rate given a building component and its grade.
-#'
-#' An internal function in \code{\link{blockbuster}} to select the correct
-#' repair cost constant for a building component and its condition grade.
-#'
-#' The default is to use the repair cost estimates for the PDS plus
-#' an E grade cost estimator based on D grade cost plus 5% (removal costs etc.). This
-#' is likely to be a source of error as the replacement of a decommisioned component
-#' depends on the component as well as other complexities. This should be addressed in later
-#' improvements of the \code{\link{blockbuster}}.
-#'
-#' @param the_elementid the building component unique identifier found in the PDS.
-#' @param the_grade the grade of a blockbuster tibble single row (a factor with 6 levels).
-#' @param costs_lookup the relevant costs look up table, default is derived from PDS 2016 costs
-#' @return a numeric constant for the repair cost of building component by grade, in pounds per unit_area.
-#' @seealso \code{\link{blockbuster_pds_repair_costs}}
-#' @examples
-#' \dontrun{
-#' x <- blockcoster_lookup(
-#' blockbuster_pds[1:10, ]$elementid,
-#'  blockbuster_pds[1:10, ]$grade)
-#'  }
-
-blockcoster_lookup <- function(
-  the_elementid, the_grade, costs_lookup = blockbuster_pds_repair_costs
-) {
-  output <- filter(costs_lookup,
-                   elementid == the_elementid & grade == the_grade)$repair_cost
-  if (length(output) <1 ){
-    warning("No repair cost has been found. Please double check the elementid
-            and grade are correct.")
-    output <- 0
-  }
-
-  return (output)
 }
