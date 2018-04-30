@@ -526,6 +526,39 @@ test_that("Incorrect inputs produce the appropriate warnings and errors",
                                      inflation = 1))
           })
 
+test_that("No files are saved when save = FALSE",{
+  # 1 block
+  A <- c(1, 0, 0, 0, 0)
+  B <- c(0, 1, 0, 0, 0)
+  C <- c(0, 0, 1, 0, 0)
+  D <- c(0, 0, 0, 1, 0)
+  E <- c(0, 0, 0, 0, 1)
+  element <- data.frame(A, B, C, D, E,
+                        ab = 0, bc = 0, cd = 0, de = 0, # turns off deterioration
+                        elementid = 1:5, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 1, D.repair.cost = 1, E.repair.cost = 1,
+                        B.repair.total = c(0, 1, 0, 0, 0),
+                        C.repair.total = c(0, 0, 1, 0, 0),
+                        D.repair.total = c(0, 0, 0, 1, 0),
+                        E.repair.total = c(0, 0, 0, 0, 1),
+                        gifa = 3, unit_area = 1)
+  block <- data.frame(buildingid = 1,
+                      block.rebuild.cost = 1,
+                      ratio = 1,
+                      B.block.repair.cost = 1,
+                      C.block.repair.cost = 2,
+                      D.block.repair.cost = 3,
+                      E.block.repair.cost = 4)
+
+  # run simulation with a random number as the save tag
+  dir_tag <- "test_save_outputs"
+  file_tag <- "test"
+  Blockbuster(element, filelabel = file_tag, path = dir_tag,
+              save = FALSE)
+
+  # check file is there
+  expect_false(file.exists(paste0(file.path(dir_tag, file_tag), "_output.rds")))
+})
 
 
 #
