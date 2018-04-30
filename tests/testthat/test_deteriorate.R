@@ -1,4 +1,4 @@
-context("Testing Deterioration process")
+context("Testing Deteriorate function")
 
 test_that("Deteriorate throws errors with incorrect inputs",
           {

@@ -1,4 +1,4 @@
-context("UpdateElementRepairs")
+context("Testing UpdateElementRepairs")
 
 test_that("Updated figures are correct", {
   # 1 block
@@ -27,7 +27,7 @@ test_that("Updated figures are correct", {
   expect_equal(UpdateElementRepairs(element10), correct10)
 })
 
-context("UpdateBlockRepairs")
+context("Testing UpdateBlockRepairs")
 
 test_that("Updated figures are correct", {
   # 1 block
@@ -56,7 +56,3 @@ test_that("Updated figures are correct", {
                         ratio = 10.88/ 100)
   expect_equal(UpdateBlockRepairs(block, element), correct)
 })
-
-test_that("Values are updated for all grades")
-
-test_that("Ratio is updated")

@@ -1,4 +1,4 @@
-context("Checking backlog computations.")
+context("Testing backlog functions")
 
 test_that("Backlog functions return correct value",
           {

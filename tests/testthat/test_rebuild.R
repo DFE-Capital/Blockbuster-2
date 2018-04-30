@@ -1,6 +1,5 @@
 context("Testing Rebuild function")
 
-
 test_that("Check toy example for correct decisions",
           {
             # construct toy element
@@ -83,7 +82,7 @@ test_that("RebuildBlock correctly updates the appropriate block", {
                data.frame(buildingid = 1:2, A = 1, B = 0, C = 0, D = 0, E = 0)) # rebuilds both buildings
 })
 
-context("Recursive rebuilding identifier")
+context("Testing RecursiveBudgeting function")
 
 test_that("RecursiveBudgeting correctly identifies blocks to rebuild.",
           {

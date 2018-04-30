@@ -240,7 +240,7 @@ test_that("Correct grade is repaired", {
 
 # Repair ------------------------------------------------------------------
 
-context("Repair")
+context("Testing Repair function")
 
 test_that("No repairs if there is no money, or negative money", {
   # construct toy element

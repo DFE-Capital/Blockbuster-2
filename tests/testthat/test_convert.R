@@ -1,4 +1,4 @@
-context("Checking that summarising element-level data produces correct block-level summary")
+context("Testing ConvertPDSToBlock")
 
 test_that("ConvertPdsToBlock correctly summarises element-level data", {
 

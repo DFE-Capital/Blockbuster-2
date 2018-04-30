@@ -1,4 +1,4 @@
-context("Checking inflation functions")
+context("Testing inflation functions applied to blocks")
 
 test_that("Inflation is applied correctly to blocks", {
   # test inflation <1, 1 and >1
@@ -43,6 +43,8 @@ test_that("Inflation is applied correctly to blocks", {
   expect_equal(block_test %>% InflateRebuild(1.5) %>% InflateRepairBlock(1.5), onehalf)
 
 })
+
+context("Testing InflateRepairElement function")
 
 test_that("Inflation is applied correctly to elements", {
   # test inflation <1, 1 and >1
