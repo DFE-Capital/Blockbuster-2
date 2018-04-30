@@ -4,19 +4,19 @@
 \alias{repairGrade}
 \title{Repair components of a particular grade}
 \usage{
-repairGrade(element.data, repair.money, grade)
+repairGrade(element.data, grade)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} object.}
+\item{element.data}{An \code{\link{element}} object, with a repair_money attribute indicating the money allowed for repairs}
 
-\item{grade}{Either \code{"B"}, \code{"C"} or \code{"D"}.  The grade to
+\item{grade}{Either \code{"B"}, \code{"C"}, \code{"D"} or \code{"E"}.  The grade to
 repair}
 
 \item{budget}{Numeric. The amount of funds available for repair.}
 }
 \value{
-A list containing the \code{\link{element}} object with repairs
-completed, and a numeric amount stating the remaining funds.
+The \code{\link{element}} object with repairs
+completed, and a numeric amount stating the remaining funds as an attribute.
 }
 \description{
 This function is used by \code{\link{Repair}} to repair all components at a

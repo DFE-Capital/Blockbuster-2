@@ -4,19 +4,19 @@
 \alias{Repair}
 \title{Repair elements in a block}
 \usage{
-Repair(element.data, block.data, repair.money, grade.order = c("D", "C", "B"))
+Repair(element.data, repair.money, grade.order = c("E", "D", "C", "B"))
 }
 \arguments{
 \item{element.data}{An \code{\link{element}} class object.}
 
-\item{block.data}{A \code{\link{block}} class object.}
-
 \item{repair.money}{A number}
 
-\item{grade.order}{(Optional) A list of the three character strings \code{"D"},
+\item{grade.order}{(Optional) A vector of character strings from \code{"E"}, \code{"D"},
 \code{"C"} and \code{"B"} in any order.  This determines the priority for
 repairs.  The first character gives the first grade that will be repaired.
-By default, D is repaired first, then C, then B.}
+By default, E is repaired first, then D, then C, then B.}
+
+\item{block.data}{A \code{\link{block}} class object.}
 
 \item{element.data}{An \code{\link{element}} class object.}
 
