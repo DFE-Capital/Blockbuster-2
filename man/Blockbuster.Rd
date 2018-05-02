@@ -6,10 +6,8 @@
 \usage{
 Blockbuster(element.data, block.data = NULL, forecast.horizon = 1,
   rebuild.money = 0, repair.money = 0, block.rebuild.cost = 2000,
-  inflation = 1, block.det.data = blockbuster_det_data,
-  block.repair.costs = blockbuster_pds_repair_costs, save = TRUE,
-  filelabel = "blockbuster_output", path = "./output/",
-  grade.order = c("D", "C", "B"))
+  inflation = 1, save = TRUE, filelabel = "blockbuster_output",
+  path = "./output/", grade.order = c("D", "C", "B"))
 }
 \arguments{
 \item{element.data}{An \code{\link{element}} object containing the initial
@@ -37,13 +35,6 @@ to repair and rebuild costs each timestep.  If a vector of length one is
 supplied it will be used as the inflation rate for all timesteps. Default
 is 1, i.e. no inflation.}
 
-\item{block.det.data}{(optional) An object of the same form as
-\code{block_det_data} that is used to provide deterioration rates.}
-
-\item{block.repair.costs}{(optional) an object of the same form as
-\code{\link{blockbuster_pds_repair_costs}} that is used to provide repair
-costs.}
-
 \item{save}{(optional) Logical. If \code{TRUE} (the default behaviour), then
 the block and element states are saved to disc at each timestep.}
 
@@ -58,6 +49,13 @@ fail. Default is "./output/".}
 \code{"C"} and \code{"B"} in any order.  This determines the priority for
 repairs.  The first character gives the first grade that will be repaired.
 By default, D is repaired first, then C, then B.}
+
+\item{block.det.data}{(optional) An object of the same form as
+\code{block_det_data} that is used to provide deterioration rates.}
+
+\item{block.repair.costs}{(optional) an object of the same form as
+\code{\link{blockbuster_pds_repair_costs}} that is used to provide repair
+costs.}
 }
 \value{
 A list.  Each list entry contains the \code{\link{block}} and
