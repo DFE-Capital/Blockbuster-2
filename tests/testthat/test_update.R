@@ -1,83 +1,58 @@
-context("Updating repair totals on element objects")
+context("Testing UpdateElementRepairs")
 
-test_that("UpdateElementRepairs returns errors with incorrect inputs", {
-  x <- PDS.element
-  class(x) <- class(x)[1:3]
-
-  expect_error(UpdateElementRepairs(1))
-  expect_error(UpdateElementRepairs(PDS.block.data))
-  expect_error(UpdateElementRepairs(x)) # PDS.element.data but no as an element object.
+test_that("Updated figures are correct", {
+  # 1 block
+  A <- c(1, 0, 0, 0, 0, 0.4)
+  B <- c(0, 1, 0, 0, 0, 0.25)
+  C <- c(0, 0, 1, 0, 0, 0.15)
+  D <- c(0, 0, 0, 1, 0, 0.07)
+  E <- c(0, 0, 0, 0, 1, 0.03)
+  element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:6, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
+                        B.repair.total = 9, C.repair.total = 3, D.repair.total = 1, E.repair.total = 7, # note the incorrect values
+                        gifa = 1, unit_area = 1)
+  correct <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:6, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
+                        B.repair.total = B, C.repair.total = C * 2, D.repair.total = D * 3, E.repair.total = E * 4, # correct figures
+                        gifa = 1, unit_area = 1)
+  correct10 <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:6, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
+                        B.repair.total = B * 10, C.repair.total = C * 20, D.repair.total = D * 30, E.repair.total = E * 40, # correct figures
+                        gifa = 1, unit_area = 10)
+  element10 <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:6, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
+                        B.repair.total = 9, C.repair.total = 3, D.repair.total = 1, E.repair.total = 7, # note the incorrect values
+                        gifa = 1, unit_area = 10)
+  expect_equal(UpdateElementRepairs(element), correct)
+  expect_equal(UpdateElementRepairs(element10), correct10)
 })
 
-test_that("UpdateElementRepairs output is correct class and no repair totals are
-          more than their theoretical maximum",
-          {
-          expect_all_less_than <- function(x, y)
-            all(x <= y)
+context("Testing UpdateBlockRepairs")
 
-          output <- UpdateElementRepairs(PDS.element)
-          base <- PDS.element %>%
-            mutate(B.max <- unit_area * B.repair.cost,
-              C.max <- unit_area * C.repair.cost,
-              D.max <- unit_area * D.repair.cost)
-
-          expect_is(output, "element")
-          expect_all_less_than (output$B.repair.total, base$B.max)
-          expect_all_less_than (output$C.repair.total, base$C.max)
-          expect_all_less_than (output$D.repair.total, base$D.max)
-          })
-
-#------------------------------------------------------------------------------#
-
-context("Updating repair totals on block objects")
-
-test_that("UpdateBlockRepairs returns errors with incorrect inputs", {
-  x <- PDS.block
-  class(x) <- class(x)[1:3] # remove block class
-
-  y <- PDS.element
-  class(y) <- class(y)[1:3] # remove element class
-
-  expect_error(UpdateBlockRepairs(1, PDS.element.data))
-  expect_error(UpdateBlockRepairs(PDS.element.data, PDS.element.data))
-  expect_error(UpdateElementRepairs(x, PDS.element.data)) # PDS.block.data but not as a block object.
-
-  expect_error(UpdateBlockRepairs(PDS.block.data, 1))
-  expect_error(UpdateBlockRepairs(PDS.block.data, PDS.block.data))
-  expect_error(UpdateBlockRepairs(PDS.block.data, y)) # PDS.element.data but no as an element object.
-  })
-
-test_that("UpdateBlockRepairs output is correct class with no dropped blocks and
-          no negative ratios or totals",
-          {
-          expect_all_gt<- function(x, y) all(x > y)
-          output <- UpdateBlockRepairs(PDS.block, PDS.element)
-
-          expect_is(output, "block")
-          expect_equal(nrow(output), length(unique(PDS.element$buildingid)))
-          expect_all_gt(output$B.block.repair.cost, 0)
-          expect_all_gt(output$C.block.repair.cost, 0)
-          expect_all_gt(output$D.block.repair.cost, 0)
-          expect_all_gt(output$ratio, 0)
-          })
-
-context("Looking up repair costs")
-
-# test_that("blockcoster_lookup does not return negative values",
-#           {
-#             random.elementid <- sample(PDS.element$elementid, 1)
-#             random.grade <- sample(c("B", "C", "D"))
-#             expect_gte(blockcoster_lookup(the_elementid = random.elementid,
-#                                           grade = random.grade),
-#                        0)
-#           })
-#
-# test_that("blockcoster_lookup returns 0 cost and warning if repair cost not found.",
-#           {
-#             expect_equal(blockcoster_lookup(the_elementid = 0, the_grade = "C"), 0)
-#             expect_equal(blockcoster_lookup(the_elementid = 1701, the_grade = "N"), 0)
-#             expect_equal(blockcoster_lookup(the_elementid = 0, the_grade = "N"), 0)
-#             expect_warning(blockcoster_lookup(the_elementid = 0, the_grade = "C"))
-#             expect_warning(blockcoster_lookup(the_elementid = 1701, the_grade = "N"))
-#             expect_warning(blockcoster_lookup(the_elementid = 0, the_grade = "N"))
-#           })
+test_that("Updated figures are correct", {
+  # 1 block
+  A <- c(1, 0, 0, 0, 0, 0.4)
+  B <- c(0, 1, 0, 0, 0, 0.25)
+  C <- c(0, 0, 1, 0, 0, 0.15)
+  D <- c(0, 0, 0, 1, 0, 0.07)
+  E <- c(0, 0, 0, 0, 1, 0.03)
+  element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5, elementid = 1:6, buildingid = 1,
+                        B.repair.cost = 1, C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
+                        B.repair.total = B, C.repair.total = C * 2, D.repair.total = D * 3, E.repair.total = E * 4,
+                        gifa = 1, unit_area = 1)
+  block <- data.frame(buildingid = 1,
+                      block.rebuild.cost = 100,
+                      B.block.repair.cost = 1,
+                      C.block.repair.cost = 1,
+                      D.block.repair.cost = 1,
+                      E.block.repair.cost = 1,
+                      ratio = 1)  # note incorrect repair and ratio values
+  correct <- data.frame(buildingid = 1,
+                        block.rebuild.cost = 100,
+                        B.block.repair.cost = 1.25,
+                        C.block.repair.cost = 2.3,
+                        D.block.repair.cost = 3.21,
+                        E.block.repair.cost = 4.12,
+                        ratio = 10.88/ 100)
+  expect_equal(UpdateBlockRepairs(block, element), correct)
+})
