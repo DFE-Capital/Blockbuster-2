@@ -58,32 +58,6 @@ Rebuild <- function(element.data, block.data, rebuild.money){
 
   element.data <- RebuildBlock(element.data, buildings)
 
-  ## OLD INEFFICIENT ALGORITHM
-  ##--------------------------------------------------------------------------##
-  # funds <- rebuild.money
-  # min.cost <- min(rebuild.order$block.rebuild.cost) # This will be non-zero
-  # i <- 1
-  #
-  # # Use a while loop to avoid looping once we can't rebuild anything else.
-  # while(funds > min.cost){
-  #
-  #   # identify building to check
-  #   building <- rebuild.order[i, ]$buildingid
-  #
-  #   #if there is money, then rebuild
-  #   if(rebuild.order[i, ]$block.rebuild.cost <= funds){
-  #     element.data <- RebuildBlock(element.data, building)
-  #     # reduce available funds
-  #     funds <- funds - rebuild.order[i, ]$block.rebuild.cost
-  #   }
-  #
-  #   if (i == nrow(rebuild.order)) break # leave loop if there are no more blocks
-  #   i <- i + 1
-  #
-  # }
-  ##--------------------------------------------------------------------------##
-
-  #element.data <- ElementLevel(element.data)  #set class
   return(element.data)
 }
 
@@ -107,7 +81,7 @@ RebuildBlock <- function(element.data, buildingids){
   return(element.data)
 }
 
-#' Find blocks to rebuild within budget recursivley.
+#' Find blocks to rebuild within budget recursively.
 #'
 #' An efficient recursive algorithm used by \code{\link{Rebuild}} that outputs
 #' the \code{keys} corresponding to the unique combination of elements in the

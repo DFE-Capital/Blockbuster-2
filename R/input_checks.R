@@ -7,15 +7,11 @@ input_checks <- function(element.data = NULL,
                          inflation = NULL
                          ){
 
-#    if(!is.element(element.data)) stop("The element.data argument must be an element
- #                                    object.")
 
   if(length(block.data) < 1){
     message("Constructing block summary from element.data.")
     block.data <- ConvertPdsToBlock(element.data, block.rebuild.cost)
   }
-#  if(!is.block(block.data)) stop("The block.data argument must be a block
-#                                 object.")
   if(length(forecast.horizon) > 1 | !is.numeric(forecast.horizon)) stop("The forecast horizon must be a single number.")
   if(forecast.horizon < 1) stop("The forecast horizon must be a positive number.")
 

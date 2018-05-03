@@ -83,12 +83,6 @@ test_that("Incorrect inputs cause errors", {
 
   # TESTS
 
-  # element.data - will be reworked with class and methods section
-  # expect_error(input_checks(element.data = "a"), "element.data must contain these columns .... TODO")
-
-  # block.data - will be reworked with class and methods section
-  # expect_error(input_checks(block.data = "a"), "block.data must contain these columns .... TODO")
-
   # forecast.horizon
   expect_error(check_input_checks("forecast.horizon", list_of_five), "The forecast horizon must be a single number.")
   expect_error(check_input_checks("forecast.horizon", list_of_ten), "The forecast horizon must be a single number.")

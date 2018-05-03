@@ -10,9 +10,6 @@
 #' inflated by the appropriate amount.
 InflateRebuild <- function(block.data, inflation){
 
-  # Check integrity of input.
-  #if (!is.block(block.data)) stop("Inflating total block rebuild costs can
-  #                                only be done on block level data.")
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
   if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
                                                     lie in a small interval around 1.
@@ -22,8 +19,7 @@ InflateRebuild <- function(block.data, inflation){
 
   # new rebuild cost is the old rebuild cost multiplied by inflation
   block.data %>%
-    mutate(block.rebuild.cost = block.rebuild.cost * inflation)# %>%
-    #BlockLevel # set class
+    mutate(block.rebuild.cost = block.rebuild.cost * inflation)
 }
 
 #' Apply inflation to the block repair costs in the block level data
@@ -37,9 +33,6 @@ InflateRebuild <- function(block.data, inflation){
 #' inflated by the appropriate amount.
 InflateRepairBlock <- function(block.data, inflation){
 
-  # Check integrity of input
-  #if (!is.block(block.data)) stop("Inflating block repair costs can
-  #                                only be done on block level data.")
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
   if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
                                                     lie in a small interval around 1.
@@ -53,8 +46,7 @@ InflateRepairBlock <- function(block.data, inflation){
     mutate(C.block.repair.cost = C.block.repair.cost * inflation,
            D.block.repair.cost = D.block.repair.cost * inflation,
            B.block.repair.cost = B.block.repair.cost * inflation,
-           E.block.repair.cost = E.block.repair.cost * inflation)# %>%
-   # BlockLevel # set class
+           E.block.repair.cost = E.block.repair.cost * inflation)
 }
 
 #' Apply inflation to the element repair costs in the element level data
@@ -68,9 +60,6 @@ InflateRepairBlock <- function(block.data, inflation){
 #' totals inflated by the appropriate amount.
 InflateRepairElement <- function(element.data, inflation){
 
-  # Check integrity of input
-  #if (!is.element(element.data)) stop("Inflating component repair costs can only
-  #                                    be done on element level data.")
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
   if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
                                                     lie in a small interval around 1.
@@ -87,7 +76,6 @@ InflateRepairElement <- function(element.data, inflation){
            B.repair.total = B.repair.total * inflation,
            C.repair.total = C.repair.total * inflation,
            D.repair.total = D.repair.total * inflation,
-           E.repair.total = E.repair.total * inflation) #%>%
-    #ElementLevel # set class
+           E.repair.total = E.repair.total * inflation)
 }
 
