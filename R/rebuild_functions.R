@@ -32,8 +32,8 @@
 #' should be run afterwards.
 Rebuild <- function(element.data, block.data, rebuild.money){
   # input integrity
-  if (!is.element(element.data)) stop("element.data must be an element object.")
-  if (!is.block(block.data)) stop("block.data must be a block object.")
+  #if (!is.element(element.data)) stop("element.data must be an element object.")
+  #if (!is.block(block.data)) stop("block.data must be a block object.")
   if (!is.numeric(rebuild.money)) stop("The repair money must be a number.")
   if (rebuild.money < 0) stop("The repair money must be a positive number.")
   if (length(rebuild.money) > 1) warning("Only the first value in repair.money
@@ -83,7 +83,7 @@ Rebuild <- function(element.data, block.data, rebuild.money){
   # }
   ##--------------------------------------------------------------------------##
 
-  element.data <- ElementLevel(element.data)  #set class
+  #element.data <- ElementLevel(element.data)  #set class
   return(element.data)
 }
 
