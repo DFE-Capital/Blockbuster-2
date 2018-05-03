@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette provides detailed information on how the Blockbuster Deterioration Model works. For information on how to use the Blockbuster2 package, please read the <Blockbuster2>[Blockbuster](Blockbuster.html) vignette.
+This vignette provides detailed information on how the Blockbuster Deterioration Model works. 
 
 # Overview
 
