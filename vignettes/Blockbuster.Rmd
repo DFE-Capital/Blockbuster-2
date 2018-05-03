@@ -24,7 +24,7 @@ the wide spectrum of practical applications. In particular, discrete time
 [Markov chains](https://cran.r-project.org/web/packages/markovchain/vignettes/an_introduction_to_markovchain_package.pdf) (DTMC) permit modelling the transition probabilities
 between discrete states by the aid of matrices. The states are represented by
 the `grade` factor which is the surveyed condition of a building element,
-determined by a quantity surveyor through grades (states); N, A, B, C, D, E. The
+determined by a quantity surveyor through grades (states); A, B, C, D, E. The
 transition probabilities are 6 by 6 matrices with the average deterioration rate
 per timestep between states provided by expert building consultant opinion (see
 documentation for full details).  
@@ -36,53 +36,96 @@ for predicting the average condition of an individual building component
 (`elementid`) through time. This modelling approach can be scaled through a
 decision making hierarchy, with modelling the deterioration at the level of a
 School block (`buildingid`), for each site (`siteid`), the School (which may be
-made of many blocks, `urn`; omitted for anonymity), at the Local Authority (LA)
-level (`lano`) and at the National level given suitable input data (filter
+made of many blocks, `URN`), at the Local Authority (LA)
+level (`LAN`) and at the National level given suitable input data (filter
 desired rows using the `dplyr` package is recommended).  
 
 The `Blockbuster` function can be used on data containing one or more components
-in one or more school blocks.  Individual component level information is stored
-in an 'element' class object (a data.frame with strict conditions on columns)
-while block-level information is held in a 'block' class object (another
-data.frame with strictly defined columns). It produces snapshots of the 
+in one or more school blocks.  Individual component level information is stored as a data.frame with strict conditions on columns
+while block-level information is held in another
+data.frame with strictly defined columns. It produces snapshots of the 
 component and block conditions at each timestep. The model can be applied to
 individual components, buildings, collections of buildings, or the entire
 estate. This flexibility allows decision makers to ask many and varied questions
 of the output data.  
 
-## Loading the packages
+## Using the package
 
 Check you have these packages installed and then load them into memory using
 `library()` `require()`.
 
 ```{r warning=FALSE, message=FALSE, error=FALSE, eval = FALSE}
-#  You could load tidyverse or you can load the individual packages, one-at-a-time.
-library(Blockbuster)
+library(Blockbuster2)
 ```
 
-<!-- ## Inputs and Outputs Overview -->
+To run a 10 year simulation of the provided simulated dataset, with no rebuilding and £1bn of repair funds per year, the command is
 
-<!-- Remember to use the R help for all of the functions and data mentioned in the -->
-<!-- vignette for extra detail (e.g. try typing `?Blockbuster` and `?test.block` -->
-<!-- into the console).   -->
+`Blockbuster(simulated_elements, forecast.horizon = 1, rebuild.money = 0, repair.money = 1000000000)`
 
-<!-- ### Input variables of each building component -->
+ Note that the Blockbuster automatically saves yearly states into files called
+  `blockbuster_output_element_*.rds` and `blockbuster_output_block_*.rds`within
+  an `output` sub-folder of the current working directory that the function will
+  create if it does not already exist.  The complete output is saved as 
+  `blockbuster_output_output.rds`.  This behaviour is customisable.  Saving of
+  outputs can be turned off with `save = FALSE` passed as an argument. Alternatively, the path and filename can be adjusted using the `filelabel` and `path` arguments.
+  
+  The element level output is a copy of the input, but with updated grade probabilities and repair totals.  Note that the the cost of repairing an element at
+  a given grade is given by the `*.repair.total` column.  The `*.repair.cost` column is the unit cost of repairing that component type.
+  
+  Passing numeric vectors to the `rebuild.money` and `repair.money` arguments allows control of the amount of money available for rebuilding and repairing each year respectively.
 
-<!-- Provided with this package is a fake dataset `test_data`. This has been -->
-<!-- constructed using the Property Data Survey dataset, removing identifying -->
-<!-- features (e.g the school Unique Reference Number), and randomizing the areas and -->
-<!-- grades of all components. The Blockbuster package utilises filter methods built -->
-<!-- on the [`dplyr`](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) package which are useful for handling this data.  Running the  -->
-<!-- forecasting on the complete data can take a non-trivial amount of time so  -->
-<!-- testing on smaller slices is advisable. The data is held in objects called -->
-<!-- 'test.block' and 'test.element', which store block-level and component-level -->
-<!-- information respectively. -->
+## Inputs and Outputs Overview
 
-<!-- The `areafy2` function was used on data queried from the Department for -->
-<!-- Education Education Funding Authority Property Data Survey SQL data tables. This -->
-<!-- provides estimates for the `unit_area` variable, a quantification of how much of -->
-<!-- a building component there is). This is crucial for the DTMC methodology and for -->
-<!-- quantifying the costs of repairs. -->
+Remember to use the R help for all of the functions and data mentioned in the
+vignette for extra detail (e.g. try typing `?Blockbuster` into the console).
+
+## Input format
+
+The first argument for the Blockbuster function is a data.frame containing the data for the elements that you wish to simulate.  This data.frame must contain the following columns:
+
+| Column | Description |
+|:---|:---|
+| buildingid | A number that uniquely identifies the building a component is part of |
+| A | The probability the element is at grade A |
+| B | The probability the element is at grade B |
+| C | The probability the element is at grade C |
+| D | The probability the element is at grade D |
+| E | The probability the element is at grade E |
+| ab | The probability that the component will deteriorate from grade A to grade B in one year |
+| bc | The probability that the component will deteriorate from grade B to grade C in one year |
+| cd | The probability that the component will deteriorate from grade C to grade D in one year |
+| de | The probability that the component will deteriorate from grade D to grade E in one year |
+| unit_area | A quantification of the size of the component - this is usually an area but could be a count or length |
+| B.repair.cost | The cost to repair one unit_area of this component at grade B |
+| C.repair.cost | The cost to repair one unit_area of this component at grade C |
+| D.repair.cost | The cost to repair one unit_area of this component at grade D |
+| E.repair.cost | The cost to repair one unit_area of this component at grade E |
+| gifa | The Gross Internal Floor Area of the building a component is part of.  This is used to generate the cost of rebuilding the entire building |
+
+The simulated data provided with the package also contains the following column that is not used internally but could be useful when analyzing outputs:
+
+| Column | Description |
+|:---|:---|
+| elementid | A number that identifies the component type |
+
+The package is designed to be used with PDS data which also includes the following columns that can be useful when looking at outputs:
+
+| Column | Description |
+|:---|:---|
+| URN | A number that uniquely identifies a school |
+| siteid | A number that uniquely identifies a school site (schools may have more than one site) |
+| LAN | A number that uniquely identifies a Local Authority |
+
+## Output format
+
+The model output is a nested list, with the first level indicating the year of simulation (including the original input at position 1) and within each year, data.frames for both element- and block-level data.
+
+So, `output[[1]]$element` will return the input element data (as the input is the first list element), while `output[[2]]$block` will return the block-level summary after one year of simulation.
+
+The element-level data.frames are structured in the same way as required for the input, while the block-level data.frames includes columns that total the expected repair cost for each block at each grade, the cost to rebuild the entire block and the ratio between the total repair cost and the rebuild cost.
+
+As mentioned previously, by default the Blockbuster function saves outputs to files.  Files can be loaded individually into your session using something akin to `load("./output/blockbuster_element_2.rds")` depending on where you set the `save`, `path` and `filelabel` arguments.
+
 
 <!-- We start by taking a look at the component-level data in `test.element`. -->
 
