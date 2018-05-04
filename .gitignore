@@ -1,4 +1,11 @@
 packrat/lib*/
 .Rproj.user
 inst/doc
-data/*
+data_ext/*
+data prep R/
+documentation/
+output/
+tests/testthat/output
+BooYah_output.rds
+.Rhistory
+

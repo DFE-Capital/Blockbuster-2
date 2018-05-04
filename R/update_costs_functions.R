@@ -9,9 +9,12 @@
 #' @return An \code{\link{element}} object with updated repair totals.
 UpdateElementRepairs <- function(element.data){
 
+<<<<<<< HEAD
   # input integrity
   #if(!is.element(element.data)) stop("Argument needs to be an element object.")
 
+=======
+>>>>>>> master
   # update element.data with the new repair totals.
   element.data <- element.data %>%
     mutate(B.repair.total = unit_area * B * B.repair.cost,
@@ -40,11 +43,6 @@ UpdateElementRepairs <- function(element.data){
 #' repair/rebuild ratio
 UpdateBlockRepairs <- function(block.data, element.data){
 
-  # Input integrity
-  #if(!is.block(block.data)) stop("block.data argument needs to be a block object.")
-  #if(!is.element(element.data)) stop("element.data argument needs to be an element object.")
-
-  # total repair costs for each building at each grade.
   repairs <- element.data %>%
     group_by(buildingid) %>%
     summarise(B = sum(B.repair.total),
@@ -61,6 +59,6 @@ UpdateBlockRepairs <- function(block.data, element.data){
            ratio = case_when(block.rebuild.cost == 0 ~ 0,
                              TRUE ~ (B + C + D + E) / block.rebuild.cost)) %>%
     select(-B, -C, -D, -E)
-  #block.data <- BlockLevel(block.data)
+
   return(block.data)
 }

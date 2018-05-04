@@ -14,10 +14,6 @@
 #' @return An \code{\link{element}} object.
 Deteriorate <- function(element.data){
 
-  # Check integrity of the input.
-  #if (!is.element(element.data)) stop("Deterioration can only be performed on
-  #                                    an element class object.")
-
   # Adjust all grade proporitions according to the appropriate deterioration
   # rate. Since each computation affects the current grade and the grade below,
   # computations are performed in reverse order.
@@ -26,6 +22,6 @@ Deteriorate <- function(element.data){
            D = C * cd + D * (1 - de),
            C = B * bc + C * (1 - cd),
            B = A * ab + B * (1 - bc),
-           A = A * (1 - ab)) #%>%
-  #  ElementLevel
+           A = A * (1 - ab))
+
 }
