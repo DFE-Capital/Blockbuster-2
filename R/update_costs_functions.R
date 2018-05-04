@@ -9,12 +9,6 @@
 #' @return An \code{\link{element}} object with updated repair totals.
 UpdateElementRepairs <- function(element.data){
 
-<<<<<<< HEAD
-  # input integrity
-  #if(!is.element(element.data)) stop("Argument needs to be an element object.")
-
-=======
->>>>>>> master
   # update element.data with the new repair totals.
   element.data <- element.data %>%
     mutate(B.repair.total = unit_area * B * B.repair.cost,

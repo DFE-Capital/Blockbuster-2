@@ -52,9 +52,9 @@ of the output data.
 ## Using the package
 
 Check you have these packages installed and then load them into memory using
-`library()` `require()`.
+`library()` or `require()`.
 
-```{r warning=FALSE, message=FALSE, error=FALSE, eval = FALSE}
+```{r warning=FALSE, message=FALSE, error=FALSE}
 library(Blockbuster2)
 ```
 
@@ -81,7 +81,14 @@ vignette for extra detail (e.g. try typing `?Blockbuster` into the console).
 
 ## Input format
 
-The first argument for the Blockbuster function is a data.frame containing the data for the elements that you wish to simulate.  This data.frame must contain the following columns:
+The first argument for the Blockbuster function is a data.frame containing the data for the elements that you wish to simulate. The package contains some simulated data in the correct format under the name `simulated_elements`.
+
+```{r}
+data("simulated_elements", package = "Blockbuster2")
+dplyr::glimpse(simulated_elements)
+```
+
+For use with blockbuster, the data.frame must contain the following columns:
 
 | Column | Description |
 |:---|:---|
@@ -124,69 +131,35 @@ So, `output[[1]]$element` will return the input element data (as the input is th
 
 The element-level data.frames are structured in the same way as required for the input, while the block-level data.frames includes columns that total the expected repair cost for each block at each grade, the cost to rebuild the entire block and the ratio between the total repair cost and the rebuild cost.
 
+The package also includes a block-level summary of the simulated data as `simulated_blocks`
+
+```{r}
+data("simulated_blocks", package = "Blockbuster2")
+dplyr::glimpse(simulated_blocks)
+```
+
+This is the same format as the block-level summary outputs of the model.
+
 As mentioned previously, by default the Blockbuster function saves outputs to files.  Files can be loaded individually into your session using something akin to `load("./output/blockbuster_element_2.rds")` depending on where you set the `save`, `path` and `filelabel` arguments.
 
+## Example analysis
 
-<!-- We start by taking a look at the component-level data in `test.element`. -->
+Here we simulate the deterioration of one building through one year.
 
-<!-- ```{r} -->
-<!-- data("test_data") -->
-<!-- dplyr::glimpse(test.element) -->
-<!-- ``` -->
+```{r, warnings = FALSE, collapse = TRUE}
+#  output demonstration
 
-<!-- The `buildingid` variable identifies the building, and the `elementid` is a key -->
-<!-- that identifies the precise component type.  The `N`, `A`, `B`, `C`, `D`, `E` -->
-<!-- columns show the proportion of the component `unit_area` that is at each -->
-<!-- condition grade.  The `na`, `ab`, `bc`, `cd`, `de` columns contain the -->
-<!-- deterioration rates between grades at each timestep.  This is stored in the data -->
-<!-- to allow for the manual alteration of rates for individual components in -->
-<!-- buildings should we identify strong local factors affecting transition rates in  -->
-<!-- the future. Finally, the data also contains information regarding the cost per -->
-<!-- unit area of repairing the component at each grade rate as well as the total -->
-<!-- cost to repair all of a given grade at the appropriate proportion. -->
+# construct single block input
+my_output <- Blockbuster(simulated_elements, save = FALSE)
+dplyr::glimpse(my_output) # this function makes the output nicer to read
 
-<!-- The `test.block` aggregates the component-level information by building. -->
+```
 
-<!-- ```{r} -->
-<!-- dplyr::glimpse(test.block) -->
-<!-- ``` -->
+The first list entry is the initial state, split into two data frames, the element-level data and the block-level summary.  The second list entry is the model output after one year.  If we forecast more years, there will be an addition list element for each year.
 
-<!-- The `ratio` column contains the ratio between the total repair costs at grades -->
-<!-- B, C, and D for a block, and the cost to rebuild the entire block.  This is used -->
-<!-- to evaluate the cost-effectiveness of rebuilding decisions within the model. -->
-
-<!-- ### The output variables compared to the input -->
-
-<!-- The output of the `Blockbuster` function is a list.  Each list entry contains two -->
-<!-- objects: the component level state and the block level state of dataframes. The  -->
-<!-- number of list entries is equivalent to the number of years simulated plus one. -->
-<!-- The output is of the custom class `blockbuster` (derivative to list). -->
-
-<!-- Here we simulate the deterioration of one building through one year. We are -->
-<!-- interested in the variables of a simulated PDS produced by our `Blockbuster` -->
-<!-- model using default arguments.  Note that the `Blockbuster` functions saves -->
-<!-- interim data in the `./output/` folder by default, although this behaviour can  -->
-<!-- be turned off with the argument `save = FALSE`. -->
-
-<!-- ```{r, warnings = FALSE} -->
-<!-- #  output demonstration -->
-
-<!-- # construct single block input -->
-<!-- my_block <- test.element %>% -->
-<!--   dplyr::filter(buildingid == 4472) -->
-
-<!-- my_block_output <- Blockbuster(my_block, save = FALSE) -->
-<!-- dplyr::glimpse(my_block_output) # this function makes the output nicer to read -->
-
-<!-- ``` -->
-
-<!-- The first list entry is the initial state and subsequent list entries are the  -->
-<!-- model outputs for each timestep. Observe that the C.block.repair.cost in the -->
-<!-- first list entry (which can be read with the command -->
-<!-- `my_block_output[[1]]$block$C.block.repair.cost`) is -->
-<!-- £XXXX. After deterioration we find it has -->
-<!-- increased to £XXXX reflecting the  -->
-<!-- deterioration of the block components. -->
+Observe that the C.block.repair.cost for the first block in the simulated data (which can be read with the command `my_output[[1]]$block$C.block.repair.cost[1]`) is
+`r paste0("£", round(my_output[[1]]$block$C.block.repair.cost[1], 2))`. After one year of deterioration we find it has increased to `r paste0("£", round(my_output[[2]]$block$C.block.repair.cost[1], 2))` reflecting the
+deterioration of the block components.
 
 <!-- This output has foreign key variables with the suffix -id, that could be joined  -->
 <!-- to other data from relevant SQL data tables (e.g. the user could find the `urn` -->

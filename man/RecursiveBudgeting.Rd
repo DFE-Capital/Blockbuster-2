@@ -2,7 +2,7 @@
 % Please edit documentation in R/rebuild_functions.R
 \name{RecursiveBudgeting}
 \alias{RecursiveBudgeting}
-\title{Find blocks to rebuild within budget recursivley.}
+\title{Find blocks to rebuild within budget recursively.}
 \usage{
 RecursiveBudgeting(vec, keys, budget, state = NULL)
 }
