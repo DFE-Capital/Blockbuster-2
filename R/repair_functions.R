@@ -90,9 +90,9 @@ repairGrade <- function(element.data, grade){
 
 #' Repairs the component in the given rows at the given grade
 #'
-#' @param element.data
+#' @param element.data data.frame. The component level data.
 #' @param row numeric.  A vector of row indices to update
-#' @param grade
+#' @param grade character. One of \code{"B"}, \code{"C"}, \code{"D"}, \code{"E"}.
 #'
 #' @return The updated element.data
 repairComponent <- function(element.data, rows, grade){
