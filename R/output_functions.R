@@ -56,3 +56,111 @@ LoadBlockbusterOutput <- function(forecast.horizon,
 
   return(output)
 }
+
+#' Collate element- and block-level outputs from Blockbuster outputs
+#'
+#' A set of convenience functions for managing the raw output of a \code{\link{Blockbuster}} function call.
+#'
+#' The functions \code{pull_Block_data} and \code{pull_Element_data} combine the appropriate data into a single dataframe with a column for year.
+#'
+#' For large datasets (for example, the PDS dataset), R can hit memory limits when the \code{\link{Blockbuster}} function tries to construct the single output object from the saved interim files. \code{load_Block_Data} and \code{load_Element_Data} loads the relevant outputs from the saved files.
+#'
+#' @describeIn pull_Element_Data Pulls out the element level data from the output of a blockbuster function call
+#' @param blockbuster_output The output from a \code{\link{Blockbuster}} call.
+#'
+#' @return A data.frame containing the appropriate data from the output, with a year column
+#' @export
+#' @examples
+#' \dontrun{
+#' output <- Blockbuster(simulated_elements, forecast_horizon = 10)
+#' pull_Block_Data(output, 10)
+#' pull_Element_Data(output, 10)
+#' }
+pull_Element_Data <- function(blockbuster_output){
+
+  # initialize output object
+  element.data <- vector("list", length(blockbuster_output))
+
+  # populate output list
+  for (i in 1:length(blockbuster_output)){
+    element.data[[i]] <- blockbuster_output[[i]]$element %>% mutate(year = i - 1)
+  }
+
+  element.data <- bind_rows(element.data)
+
+  return(element.data)
+}
+
+
+
+#' @describeIn pull_Element_Data Pulls out the block data from the output from a blockbuster function call
+#'
+#' @export
+#' @examples
+pull_Block_Data <- function(blockbuster_output){
+
+  # initialize output
+  block.data <- vector("list", length(blockbuster_output))
+
+  # put data into list
+  for (i in 1:length(blockbuster_output)){
+    block.data[[i]] <- blockbuster_output[[i]]$block %>% mutate(year = i - 1)
+  }
+
+  block.data <- bind_rows(block.data)
+
+  return(block.data)
+}
+
+#' @describeIn pull_Element_Data Loads the element-level output from a blockbuster call
+#'
+#' @param forecast.horizon integer.  This specifies how many years of the saved
+#' output will be loaded.
+#' @param path character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.
+#' @param filelabel character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.
+#'
+#' @export
+#' @examples
+#' # loading outputs from saved files
+#' \dontrun{
+#' Blockbuster(simulated elements, path = "output", filelabel = "example")
+#' load_Element_data(1, path = "output", filelabel = "example")
+#' load_Block_data(1, path = "output", filelabel = "example")
+#' }
+load_Element_Data <- function(forecast.horizon, path = "./output/", filelabel = "blockbuster_output"){
+
+  file <- file.path(path, filelabel)
+
+  # set up output
+    output <- vector("list", forecast.horizon + 1)
+
+    # loop over forecast.horizon
+    for (i in 0:forecast.horizon){
+      # load data
+       output[[i + 1]] <- readRDS(paste0(file, "_element_", i, ".rds")) %>% mutate(year = i)
+    }
+
+    output <- bind_rows(output)
+
+    return(output)
+  }
+
+
+#' @describeIn pull_Element_Data Loads the element-level output from a blockbuster call
+#' @export
+load_Block_Data <- function(forecast.horizon, path = "./output/", filelabel = "blockbuster_output"){
+  file <- file.path(path, filelabel)
+
+  # set up output
+  output <- vector("list", forecast.horizon + 1)
+
+  # loop over forecast.horizon
+  for (i in 0:forecast.horizon){
+    # load data
+    output[[i + 1]] <- readRDS(paste0(file, "_block_", i, ".rds")) %>% mutate(year = i)
+  }
+
+  output <- bind_rows(output)
+
+  return(output)
+}

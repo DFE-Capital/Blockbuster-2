@@ -2,4 +2,8 @@
 
 export(Blockbuster)
 export(backlog)
+export(load_Block_Data)
+export(load_Element_Data)
+export(pull_Block_Data)
+export(pull_Element_Data)
 import(dplyr)

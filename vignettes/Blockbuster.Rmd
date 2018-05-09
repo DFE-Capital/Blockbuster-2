@@ -90,38 +90,71 @@ dplyr::glimpse(simulated_elements)
 
 For use with blockbuster, the data.frame must contain the following columns:
 
-| Column | Description |
-|:---|:---|
-| buildingid | A number that uniquely identifies the building a component is part of |
-| A | The probability the element is at grade A |
-| B | The probability the element is at grade B |
-| C | The probability the element is at grade C |
-| D | The probability the element is at grade D |
-| E | The probability the element is at grade E |
-| ab | The probability that the component will deteriorate from grade A to grade B in one year |
-| bc | The probability that the component will deteriorate from grade B to grade C in one year |
-| cd | The probability that the component will deteriorate from grade C to grade D in one year |
-| de | The probability that the component will deteriorate from grade D to grade E in one year |
-| unit_area | A quantification of the size of the component - this is usually an area but could be a count or length |
-| B.repair.cost | The cost to repair one unit_area of this component at grade B |
-| C.repair.cost | The cost to repair one unit_area of this component at grade C |
-| D.repair.cost | The cost to repair one unit_area of this component at grade D |
-| E.repair.cost | The cost to repair one unit_area of this component at grade E |
-| gifa | The Gross Internal Floor Area of the building a component is part of.  This is used to generate the cost of rebuilding the entire building |
+--------------------------------------------------------------
+Column              Description 
+--------------      -----------------------------------------------------------
+buildingid          A number that uniquely identifies the building a component
+                    is part of
+                    
+A                   The probability the element is at grade A
+ 
+B                   The probability the element is at grade B
+
+C                   The probability the element is at grade C
+
+D                   The probability the element is at grade D
+
+E                   The probability the element is at grade E 
+
+ab                  The probability that the component will deteriorate from 
+                    grade A to grade B in one year
+                  
+bc                  The probability that the component will deteriorate from
+                    grade B to grade C in one year
+                   
+cd                  The probability that the component will deteriorate from
+                    grade C to grade D in one year
+                   
+de                  The probability that the component will deteriorate from 
+                    grade D to grade E in one year
+                   
+unit_area           A quantification of the size of the component - this is 
+                    usually an area but could be a count or length
+                   
+B.repair.cost       The cost to repair one unit_area of this component at grade B
+ 
+C.repair.cost       The cost to repair one unit_area of this component at grade C
+
+D.repair.cost       The cost to repair one unit_area of this component at grade D
+
+E.repair.cost       The cost to repair one unit_area of this component at grade E
+
+gifa                The Gross Internal Floor Area of the building a component is
+                    part of. This is used to generate the cost of rebuilding the
+                    entire building
+
+-------------------------------------------------------------
 
 The simulated data provided with the package also contains the following column that is not used internally but could be useful when analyzing outputs:
 
-| Column | Description |
-|:---|:---|
-| elementid | A number that identifies the component type |
+-----------------------------
+Column     Description
+---------- --------------------------------------------------
+elementid  A number that identifies the component type
+-----------------------------
+
 
 The package is designed to be used with PDS data which also includes the following columns that can be useful when looking at outputs:
 
-| Column | Description |
-|:---|:---|
-| URN | A number that uniquely identifies a school |
-| siteid | A number that uniquely identifies a school site (schools may have more than one site) |
-| LAN | A number that uniquely identifies a Local Authority |
+--------------------------------
+Column  Description
+------- ----------------------------------------------------------------------
+URN     A number that uniquely identifies a school 
+
+siteid  A number that uniquely identifies a school site (schools may have more than one site) 
+
+LAN     A number that uniquely identifies a Local Authority
+----------------------------------
 
 ## Output format
 
@@ -152,14 +185,31 @@ Here we simulate the deterioration of one building through one year.
 # construct single block input
 my_output <- Blockbuster(simulated_elements, save = FALSE)
 dplyr::glimpse(my_output) # this function makes the output nicer to read
-
 ```
 
 The first list entry is the initial state, split into two data frames, the element-level data and the block-level summary.  The second list entry is the model output after one year.  If we forecast more years, there will be an addition list element for each year.
 
+For convenience there are four useful functions for managing the output.  `pull_Element_Data` and `pull_Block_Data` can be used to pull out the element- and block-level data from the output. For large datasets (for example, the PDS dataset), R can hit memory limits when the `Blockbuster` function tries to construct the single output object from the saved interim files. `load_Block_Data` and `load_Element_Data` load the relevant outputs from the saved files.
+
+We start by looking at the block-level output:
+
+```{r, collapse = TRUE}
+my_block <- pull_Block_Data(my_block)
+glimpse(my_block)
+```
+
+Note that the `pull_Block_Data` combines the outputs for all years into one data.frame and adds a `year` column.
+
+
 Observe that the C.block.repair.cost for the first block in the simulated data (which can be read with the command `my_output[[1]]$block$C.block.repair.cost[1]`) is
 `r paste0("£", round(my_output[[1]]$block$C.block.repair.cost[1], 2))`. After one year of deterioration we find it has increased to `r paste0("£", round(my_output[[2]]$block$C.block.repair.cost[1], 2))` reflecting the
 deterioration of the block components.
+
+We use the `ggplot` package to produce some plots
+
+```{r}
+my_output %>% 
+```
 
 <!-- This output has foreign key variables with the suffix -id, that could be joined  -->
 <!-- to other data from relevant SQL data tables (e.g. the user could find the `urn` -->
