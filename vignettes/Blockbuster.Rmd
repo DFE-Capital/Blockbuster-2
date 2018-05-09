@@ -189,26 +189,53 @@ dplyr::glimpse(my_output) # this function makes the output nicer to read
 
 The first list entry is the initial state, split into two data frames, the element-level data and the block-level summary.  The second list entry is the model output after one year.  If we forecast more years, there will be an addition list element for each year.
 
-For convenience there are four useful functions for managing the output.  `pull_Element_Data` and `pull_Block_Data` can be used to pull out the element- and block-level data from the output. For large datasets (for example, the PDS dataset), R can hit memory limits when the `Blockbuster` function tries to construct the single output object from the saved interim files. `load_Block_Data` and `load_Element_Data` load the relevant outputs from the saved files.
+For convenience there are four useful functions for managing the output.  `pull_Element_Data` and `pull_Block_Data` can be used to pull out the element- and block-level data from the output. For large datasets (for example, the PDS dataset), R can hit memory limits when the `Blockbuster` function tries to construct the single output object from the saved interim files. `load_Block_Data` and `load_Element_Data` load the relevant outputs from the saved files.  These functions have a dependency on the `tidyr` package, so you will need to load it if you want to use these convenient functions for looking at the outputs.
 
-We start by looking at the block-level output:
+```{r}
+library(tidyr)
+```
+
+We start by looking at the block-level output.
 
 ```{r, collapse = TRUE}
-my_block <- pull_Block_Data(my_block)
+my_block <- pull_Block_Data(my_output)
 glimpse(my_block)
 ```
 
-Note that the `pull_Block_Data` combines the outputs for all years into one data.frame and adds a `year` column.
+Note that the `pull_Block_Data` combines the outputs for all years into one data frame, adds a `year` column and places the grades and backlog into tidy format. This makes it easier to filter and plot the data.  
 
-
-Observe that the C.block.repair.cost for the first block in the simulated data (which can be read with the command `my_output[[1]]$block$C.block.repair.cost[1]`) is
-`r paste0("£", round(my_output[[1]]$block$C.block.repair.cost[1], 2))`. After one year of deterioration we find it has increased to `r paste0("£", round(my_output[[2]]$block$C.block.repair.cost[1], 2))` reflecting the
-deterioration of the block components.
-
-We use the `ggplot` package to produce some plots
+For example, let's look at all the blocks with an expected grade D backlog after one year of over £100,000:
 
 ```{r}
-my_output %>% 
+my_block %>% filter(year == 1, grade == "D", backlog > 100000)
+```
+Or we could rank the blocks in order of their total backlog after one year:
+
+```{r}
+my_block %>%
+  filter(year == 1) %>%
+  group_by(buildingid) %>%
+  summarise(total = sum(backlog)) %>%
+  arrange(desc(total))
+```
+
+Here we use `ggplot2` to plot the backlog for each grade over time.
+
+```{r}
+library(ggplot2)
+my_block %>% group_by(year, grade) %>%
+  summarise(backlog = sum(backlog)) %>%
+  ggplot() +
+  geom_line(aes(x = year, y = backlog, colour = grade))
+```
+
+The `pull_Element_Data` and `load_Element_Data` functions work in the same way, but with 
+an extra argument called `type`.  If `type` is `"area"` then the resulting data frame will contain the proportional area at each grade in tidy format.  If `type` is `"backlog"` then the backlog at each grade will be in tidy format.  If `type` is anything else then the output will be the raw data.
+
+```{r}
+pull_Element_Data(my_output) %>% glimpse
+pull_Element_Data(my_output, type = "area") %>% glimpse
+pull_Element_Data(my_output, type = "backlog") %>% glimpse
 ```
 
 <!-- This output has foreign key variables with the suffix -id, that could be joined  -->
