@@ -68,7 +68,9 @@ LoadBlockbusterOutput <- function(forecast.horizon,
 #' @describeIn pull_Element_Data Pulls out the element level data from the output of a blockbuster function call
 #' @param blockbuster_output The output from a \code{\link{Blockbuster}} call.
 #'
-#' @return A data.frame containing the appropriate data from the output, with a year column
+#' @param type character. Selects whether the output contains tidy data about \code{"area"} or \code{"backlog"}.  If left as default, raw element data is output.
+#'
+#' @return A data.frame containing the appropriate data from the output, with a year column.  If \code{type = "area"} then the data will contain the grade and component area in tidy format. If \code{type = "backlog"} then the data will contain the grade and backlog in tidy format.
 #' @export
 #' @examples
 #' \dontrun{
@@ -76,7 +78,7 @@ LoadBlockbusterOutput <- function(forecast.horizon,
 #' pull_Block_Data(output, 10)
 #' pull_Element_Data(output, 10)
 #' }
-pull_Element_Data <- function(blockbuster_output){
+pull_Element_Data <- function(blockbuster_output, type = ""){
 
   # initialize output object
   element.data <- vector("list", length(blockbuster_output))
@@ -87,6 +89,28 @@ pull_Element_Data <- function(blockbuster_output){
   }
 
   element.data <- bind_rows(element.data)
+
+  if(type == "backlog"){
+    element.data <- element.data %>%
+      select(-B, -C, -D, -E) %>% # remove these columns as I want their names
+      rename(B = B.repair.total,
+             C = C.repair.total,
+             D = D.repair.total,
+             E = E.repair.total) %>%
+      gather("grade", "backlog", B, C, D, E) %>%
+      select("buildingid", "elementid", year, grade, backlog)
+  }
+
+  if (type == "area"){
+    element.data <- element.data %>%
+      mutate(A = A * unit_area,
+             B = B * unit_area,
+             C = C * unit_area,
+             D = D * unit_area,
+             E = E * unit_area) %>%
+      gather("grade", "area", A, B, C, D, E) %>%
+      select("buildingid", "elementid", year, grade, area)
+  }
 
   return(element.data)
 }
@@ -107,7 +131,12 @@ pull_Block_Data <- function(blockbuster_output){
     block.data[[i]] <- blockbuster_output[[i]]$block %>% mutate(year = i - 1)
   }
 
-  block.data <- bind_rows(block.data)
+  block.data <- bind_rows(block.data) %>%
+    rename(B = B.block.repair.cost,
+           C = C.block.repair.cost,
+           D = D.block.repair.cost,
+           E = E.block.repair.cost) %>%
+    gather("grade", "backlog", B, C, D, E)
 
   return(block.data)
 }
@@ -127,7 +156,7 @@ pull_Block_Data <- function(blockbuster_output){
 #' load_Element_data(1, path = "output", filelabel = "example")
 #' load_Block_data(1, path = "output", filelabel = "example")
 #' }
-load_Element_Data <- function(forecast.horizon, path = "./output/", filelabel = "blockbuster_output"){
+load_Element_Data <- function(forecast.horizon, path = "./output/", filelabel = "blockbuster_output", type = ""){
 
   file <- file.path(path, filelabel)
 
@@ -141,6 +170,28 @@ load_Element_Data <- function(forecast.horizon, path = "./output/", filelabel = 
     }
 
     output <- bind_rows(output)
+
+    if(type == "backlog"){
+      output <- output %>%
+        select(-B, -C, -D, -E) %>% # remove these columns as I want their names
+        rename(B = B.repair.total,
+               C = C.repair.total,
+               D = D.repair.total,
+               E = E.repair.total) %>%
+        gather("grade", "backlog", B, C, D, E) %>%
+        select("buildingid", "elementid", year, grade, backlog)
+    }
+
+    if (type == "area"){
+      output <- output %>%
+        mutate(A = A * unit_area,
+               B = B * unit_area,
+               C = C * unit_area,
+               D = D * unit_area,
+               E = E * unit_area) %>%
+        gather("grade", "area", A, B, C, D, E) %>%
+        select("buildingid", "elementid", year, grade, area)
+    }
 
     return(output)
   }
@@ -160,7 +211,12 @@ load_Block_Data <- function(forecast.horizon, path = "./output/", filelabel = "b
     output[[i + 1]] <- readRDS(paste0(file, "_block_", i, ".rds")) %>% mutate(year = i)
   }
 
-  output <- bind_rows(output)
+  output <- bind_rows(output) %>%
+    rename(B = B.block.repair.cost,
+           C = C.block.repair.cost,
+           D = D.block.repair.cost,
+           E = E.block.repair.cost) %>%
+    gather("grade", "backlog", B, C, D, E)
 
   return(output)
 }

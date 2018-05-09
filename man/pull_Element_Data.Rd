@@ -7,12 +7,12 @@
 \alias{load_Block_Data}
 \title{Collate element- and block-level outputs from Blockbuster outputs}
 \usage{
-pull_Element_Data(blockbuster_output)
+pull_Element_Data(blockbuster_output, type = "")
 
 pull_Block_Data(blockbuster_output)
 
 load_Element_Data(forecast.horizon, path = "./output/",
-  filelabel = "blockbuster_output")
+  filelabel = "blockbuster_output", type = "")
 
 load_Block_Data(forecast.horizon, path = "./output/",
   filelabel = "blockbuster_output")
@@ -26,9 +26,11 @@ output will be loaded.}
 \item{path}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
 
 \item{filelabel}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
+
+\item{character}{Selects whether the output contains tidy data about \code{"area"} or \code{"backlog"}.  If left as default, raw element data is output.}
 }
 \value{
-A data.frame containing the appropriate data from the output, with a year column
+A data.frame containing the appropriate data from the output, with a year column.  If \code{type = "area"} then the data will contain the grade and component area in tidy format. If \code{type = "backlog"} then the data will contain the grade and backlog in tidy format.
 }
 \description{
 A set of convenience functions for managing the raw output of a \code{\link{Blockbuster}} function call.
