@@ -23,4 +23,5 @@ Deteriorate <- function(element.data){
            C = B * bc + C * (1 - cd),
            B = A * ab + B * (1 - bc),
            A = A * (1 - ab))
+
 }

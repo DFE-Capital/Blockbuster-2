@@ -14,6 +14,7 @@ test_that("single_backlog returns error with invalid grade", {
                fixed = TRUE)
   })
 
+
 test_that("Backlog functions return correct value",
           {
             # simulated block

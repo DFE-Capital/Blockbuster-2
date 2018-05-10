@@ -37,7 +37,6 @@ UpdateElementRepairs <- function(element.data){
 #' repair/rebuild ratio
 UpdateBlockRepairs <- function(block.data, element.data){
 
-    # total repair costs for each building at each grade.
   repairs <- element.data %>%
     group_by(buildingid) %>%
     summarise(B = sum(B.repair.total),

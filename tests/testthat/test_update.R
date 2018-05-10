@@ -7,6 +7,7 @@ test_that("Updated figures are correct", {
   C <- c(0, 0, 1, 0, 0, 0.15)
   D <- c(0, 0, 0, 1, 0, 0.07)
   E <- c(0, 0, 0, 0, 1, 0.03)
+
   element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5,
                         elementid = 1:6, buildingid = 1, B.repair.cost = 1,
                         C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,
@@ -45,6 +46,7 @@ test_that("Updated figures are correct", {
   C <- c(0, 0, 1, 0, 0, 0.15)
   D <- c(0, 0, 0, 1, 0, 0.07)
   E <- c(0, 0, 0, 0, 1, 0.03)
+
   element <- data.frame(A, B, C, D, E, ab = 0.8, bc = 0.7, cd = 0.6, de = 0.5,
                         elementid = 1:6, buildingid = 1, B.repair.cost = 1,
                         C.repair.cost = 2, D.repair.cost = 3, E.repair.cost = 4,

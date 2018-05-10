@@ -92,6 +92,7 @@ Blockbuster <- function(element.data, block.data = NULL,
                         repair.money = 0,
                         block.rebuild.cost = 2000,
                         inflation = 1,
+
                         save = TRUE,
                         filelabel = "blockbuster_output",
                         path = "./output/",
@@ -115,7 +116,6 @@ Blockbuster <- function(element.data, block.data = NULL,
 
   # set filepath
   savefile <- file.path(path, filelabel)
-
 
   # save initial state ------------------------------------------------------
 
@@ -200,6 +200,7 @@ Blockbuster <- function(element.data, block.data = NULL,
     output <- LoadBlockbusterOutput(forecast.horizon = forecast.horizon,
                                     filelabel = filelabel,
                                     path = path)
+
     saveRDS(output, file = paste0(savefile, "_output.rds"))
   } else {
     message("Preparing output.")
@@ -208,3 +209,4 @@ Blockbuster <- function(element.data, block.data = NULL,
 
   return(output)
 }
+

@@ -7,7 +7,9 @@
 repairComponent(element.data, rows, grade)
 }
 \arguments{
-\item{grade}{}
+\item{element.data}{data.frame. The component level data.}
+
+\item{grade}{character. One of \code{"B"}, \code{"C"}, \code{"D"}, \code{"E"}.}
 
 \item{row}{numeric.  A vector of row indices to update}
 }

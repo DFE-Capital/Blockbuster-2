@@ -5,7 +5,7 @@
 \title{Load data from the blockbuster output files.}
 \usage{
 LoadBlockbusterOutput(forecast.horizon, filelabel = "blockbuster_output",
-  path = "./output/", type = "blockbuster")
+  path = "./output/")
 }
 \arguments{
 \item{forecast.horizon}{The number of timesteps to collate.}
