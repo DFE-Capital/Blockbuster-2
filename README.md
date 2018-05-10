@@ -32,7 +32,8 @@ Rebuild funds             A vector containing the budget for rebuilding each yea
 
 Inflation                 A vector containing the inflation to be applied to all
                           repair and rebuild costs each year
---------------------------------------------------------
+                          
+--------------------------------------------------------------------------
 
   ## Installing the package
 
