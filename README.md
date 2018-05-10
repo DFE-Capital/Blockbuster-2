@@ -2,21 +2,37 @@
 
   # Blockbuster2
 
-  *This is a prototype package being developed in anticipation of analysing the [Condition Data Collection](https://www.gov.uk/guidance/condition-data-collection-programme-information-and-guidance) and is subject to constant development*
+*This is a prototype package being developed in anticipation of analysing the [Condition Data Collection](https://www.gov.uk/guidance/condition-data-collection-programme-information-and-guidance) and is subject to constant development*
 
-    This R package allows you to simulate the deterioration of School buildings through time using a Discrete Time Markov Chain. R packages are an ideal way to package and distribute R code and data for re-use by others.
+This R package allows you to simulate the deterioration of School buildings through time using a Discrete Time Markov Chain. R packages are an ideal way to package and distribute R code and data for re-use by others.
 
-  Data on the condition of the school estate were collected during the Property Data Survey Programme (PDSP) of 2012-2014. Approximately 2.7 million rows of data were collected. This provides the initial state of the School Estate at timestep zero. The deterioration of the School Estate is then modelled by using deterioration rates associated with each Construction Elements-Sub-element-construction-type. Cost of repairs for these building components are estimated. An investment profile for rebuilding and maintaining the School Estate can also be input to mitigate this entropic spiral. 
-  
-  The PDS data is not included with this package. A small simulated dataset is available.
+Data on the condition of the school estate were collected during the Property Data Survey Programme (PDSP) of 2012-2014. Approximately 2.7 million rows of data were collected. This provides the initial state of the School Estate at timestep zero. The deterioration of the School Estate is then modelled by using deterioration rates associated with each construction element / sub-element / construction-type. Cost of repairs for these building components are estimated. An investment profile for rebuilding and maintaining the School Estate can also be input to mitigate this entropic spiral.
 
+The PDS data is not included with this package. A small simulated dataset is provided.
 
-  | Data inputs | Description |
-    |---|---|
-    | building condition | Input data for time zero. A sample simulated from the PDS condition data table. |
-    | transition matrices | Deterioration rates based on estimates of expected lifetime of a building element-sub-element-construction-type. |
-    | repair costs | Repair costs of building components from condition grades D-B back to A. |
-    | rebuild costs | Rebuild cost in pounds per metre squared per unit of gross internal floor area to be rebuilt. |
+The model works with the following parameters
+
+---------------------------------------------
+Data inputs               Description 
+------------------------- ----------------------------------------------------
+Input data for time zero  A data frame with one row per construction element
+
+Deterioration rates       Estimated probabilities of deterioration within one
+                          year for each component at each condition grade
+
+Repair costs              Repair costs of repairing components at condition
+                          grades B, C, D, and E
+
+Rebuild costs             Cost in pounds per square metre used to estimate cost
+                          of rebuilding individual buildings
+                          
+Repair funds              A vector containing the budget for repairs each year
+
+Rebuild funds             A vector containing the budget for rebuilding each year
+
+Inflation                 A vector containing the inflation to be applied to all
+                          repair and rebuild costs each year
+--------------------------------------------------------
 
   ## Installing the package
 
@@ -32,7 +48,7 @@
 
   `library(Blockbuster2)`
   
-  The beauty of package development is that the business knowledge is enshrined in the package, with the code and documentation in one place. To familiarise yourself after install you can work through the blockbuster vignette which will provide typical uses.
+  The beauty of package development is that the business knowledge is enshrined in the package, with the code and documentation in one place. To familiarise yourself after install you can work through the blockbuster vignette which will provide typical uses. The blockbuster-methodology vignette provides in depth detail about how the model works.
 
   You can also use the extensive R help which explains the input arguments and output values of all functions by prefixing a function with a *?*.
   
@@ -48,16 +64,13 @@
   ```
   results <- Blockbuster(simulated_elements, forecast.horizon = 10)
   ```
-  
-  Note that the Blockbuster automatically saves yearly states into files called
-  `blockbuster_output_element_*.rds` and `blockbuster_output_block_*.rds`within
-  an `output` sub-folder of the current working directory that the function will
-  create if it does not already exist.  The complete output is saved as 
-  `blockbuster_output_output.rds`.  This behaviour is customisable.  Saving of
-  outputs can be turned off with `save = FALSE` passed as an argument. Alternatively, the path and filename can be adjusted using the `filelabel` and `path` arguments.
+  Note that by default the Blockbuster Deterioration Model automatically saves yearly states into files called `blockbuster_output_element_*.rds` and `blockbuster_output_block_*.rds`within an `output` sub-folder of the current working directory that the function will create if it does not already exist.  The complete output is saved as `blockbuster_output_output.rds`.  This behaviour is customisable.  Saving of outputs can be turned off with `save = FALSE` passed as an argument. Alternatively, the path and filename can be adjusted using the `filelabel` and `path` arguments.  When using large datasets and forecasting over long periods it is recommended to always use `save = TRUE`, to avoid losing progress should R run out of memory to hold the complete output.
   
   The element level output is a copy of the input, but with updated grade probabilities and repair totals.  Note that the the cost of repairing an element at
   a given grade is given by the `*.repair.total` column.  The `*.repair.cost` column is the unit cost of repairing that component type.
+  
+  We recommend using the functions `pull_Element_Data`, `pull_Block_Data`, `load_Element_Data` and `load_Block_Data` to put the output of a Blockbuster Deterioration Model run into a friendlier format for
+  analysis.
   
   Passing numeric vectors to the `rebuild.money` and `repair.money` arguments allows control of the amount of money available for rebuilding and repairing each year respectively.
   

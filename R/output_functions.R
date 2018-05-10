@@ -120,7 +120,6 @@ pull_Element_Data <- function(blockbuster_output, type = ""){
 #' @describeIn pull_Element_Data Pulls out the block data from the output from a blockbuster function call
 #'
 #' @export
-#' @examples
 pull_Block_Data <- function(blockbuster_output){
 
   # initialize output

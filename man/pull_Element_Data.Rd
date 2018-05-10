@@ -20,14 +20,14 @@ load_Block_Data(forecast.horizon, path = "./output/",
 \arguments{
 \item{blockbuster_output}{The output from a \code{\link{Blockbuster}} call.}
 
+\item{type}{character. Selects whether the output contains tidy data about \code{"area"} or \code{"backlog"}.  If left as default, raw element data is output.}
+
 \item{forecast.horizon}{integer.  This specifies how many years of the saved
 output will be loaded.}
 
 \item{path}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
 
 \item{filelabel}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
-
-\item{character}{Selects whether the output contains tidy data about \code{"area"} or \code{"backlog"}.  If left as default, raw element data is output.}
 }
 \value{
 A data.frame containing the appropriate data from the output, with a year column.  If \code{type = "area"} then the data will contain the grade and component area in tidy format. If \code{type = "backlog"} then the data will contain the grade and backlog in tidy format.
