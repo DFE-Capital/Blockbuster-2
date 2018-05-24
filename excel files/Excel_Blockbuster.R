@@ -1,3 +1,12 @@
+library(Blockbuster2)
+library(readxl)
+
+print ("loading functions")
+args <- commandArgs(trailingOnly = TRUE)
+
+working_dir <- file.path(args[1])
+setwd(working_dir)
+
 load_forecast_horizon <- function(path = "./excel files/Excel input.xlsm"){
   read_excel(path, range = "Inputs!G1", col_names = "forecast_horizon") %>% pull()
 }
@@ -82,6 +91,7 @@ load_excel_inputs <- function(path = "./excel files/Excel input.xlsm"){
               save_path = save_path,
               file_label = file_label,
               data_path = data_path,
+              project_path = project_path,
               repair_budget = repair_budget,
               rebuild_budget = rebuild_budget,
               inflation = inflation,
@@ -104,7 +114,7 @@ create_inputs_from_excel <- function(path = "./excel files/Excel input.xlsm"){
     # compute block rebuild costs
     left_join(data$building %>% select(buildingid, gifa), by = "buildingid") %>%
     # update the repair totals
-    UpdateElementRepairs()
+    Blockbuster2:::UpdateElementRepairs()
 
   return(inputs)
 }
@@ -113,6 +123,7 @@ blockbuster_excel <- function(path){
 
   # pull inputs from excel
   inputs <- create_inputs_from_excel(path)
+  print(inputs)
 
   # run Blockbuster
   Blockbuster(element.data = inputs$element,
@@ -125,3 +136,10 @@ blockbuster_excel <- function(path){
               path = file.path(inputs$project_path, inputs$save_path),
               grade.order = inputs$grade_order)
 }
+
+print("running blockbuster")
+
+blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
+
+save(args, file = file.path(args[1], "test.rda"))
+
