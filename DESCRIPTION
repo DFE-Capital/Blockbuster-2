@@ -21,12 +21,14 @@ Description: This R package allows you to simulate the deterioration of school
     timestep.
 Depends:
     R (>= 3.3.1),
-    dplyr
+    dplyr,
+    xlsx
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-    readr
+    readr,
+    xlsx
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,
