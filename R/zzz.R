@@ -17,7 +17,7 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area",
 
   pkg <- find.package("Blockbuster2")
 
-  file <- file.path(pkg, "Excel input.xlsm")
+  file <- file.path(pkg, "excel files/Excel input.xlsm")
   wb <- loadWorkbook(file)
 
   # Create object rows that contain the cells from the second sheet (Inputs)
@@ -36,6 +36,6 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area",
   # save the workbook
   saveWorkbook(wb, file)
 
-  packageStartupMessage(paste0("The file 'Excel input.xlsm' can be found in the folder ", find.package("Blockbuster2"), ". To run the blockbuster model, copy this excel sheet to a project folder, amend the model parameters within the workbook as required, and run it using the button on the first worksheet."))
+  packageStartupMessage(paste0("The file 'Excel input.xlsm' can be found in the folder ", find.package("Blockbuster2"), "/excel files. To run the blockbuster model, copy this excel sheet to a project folder, amend the model parameters within the workbook as required, and run it using the button on the first worksheet."))
 
 }
