@@ -30,7 +30,7 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area",
   setCellValue(cell[[1]], R.home("bin"))
 
   #set package
-  cell <- getCells(rows[15, 7]) # create object containing the cell (row 15, col 7) that needs to contain the folder path
+  cell <- getCells(rows[15], 7) # create object containing the cell (row 15, col 7) that needs to contain the folder path
   setCellValue(cell[[1]], find.package("Blockbuster2"))
 
   # save the workbook
