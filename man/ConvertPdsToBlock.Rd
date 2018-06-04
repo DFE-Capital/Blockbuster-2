@@ -7,17 +7,25 @@
 ConvertPdsToBlock(pds, block.rebuild.cost)
 }
 \arguments{
-\item{pds}{blockbuster_det_data (or equivalent)}
+\item{pds}{A data frame containing the element-level data.}
 
-\item{block.rebuild.cost}{A number}
+\item{block.rebuild.cost}{The unit cost to rebuild 1 sq.m.}
 }
 \value{
 A block level wide format table for use with blockbuster v2
 }
 \description{
-Convert blockbuster_pds_data sample into block level wide format
+Provide a block-level summary of an element-level data frame.  Repair costs
+at each grade are summed and the cost-effectiveness ratio (repair/rebuild) is
+computed.
 }
 \details{
-block.rebuild.cost is used to compute the estimated cost of rebuilding
-each building as block.rebuild.cost x gifa (Gross Internal Floor Area).
+block.rebuild.cost is used to compute the estimated cost of
+rebuilding.  The formula used is block.rebuild.cost x gifa (Gross Internal
+Floor Area).
+}
+\examples{
+# Summarise the element-level PDS.data at block level with a £5,000 unit
+# rebuild cost.
+blockbuster2:::ConvertPdsToBlock(simulated_elements, 5000)
 }

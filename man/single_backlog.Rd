@@ -7,7 +7,7 @@
 single_backlog(block, grade)
 }
 \arguments{
-\item{block}{A \code{\link{block}} class object.}
+\item{block}{A data frame containing block-level data.}
 
 \item{grade}{Character.  Either \code{"B"}, \code{"C"}, \code{"D"}, or
 \code{"E"}. Anything else will return an error.}

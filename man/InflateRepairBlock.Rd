@@ -7,14 +7,19 @@
 InflateRepairBlock(block.data, inflation)
 }
 \arguments{
-\item{block.data}{A \code{\link{block}} class object.}
+\item{block.data}{A block-level data frame.}
 
-\item{inflation}{A number.}
+\item{inflation}{A number. An inflation rate of 4.5% should be entered as
+1.045.}
 }
 \value{
-A \code{\link{block}} class object with the block repair costs
-inflated by the appropriate amount.
+A block-level data frame with the block repair costs inflated by the
+appropriate amount.
 }
 \description{
-An inflation rate of 4.5% should be entered as 1.045.
+Apply inflation to the block repair costs in the block level data
+}
+\examples{
+# Apply 3\% inflation to block-level repair costs
+blockbuster2:::InflateRepairBlock(simulated_blocks, 1.03)
 }

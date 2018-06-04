@@ -7,14 +7,19 @@
 InflateRepairElement(element.data, inflation)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} class object.}
+\item{element.data}{An element-level data frame.}
 
-\item{inflation}{A number.}
+\item{inflation}{A number. An inflation rate of 4.5% should be entered as
+1.045.}
 }
 \value{
-An \code{\link{element}} class object with the repair costs and
-totals inflated by the appropriate amount.
+An element-level data frame with the repair costs and totals inflated
+by the appropriate amount.
 }
 \description{
-An inflation rate of 4.5% should be entered as 1.045.
+Apply inflation to the element repair costs in the element level data
+}
+\examples{
+# Apply 3\% inflation to the element-level repair costs and totals.
+blockbuster2:::InflateRepairElement(simulated_elements, 1.03)
 }

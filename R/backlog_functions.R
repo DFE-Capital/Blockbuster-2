@@ -1,6 +1,6 @@
 #' Pull the backlog column for a given grade from block data
 #'
-#' @param block A \code{\link{block}} class object.
+#' @param block A data frame containing block-level data.
 #' @param grade Character.  Either \code{"B"}, \code{"C"}, \code{"D"}, or
 #'  \code{"E"}. Anything else will return an error.
 #'
@@ -15,7 +15,7 @@ single_backlog <- function(block, grade){
 
 #' Sums the backlog in block data
 #'
-#' @param block A \code{\link{block}} class object.
+#' @param block A data frame containing block-level data.
 #' @param grade Character vector. Elements in the vector must be either
 #'  \code{"B"}, \code{"C"}, \code{"D"}, or \code{"E"}. Anything else will return
 #'   an error. Set as \code{c("B", "C", "D", "E")} by default.
@@ -25,14 +25,12 @@ single_backlog <- function(block, grade){
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Total grade B backlog
-#' backlog(block_data, "B")
+#' backlog(simulated_blocks, "B")
 #' # Total grade B and C backlog
-#' backlog(block_data, c("B", "C"))
+#' backlog(simulated_blocks, c("B", "C"))
 #' # All backlog
-#' backlog(block_data)
-#' }
+#' backlog(simulated_blocks)
 backlog <- function(block, grade = c("B", "C", "D", "E")){
   sum(sapply(unique(grade), single_backlog, block = block))
 }

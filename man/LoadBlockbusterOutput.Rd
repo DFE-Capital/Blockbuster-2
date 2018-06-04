@@ -10,41 +10,35 @@ LoadBlockbusterOutput(forecast.horizon, filelabel = "blockbuster_output",
 \arguments{
 \item{forecast.horizon}{The number of timesteps to collate.}
 
-\item{filelabel}{Character. Default is "blockbuster_output".}
+\item{filelabel}{Character. The file label on the output files. This
+corresponds to the \code{filelabel} argument passed to \code{Blockbuster}.
+Default is "blockbuster_output".}
 
-\item{path}{Character. Default is "./output/".}
+\item{path}{Character. The path to the folder containing the saved files.
+This corresponds to the \code{path} argument passed to \code{Blockbuster}.
+Default is "./output/".}
 }
 \value{
-A \code{\link{blockbuster}} object.
+A list of lists.  There is one list entry for each timestep, so
+the output will be of length \code{forecast.horizon + 1} as the first will
+contain the initial state.  Each list entry contains a block-level and
+element-level data frame named \code{block} and \code{element} respectively.
 }
 \description{
-Create a \code{\link{blockbuster}}, \code{\link{element.list}} or
-\code{\link{block.list}} object from the files saved during a call to
-\code{\link{Blockbuster}}.
+This function loads the blockbuster outputs into memory from the saved files
+produced during a call to \code{\link{Blockbuster}}.
 }
 \details{
-The files are expected to end in "_element_i" and "block_i", with i being the
-timestep plus one. If the data input to \code{\link{Blockbuster}} is large
-then R may run out of memory when creating the final output.  For this reason
-the state of the estate can be saved to disc and the final output
+The files are expected to end in "_element_i" and "block_i", with i
+being the timestep plus one. If the data input to \code{\link{Blockbuster}}
+is large then R may run out of memory when creating the final output.  For
+this reason the state of the estate can be saved to disc and the final output
 reconstructed at the end of the process, or outside of the
 \code{\link{Blockbuster}} call.
-
-If \code{type} is set to \code{"block"} or \code{"block.list"} then a
-\code{\link{block.list}} object will be created containing on the block-level
-summary.
-
-If \code{type} is set to \code{"element"} or \code{"element.list"} then an
-\code{\link{element.list}} object is created containing the element-level
-information.
-
-The default behavior is \code{type = "blockbuster"} which creates the
-\code{\link{blockbuster}} object containing the element and block level
-information for all timesteps.
-
-For large datasets, it is not unusual for \code{type = "block.list"} and
-\code{type = "blockbuster"} to fail due to lack of memory.  The functions
-\code{\link{LoadLongArea}} and \code{\link{LoadRepairBacklog}} will then be
-useful for constructing the required output summaries to pass to
-\code{ggplot2}.
+}
+\examples{
+\dontrun{
+# Load the first ten years of output from the default folder
+LoadBlockbusterOutput(10)
+}
 }

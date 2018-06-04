@@ -37,7 +37,7 @@ the component will drop from its current grade to the next worse within a year. 
 this wall has a 9.5% chance of dropping to grade D within a year if it is at grade C.
 
 ```{r out.width = "100%", echo = FALSE}
-knitr::include_graphics("images/wall with deterioration rates.png")
+knitr::include_graphics("images/wall_with_deterioration_rates.png")
 ```
 
 During simulation, the Blockbuster Deterioration Model does not store the current grade of all components, but instead it stores the **probability** that a component is at each grade. This is for computational reasons.  For more information on a variant model approach that instead stores **grades** rather than **probability of grades** see the section on the [Monte Carlo approach](#Montecarlo), but be aware that it is only suitable for simulating individual blocks.
@@ -45,7 +45,7 @@ During simulation, the Blockbuster Deterioration Model does not store the curren
 The following flowchart describes how each component is simulated.
 
 ```{r out.width = "100%", echo = FALSE}
-knitr::include_graphics("images/Flowchart for single element.png")
+knitr::include_graphics("images/Flowchart_for_single_element.png")
 ```
 
 Components are first deteriorated, then the Blockbuster Deterioration Model determines which buildings will be rebuilt.  It

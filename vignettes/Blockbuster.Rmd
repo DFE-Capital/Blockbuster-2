@@ -55,7 +55,7 @@ Check you have these packages installed and then load them into memory using
 `library()` or `require()`.
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
-library(Blockbuster2)
+library(blockbuster2)
 ```
 
 To run a 10 year simulation of the provided simulated dataset, with no rebuilding and £1bn of repair funds per year, the command is
@@ -84,7 +84,7 @@ vignette for extra detail (e.g. try typing `?Blockbuster` into the console).
 The first argument for the Blockbuster function is a data.frame containing the data for the elements that you wish to simulate. The package contains some simulated data in the correct format under the name `simulated_elements`.
 
 ```{r}
-data("simulated_elements", package = "Blockbuster2")
+data("simulated_elements", package = "blockbuster2")
 dplyr::glimpse(simulated_elements)
 ```
 
@@ -167,7 +167,7 @@ The element-level data.frames are structured in the same way as required for the
 The package also includes a block-level summary of the simulated data as `simulated_blocks`
 
 ```{r}
-data("simulated_blocks", package = "Blockbuster2")
+data("simulated_blocks", package = "blockbuster2")
 dplyr::glimpse(simulated_blocks)
 ```
 

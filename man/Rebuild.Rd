@@ -2,32 +2,31 @@
 % Please edit documentation in R/rebuild_functions.R
 \name{Rebuild}
 \alias{Rebuild}
-\title{Rebuild blocks by adjusting the element object}
+\title{Rebuild blocks by adjusting the block- and element-level data frames}
 \usage{
 Rebuild(element.data, block.data, rebuild.money)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} class object}
+\item{element.data}{An element-level data-frame.}
 
-\item{block.data}{A \code{\link{block}} class object}
+\item{block.data}{A block-level data-frame.}
 
 \item{rebuild.money}{A number}
 }
 \value{
-An \code{\link{element}} object with updated grade proportions for
+An element-level data frame with updated grade proportions for
 rebuilt blocks.  Note that repair costs are not updated, nor the
-\code{\link{block}} object holding block-level information so
+block-level data frame holding block-level information so
 \code{\link{UpdateElementRepairs}} and \code{\link{UpdateBlockRepairs}}
 should be run afterwards.
 }
 \description{
 This function simulates rebuilding by changing all component blocks to grade
-N in rebuild blocks.  The output is the element-level object of class
-\code{\link{element}} and the repair costs are not updated in this function.
-It is therefore important to run \code{\link{UpdateElementRepairs}} and
-\code{\link{UpdateBlockRepairs}} on the \code{\link{element}} and
-\code{\link{block}} objects respectively after calling this function, and in
-that order too.
+A in rebuilt blocks.  The output is an element-level data frame and only the
+grade probabilities are changed. The repair costs are not updated in this
+function. It is therefore important to run \code{\link{UpdateElementRepairs}}
+and \code{\link{UpdateBlockRepairs}} on the element- and block-level data
+frames respectively after calling this function, and in that order too.
 }
 \details{
 The decision about which blocks to rebuild is made based on a measure of
@@ -42,4 +41,13 @@ cost effectiveness.  If there is enough money then the first block is
 repaired, then the second, and so on, skipping blocks if there are not
 enough funds.  This continues until either there are no blocks left to
 rebuild or not enough money to rebuild any remaining blocks.
+}
+\examples{
+# Rebuild blocks with budget of £1M
+rebuilt_elements <- blockbuster2:::Rebuild(simulated_elements, simulated_blocks, 1e6)
+# IMPORTANT - This does not update the repair costs so you need to pass
+# the results to UpdateElementRepairs
+rebuilt_elements <- blockbuster2:::UpdateElementRepairs(rebuilt_elements)
+# Also update the block-level costs
+rebuild_blocks <- blockbuster2:::UpdateBlockRepairs(simulated_blocks, rebuilt_elements)
 }

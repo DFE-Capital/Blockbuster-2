@@ -7,16 +7,15 @@
 repairGrade(element.data, grade)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} object, with a repair_money attribute indicating the money allowed for repairs}
+\item{element.data}{An element-level data frame, with a \code{repair_money}
+attribute indicating the money allowed for repairs}
 
-\item{grade}{Either \code{"B"}, \code{"C"}, \code{"D"} or \code{"E"}.  The grade to
-repair}
-
-\item{budget}{Numeric. The amount of funds available for repair.}
+\item{grade}{Either \code{"B"}, \code{"C"}, \code{"D"} or \code{"E"}. The
+grade to repair.}
 }
 \value{
-The \code{\link{element}} object with repairs
-completed, and a numeric amount stating the remaining funds as an attribute.
+The element-level data frame with repairs completed, and a numeric
+amount stating the remaining funds as an attribute.
 }
 \description{
 This function is used by \code{\link{Repair}} to repair all components at a
@@ -25,4 +24,12 @@ particular grade.
 \details{
 Components are sorted by their proportion at the given grade.  They are then
 repaired in descending order until the money given by \code{budget} runs out.
+}
+\examples{
+elements <- simulated_elements
+# the input to repairGrade needs a value for the "repair_money" attribute.
+attr(elements, "repair_money") <- 10000
+
+blockbuster2:::repairGrade(elements, "A")
+blockbuster2:::repairGrade(elements, "C")
 }
