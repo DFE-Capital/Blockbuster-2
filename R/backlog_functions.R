@@ -5,6 +5,8 @@
 #'  \code{"E"}. Anything else will return an error.
 #'
 #' @return A vector of the repair costs for the appropriate grade.
+#' @examples
+#' blockbuster2:::single_backlog(simulated_blocks, "C")
 single_backlog <- function(block, grade){
   if(grade %in% c("B", "C", "D", "E")){
     return (eval(parse(text = paste(grade, ".block.repair.cost", sep = "")), block))

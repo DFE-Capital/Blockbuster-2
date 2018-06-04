@@ -1,5 +1,13 @@
-# version 1.0.1
 
+# version 1.0.2
+
+* updated package authors
+* Fixed tests that were broken by carriage returns in warnings that were added in 1.0.1 to keep within 80 character lines)
+* added travis and codecov badges to the README
+* all functions now have examples
+* readr added to dependencies (used to load outputs)
+
+# version 1.0.1
 
 * Changed package and repository name
 

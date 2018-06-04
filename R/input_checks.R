@@ -66,17 +66,14 @@ input_checks <- function(element.data = NULL,
     stop ("The rebuild.money argument must be numeric.")
   }
   if(length(rebuild.money) == 1 & forecast.horizon != 1){
-    warning("You have only provided a single value for rebuild.money. It will be
-            used as the available funds for each forecast timestep.")
+    warning("You have only provided a single value for rebuild.money. It will be used as the available funds for each forecast timestep.")
     rebuild.money <- rep(rebuild.money, forecast.horizon)
   }
   if(length(rebuild.money) < forecast.horizon){
-    stop("The length of the vector passed to rebuild.money must match the number
-         passed to forecast.horizon.")
+    stop("The length of the vector passed to rebuild.money must match the number passed to forecast.horizon.")
   }
   if(length(rebuild.money) > forecast.horizon) {
-    warning("You have provided rebuild money for years outside the forecast
-            horizon.  The extra values will be ignored.")
+    warning("You have provided rebuild money for years outside the forecast horizon.  The extra values will be ignored.")
   }
   if(any(rebuild.money < 0)){
     stop("You have supplied negative values for the rebuild budget.")
@@ -89,17 +86,14 @@ input_checks <- function(element.data = NULL,
     stop ("The repair.money argument must be numeric.")
   }
   if(length(repair.money) == 1 & forecast.horizon != 1){
-    warning("You have only provided a single value for repair.money. It will be
-            used as the available funds for each forecast timestep.")
+    warning("You have only provided a single value for repair.money. It will be used as the available funds for each forecast timestep.")
     repair.money <- rep(repair.money, forecast.horizon)
   }
   if(length(repair.money) < forecast.horizon){
-    stop("The length of the vector passed to repair.money must match the number
-         passed to forecast.horizon.")
+    stop("The length of the vector passed to repair.money must match the number passed to forecast.horizon.")
   }
   if(length(repair.money) > forecast.horizon) {
-    warning("You have provided repair money for years outside the forecast
-            horizon.  The extra values will be ignored.")
+    warning("You have provided repair money for years outside the forecast horizon.  The extra values will be ignored.")
   }
   if(any(repair.money < 0)){
     stop("You have supplied negative values for the repair budget.")
@@ -117,27 +111,22 @@ input_checks <- function(element.data = NULL,
     warning("Only the first value entered for block.rebuild.cost will be used.")
   }
   if(!is.numeric(inflation)) {
-    stop("The inflation argument should be a single number or a vector with a
-         value for each timestep.")
+    stop("The inflation argument should be a single number or a vector with a value for each timestep.")
   }
   if(length(inflation) == 1 & forecast.horizon != 1){
     inflation <- rep(inflation, forecast.horizon)
     message("Inflation will be applied as a constant rate each timestep")
   }
   if(length(inflation) < forecast.horizon){
-    stop("The inflation argument should be a single number or a vector with a
-         value for each timestep.")
+    stop("The inflation argument should be a single number or a vector with a value for each timestep.")
   }
   if(length(inflation) > forecast.horizon) {
-    warning("You have provided inflation rates for years outside the forecast
-            horizon.  The extra values will be ignored.")
+    warning("You have provided inflation rates for years outside the forecast horizon.  The extra values will be ignored.")
   }
 
   if(any(inflation <= 0)) stop("All inflation values should be positive")
   if(any(inflation > 2)){
-    message("For at least one year, inflation is set above 200%. Are you sure
-            this is right.  A value of 1 represents 100% inflation, i.e. no
-            change.")
+    message("For at least one year, inflation is set above 200%. Are you sure this is right.  A value of 1 represents 100% inflation, i.e. no change.")
   }
 
   return(list(element.data = element.data,

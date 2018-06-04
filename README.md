@@ -1,6 +1,9 @@
+[![Build Status](https://travis-ci.org/DFE-Capital/blockbuster2.svg?branch=master)](https://travis-ci.org/DFE-Capital/blockbuster2)
+[![codecov](https://codecov.io/gh/DFE-Capital/blockbuster2/branch/master/graph/badge.svg)](https://codecov.io/gh/DFE-Capital/blockbuster2)
+
  This package represents the most current version of the Blockbuster Deterioration model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
 
-  # blockbuster2 - The Blockbuster Deterioration Model
+# blockbuster2 - The Blockbuster Deterioration Model
 
 *This is a prototype package being developed in anticipation of analysing the [Condition Data Collection](https://www.gov.uk/guidance/condition-data-collection-programme-information-and-guidance) and is subject to constant development*
 
