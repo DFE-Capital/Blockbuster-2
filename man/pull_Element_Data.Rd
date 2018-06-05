@@ -20,46 +20,69 @@ load_Block_Data(forecast.horizon, path = "./output/",
 \arguments{
 \item{blockbuster_output}{The output from a \code{\link{Blockbuster}} call.}
 
-\item{type}{character. Selects whether the output contains tidy data about \code{"area"} or \code{"backlog"}.  If left as default, raw element data is output.}
+\item{type}{character. Selects whether the output contains tidy data about
+\code{"area"} or \code{"backlog"}.  If left as default, raw element data
+ is output.}
 
 \item{forecast.horizon}{integer.  This specifies how many years of the saved
 output will be loaded.}
 
-\item{path}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
+\item{path}{character. This should be the same as the argument passed to the
+\code{\link{Blockbuster}} function.}
 
-\item{filelabel}{character. This should be the same as the argument passed to the \code{\link{Blockbuster}} function.}
+\item{filelabel}{character. This should be the same as the argument passed to
+the \code{\link{Blockbuster}} function.}
 }
 \value{
-A data.frame containing the appropriate data from the output, with a year column.  If \code{type = "area"} then the data will contain the grade and component area in tidy format. If \code{type = "backlog"} then the data will contain the grade and backlog in tidy format.
+A data.frame containing the appropriate data from the output, with a
+ year column.  If \code{type = "area"} then the output will contain the grade
+ and component area in tidy format. If \code{type = "backlog"} then the
+ output will contain the grade and backlog in tidy format.
 }
 \description{
-A set of convenience functions for managing the raw output of a \code{\link{Blockbuster}} function call.
+A set of convenience functions for managing the raw output of a
+\code{\link{Blockbuster}} function call.
 }
 \details{
-The functions \code{pull_Block_data} and \code{pull_Element_data} combine the appropriate data into a single dataframe with a column for year.
+The functions \code{pull_Block_data} and \code{pull_Element_data} take the
+output from a \code{\link{Blockbuster}} call and combine the appropriate data
+into a single dataframe with a column for year.
 
-For large datasets (for example, the PDS dataset), R can hit memory limits when the \code{\link{Blockbuster}} function tries to construct the single output object from the saved interim files. \code{load_Block_Data} and \code{load_Element_Data} loads the relevant outputs from the saved files.
+For large datasets (for example, the PDS dataset), R can hit memory limits
+when the \code{\link{Blockbuster}} function tries to construct the single
+output object from the saved interim files. \code{load_Block_Data} and
+\code{load_Element_Data} loads only the relevant outputs from the saved
+files.
+
+These functions can also provide area and backlog summaries in tidy format
+suitable for passing to \code{ggplot2}.
 }
 \section{Functions}{
 \itemize{
-\item \code{pull_Element_Data}: Pulls out the element level data from the output of a blockbuster function call
+\item \code{pull_Element_Data}: Pulls out the element level data from the
+output of a blockbuster function call
 
-\item \code{pull_Block_Data}: Pulls out the block data from the output from a blockbuster function call
+\item \code{pull_Block_Data}: Pulls out block data from the output from a
+blockbuster function call
 
-\item \code{load_Element_Data}: Loads the element-level output from a blockbuster call
+\item \code{load_Element_Data}: Loads the element-level output from a
+blockbuster call
 
-\item \code{load_Block_Data}: Loads the element-level output from a blockbuster call
+\item \code{load_Block_Data}: Loads the element-level output from a
+blockbuster call
 }}
 
 \examples{
 \dontrun{
-output <- Blockbuster(simulated_elements, forecast_horizon = 10)
+# Collate the first ten years of output from an object output by
+# Blockbuster
+output <- Blockbuster(simulated_elements, forecast.horizon = 15)
 pull_Block_Data(output, 10)
 pull_Element_Data(output, 10)
 }
 # loading outputs from saved files
 \dontrun{
-Blockbuster(simulated elements, path = "output", filelabel = "example")
+Blockbuster(simulated_elements, path = "output", filelabel = "example")
 load_Element_data(1, path = "output", filelabel = "example")
 load_Block_data(1, path = "output", filelabel = "example")
 }

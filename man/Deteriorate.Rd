@@ -2,24 +2,26 @@
 % Please edit documentation in R/deteriorate_function.R
 \name{Deteriorate}
 \alias{Deteriorate}
-\title{Deteriorate all the elements in an \code{\link{element}} class blockbuster
-object.}
+\title{Deteriorate all the elements in an element-level data frame.}
 \usage{
 Deteriorate(element.data)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} object.}
+\item{element.data}{An element-level data frame.}
 }
 \value{
-An \code{\link{element}} object.
+An element-level data frame.
 }
 \description{
-Takes an \code{\link{element}} class object and amends the grade
-proportions for each row according to the deterioration rate in each row.
-This function is used by the \code{\link{Blockbuster}} function to
-compute the deterioration at each timestep.
+Takes an element-level data frame and amends the grade proportions for each
+row according to the deterioration rate in each row. This function is used by
+the \code{\link{Blockbuster}} function to compute the deterioration at each
+timestep.
 }
 \details{
 The deterioration rates are based on lifetime estimates from EC Harris and
 other expert opinion.
+}
+\examples{
+blockbuster2:::Deteriorate(simulated_elements)
 }

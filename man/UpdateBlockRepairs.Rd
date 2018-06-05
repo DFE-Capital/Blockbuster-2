@@ -2,25 +2,28 @@
 % Please edit documentation in R/update_costs_functions.R
 \name{UpdateBlockRepairs}
 \alias{UpdateBlockRepairs}
-\title{Updates the repair costs of each grade in a block object}
+\title{Updates the repair costs of each grade in a block-level data frame}
 \usage{
 UpdateBlockRepairs(block.data, element.data)
 }
 \arguments{
-\item{block.data}{A \code{\link{block}} object.}
+\item{block.data}{A block-level data frame.}
 
-\item{element.data}{The \code{\link{element}} object containing the component
+\item{element.data}{The element_level data frame containing the component
 information of the blocks.}
 }
 \value{
-A \code{\link{block}} object with updated repair costs and
+A block-level data frame with updated repair costs and
 repair/rebuild ratio
 }
 \description{
 Computes the total repair costs at each grade for all blocks by summing the
-totals from the related \code{\link{element}} object.  It is good practise to
-run \code{\link{UpdateElementRepairs}} on the \code{\link{element}} first to
-avoid incorrect repair totals.  When computing the repair/rebuild ratio used
-to determine which blocks are rebuilt first, B grade repair costs are ignored
-so as to prioritise poor condition blocks.
+totals from the related element-level data frame.  It is good practise to
+run \code{\link{UpdateElementRepairs}} on the element-level data frame first
+to avoid incorrect repair totals.  When computing the repair/rebuild ratio
+used to determine which blocks are rebuilt first, B grade repair costs are
+ignored so as to prioritise poor condition blocks.
+}
+\examples{
+blockbuster2:::UpdateBlockRepairs(simulated_blocks, simulated_elements)
 }

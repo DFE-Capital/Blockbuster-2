@@ -5,14 +5,13 @@
 #' building components. It is composed of many smaller functions that
 #' deteriorate, rebuild and repair the components.
 
-#' Outputs a list of block and element objects detailing the condition of the
-#' modelled blocks and components at each timestep.  Information is stored as
-#' \code{\link{block}} and \code{\link{element}} objects. The states at each
-#' timestep and the final output are saved as files specified by the
-#' \code{filelabel} and \code{path} parameters.  The saving of outputs to disc is
-#' mandatory.  It saves memory space for large samples and simulations and the
-#' final output is collated from the individual files rather than being stored
-#' in memory.
+#' Outputs a list of data frames detailing the condition of the modelled blocks
+#' and components at each timestep.  Information is stored at block and element
+#' level. The states at each timestep and the final output are saved as files
+#' specified by the \code{filelabel} and \code{path} parameters.  The saving of
+#' outputs to disc is mandatory.  It saves memory space for large samples and
+#' simulations and the final output is collated from the individual files rather
+#' than being stored in memory.
 #'
 #' At each timestep the components are degraded at the appropriate rates.
 #' Inflation (set by the user using the \code{inflation} parameter) is then
@@ -29,11 +28,10 @@
 #' be passed to the function using the \code{block.repair.costs} parameter after
 #' manually editing the block_det_data object created by the library.
 #'
-#' Repair costs per unit area for each component are pulled from the
-#' \code{link{blockbuster_pds_repair_costs}} data table created by the
-#' blockbuster package.  Repair costs can be manually passed to the blockbuster
-#' function using the \code{block.repair.costs} argument, respecting the format
-#' of the default parameter.
+#' Repair costs per unit area for each component are pulled from a data table
+#' internal to the package.  Repair costs can be manually passed to the
+#' blockbuster function using the \code{block.repair.costs} argument, respecting
+#' the format of the default parameter.
 #'
 #' Rebuild costs per unit area are user-input as parameter
 #' \code{block.rebuild.cost} and individiual block rebuild costs generated from
@@ -42,50 +40,51 @@
 #' The \code{rebuild.money} and \code{repair.money} arguments provide the
 #' budgets for rebuilding and repairing during each timestep respectively.
 #'
-#' @param element.data An \code{\link{element}} object containing the initial
-#' state of the block components.
-#' @param block.data (optional) A \code{\link{block}} object containing the
-#' initial state of the blocks. If not supplied, this will be created from the
-#' element.data.
+#' @param element.data A data frame containing the element-level initial state.
+#' @param block.data (optional) A data frame containing the block-level initial
+#' state. If not supplied, this will be created from the element.data.
 #' @param forecast.horizon A number. How many timesteps are to be simulated.
 #' Default value is 1.
 #' @param rebuild.money A vector of numbers indicating the available money to
 #' spend on rebuilding blocks each timestep. Default value is zero.
 #' @param repair.money A vector of numbers indicating the available money to
 #' spend on repairing components each timestep. Default value is zero
-#' @param block.rebuild.cost (optional) The unit cost (per m^2^) of rebuilding blocks.
-#' Default value is 2000. This is required if the \code{block.data} argument is not
-#' supplied.
+#' @param block.rebuild.cost (optional) The unit cost (per m^2^) of rebuilding
+#' blocks. Default value is 2000. This is required if the \code{block.data}
+#' argument is not supplied.
 #' @param inflation A vector of numbers indicating the inflation rate to apply
 #' to repair and rebuild costs each timestep.  If a vector of length one is
 #' supplied it will be used as the inflation rate for all timesteps. Default
 #' is 1, i.e. no inflation.
-#' @param block.det.data (optional) An object of the same form as
-#' \code{block_det_data} that is used to provide deterioration rates.
-#' @param block.repair.costs (optional) an object of the same form as
-#' \code{\link{blockbuster_pds_repair_costs}} that is used to provide repair
-#' costs.
 #' @param save (optional) Logical. If \code{TRUE} (the default behaviour), then
 #' the block and element states are saved to disc at each timestep.
-#' @param filelabel (optional) Character. The start of the file names used to save
-#' the interim outputs. Default is "blockbuster_output".
+#' @param filelabel (optional) Character. The start of the file names used to
+#' save the interim outputs. Default is \code{blockbuster_output}.
 #' @param path (optional) Character. The path to the folder which stores the
 #' outputs. If the folder this points to does not exist then the simulation will
-#' fail. Default is "./output/".
+#' fail. Default is \code{./output/}.
 #' @param grade.order (Optional) A list of the three character strings \code{"D"},
 #'  \code{"C"} and \code{"B"} in any order.  This determines the priority for
 #'  repairs.  The first character gives the first grade that will be repaired.
 #'  By default, D is repaired first, then C, then B.
 #'
-#' @return A list.  Each list entry contains the \code{\link{block}} and
-#' \code{\link{element}} objects that store the condition of the blocks and
+#' @return A list.  Each list entry contains the block-level and
+#' element-level objects that store the condition of the blocks and
 #' components at each timestep, with the initial conditions stored in the first
 #' list entry.
 #'
 #' @export
 #'
 #' @examples
-#' # TODO
+#' \dontrun{
+#' # Run the Blockbuster Deterioration Model over 10 years, with no funds for
+#' # rebuilding or repairing.
+#' Blockbuster(simulated_elements, forecast.horizon = 10)
+#'
+#' # Run the Blockbuster Deterioration Model over 10 years, with £1M for
+#' # repairing each year.
+#' Blockbuster(simulated_elements, forecast.horizon = 10, repair.money = 1e6)
+#' }
 Blockbuster <- function(element.data, block.data = NULL,
                         forecast.horizon = 1,
                         rebuild.money = 0,

@@ -7,7 +7,7 @@
 single_backlog(block, grade)
 }
 \arguments{
-\item{block}{A \code{\link{block}} class object.}
+\item{block}{A data frame containing block-level data.}
 
 \item{grade}{Character.  Either \code{"B"}, \code{"C"}, \code{"D"}, or
 \code{"E"}. Anything else will return an error.}
@@ -17,4 +17,7 @@ A vector of the repair costs for the appropriate grade.
 }
 \description{
 Pull the backlog column for a given grade from block data
+}
+\examples{
+blockbuster2:::single_backlog(simulated_blocks, "C")
 }

@@ -7,16 +7,21 @@
 RebuildBlock(element.data, buildingids)
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} class object.}
+\item{element.data}{An element-level data frame.}
 
 \item{buildingids}{A numeric vector identifying the \code{buildingid} keys of
 the blocks to rebuild.}
 }
 \value{
-An \code{\link{element}} class object with updated grades.
+An element-level data frame with updated grades.
 }
 \description{
 This is a helper function used by \code{\link{Rebuild}}.  It sets grade A to
 1 for all blocks identified in the vector \code{buildingids} and sets all
-grades to 0 while not changing the grades of blocks not in \code{buildingids}.
+grades to 0 while not changing the grades of blocks not in
+\code{buildingids}.
+}
+\examples{
+# Rebuild the block with buildingid 11
+blockbuster2:::RebuildBlock(simulated_elements, 11)
 }

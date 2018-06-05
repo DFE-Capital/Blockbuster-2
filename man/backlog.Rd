@@ -7,7 +7,7 @@
 backlog(block, grade = c("B", "C", "D", "E"))
 }
 \arguments{
-\item{block}{A \code{\link{block}} class object.}
+\item{block}{A data frame containing block-level data.}
 
 \item{grade}{Character vector. Elements in the vector must be either
 \code{"B"}, \code{"C"}, \code{"D"}, or \code{"E"}. Anything else will return
@@ -21,12 +21,10 @@ Numeric. The sum of the repair costs for all grades specified in
 Sums the backlog in block data
 }
 \examples{
-\dontrun{
 # Total grade B backlog
-backlog(block_data, "B")
+backlog(simulated_blocks, "B")
 # Total grade B and C backlog
-backlog(block_data, c("B", "C"))
+backlog(simulated_blocks, c("B", "C"))
 # All backlog
-backlog(block_data)
-}
+backlog(simulated_blocks)
 }

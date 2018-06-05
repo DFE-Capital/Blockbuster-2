@@ -11,3 +11,4 @@
 ^\\data$
 ^\.travis\.yml$
 ^\\documentation$
+^\\data_ext$

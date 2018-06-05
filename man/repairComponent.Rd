@@ -9,13 +9,20 @@ repairComponent(element.data, rows, grade)
 \arguments{
 \item{element.data}{data.frame. The component level data.}
 
-\item{grade}{character. One of \code{"B"}, \code{"C"}, \code{"D"}, \code{"E"}.}
+\item{rows}{numeric.  A vector of row indices to update}
 
-\item{row}{numeric.  A vector of row indices to update}
+\item{grade}{character. One of \code{"B"}, \code{"C"}, \code{"D"},
+\code{"E"}.}
 }
 \value{
-The updated element.data
+The updated element.data.  The new probability of being at grade A is
+the old probability plus the probability of being at the repaired grade.  The
+probability of being at the repaired grade is set to zero.
 }
 \description{
 Repairs the component in the given rows at the given grade
+}
+\examples{
+# repair all B grade components in the first five rows
+blockbuster2:::repairComponent(simulated_elements, 1:5, "B")
 }

@@ -33,3 +33,10 @@ keys are selected, otherwise, the argument is split in half again and checked,
 and so on.  Afterwards, the second half is checked if there are still monies
 to spend.
 }
+\examples{
+# Ten buildings have rebuild costs between one to ten. Spend 12 to rebuild
+# the first four
+blockbuster2:::RecursiveBudgeting(1:10, 1:10, 12)
+# If the costs are reversed, the decision changes as the vector is ordered
+blockbuster2:::RecursiveBudgeting(10:1, 1:10, 12)
+}

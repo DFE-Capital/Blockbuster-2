@@ -2,7 +2,7 @@
   packageStartupMessage(paste0("Welcome to the Blockbuster deterioration model developed by Mat Gregory and Peter Curtis. The file 'Excel input.xlsm' can be found in the folder ", find.package("blockbuster2"), "/excel files. To run the blockbuster model, copy this excel sheet to a project folder, amend the model parameters within the workbook as required, and run it using the button on the first worksheet."))
 }
 
-globalVariables(c("elementid", "buildingid", "grade", "unit_area",
+globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
                   "blockbuster_pds_repair_costs", "blockbuster_det_data",
                   "unit_area", ".", "gifa", "B.repair.total", "C.repair.total",
                   "D.repair.total", "E.repair.total", "B.block.repair.cost",

@@ -1,10 +1,12 @@
-Package: Blockbuster2
+Package: blockbuster2
 Type: Package
 Title: Deterioration Model of the School Estate
-Version: 1.0.0
+Version: 1.0.2
 Authors@R: c(
     person("Matthew", "Gregory", email = "matthew.gregory@teachfirst.org.uk",
-    role = "aut"),
+    role = c("aut", "rev"), comment = "Dr. Matthew Gregory coded the first
+    version of the Blockbuster Deterioration Model and has reviewed this new 
+    version, see <https://github.com/DFE-Capital/blockbuster2/issues/8>"),
     person("Matthew", "Upson", email = "matthew.upson@digital.cabinet-office.gov.uk",
     role = "ctb"), 
     person("Peter", "Curtis", email = "peter.curtis@education.gov.uk",
@@ -22,18 +24,22 @@ Description: This R package allows you to simulate the deterioration of school
 Depends:
     R (>= 3.3.1),
     dplyr,
-    tidyr
+    tidyr,
     xlsx
 License: GPL-3
+Imports:
+    readr
 Encoding: UTF-8
 LazyData: true
+<<<<<<< HEAD
 Imports:
+=======
+>>>>>>> master
     readr
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,
     data.table,
     ggplot2,
-    tidyr,
     testthat
 VignetteBuilder: knitr

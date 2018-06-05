@@ -1,6 +1,9 @@
- This package represents the most current version of the Blockbuster model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
+[![Build Status](https://travis-ci.org/DFE-Capital/blockbuster2.svg?branch=master)](https://travis-ci.org/DFE-Capital/blockbuster2)
+[![codecov](https://codecov.io/gh/DFE-Capital/blockbuster2/branch/master/graph/badge.svg)](https://codecov.io/gh/DFE-Capital/blockbuster2)
 
-  # Blockbuster2
+ This package represents the most current version of the Blockbuster Deterioration model. Code optimisation resulted in a completely rewritten code base so it is appropriate to initiate a new github page here. The original version can be found at: (https://github.com/DFE-Capital/Blockbuster)
+
+# blockbuster2 - The Blockbuster Deterioration Model
 
 *This is a prototype package being developed in anticipation of analysing the [Condition Data Collection](https://www.gov.uk/guidance/condition-data-collection-programme-information-and-guidance) and is subject to constant development*
 
@@ -37,7 +40,7 @@ Inflation                 A vector containing the inflation to be applied to all
 
   ## Installing the package
 
-  The package can be installed with the `devtools` package with `devtools::install_github('DFE-Capital/Blockbuster-2')`.
+  The package can be installed with the `devtools` package with `devtools::install_github('DFE-Capital/blockbuster2')`.
 
   If you cannot use this function (due to firewalls for instance) you can download the package as a `.zip` file from the main repository page, and run `devtools::install_local('path_to_zip_file')`. You may need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) to facilitate this.
 
@@ -81,6 +84,6 @@ Inflation                 A vector containing the inflation to be applied to all
 
 ## Improvements
 
-* If you find any bugs raise an issue on the [Github package page](https://github.com/DFE-Capital/Blockbuster-2).
+* If you find any bugs raise an issue on the [Github package page](https://github.com/DFE-Capital/blockbuster2).
 * Any suggestions or improvments to the decision making process within the model would also be welcome.
 * Package development is iterative and dependent on user feedback.

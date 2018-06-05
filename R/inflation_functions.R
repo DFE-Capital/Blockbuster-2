@@ -1,21 +1,23 @@
 
 #' Apply inflation to the block rebuild costs in the block level data
 #'
-#' An inflation rate of 4.5% should be entered as 1.045.
+#' @param block.data A block-level data frame.
+#' @param inflation A number. An inflation rate of 4.5% should be entered as
+#' 1.045.
 #'
-#' @param block.data A \code{\link{block}} class object.
-#' @param inflation A number.
-#'
-#' @return A \code{\link{block}} class object with the block rebuild costs
-#' inflated by the appropriate amount.
+#' @return A block-level data frame with the block rebuild costs inflated by the
+#' appropriate amount.
+#' @examples
+#' # Apply 3% inflation to rebuild costs in block-level data
+#' blockbuster2:::InflateRebuild(simulated_blocks, 1.03)
 InflateRebuild <- function(block.data, inflation){
 
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
-  if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
-                                                    lie in a small interval around 1.
-                                                    You have entered ", inflation,
-                                                    ". Are you sure this is correct?",
-                                                    sep=""))
+  if(inflation > 2 | inflation < 0.5) {
+    warning(
+      paste("Inflation is usually expected to lie in a small interval around 1.
+            You have entered ", inflation, ". Are you sure this is correct?",
+            sep=""))}
 
   # new rebuild cost is the old rebuild cost multiplied by inflation
   block.data %>%
@@ -24,22 +26,23 @@ InflateRebuild <- function(block.data, inflation){
 
 #' Apply inflation to the block repair costs in the block level data
 #'
-#' An inflation rate of 4.5% should be entered as 1.045.
+#' @param block.data A block-level data frame.
+#' @param inflation A number. An inflation rate of 4.5% should be entered as
+#' 1.045.
 #'
-#' @param block.data A \code{\link{block}} class object.
-#' @param inflation A number.
-#'
-#' @return A \code{\link{block}} class object with the block repair costs
-#' inflated by the appropriate amount.
+#' @return A block-level data frame with the block repair costs inflated by the
+#' appropriate amount.
+#' @examples
+#' # Apply 3% inflation to block-level repair costs
+#' blockbuster2:::InflateRepairBlock(simulated_blocks, 1.03)
 InflateRepairBlock <- function(block.data, inflation){
 
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
-  if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
-                                                    lie in a small interval around 1.
-                                                    You have entered ", inflation,
-                                                    ". Are you sure this is correct?",
-                                                    sep=""))
-
+  if(inflation > 2 | inflation < 0.5) {
+    warning(
+      paste("Inflation is usually expected to   lie in a small interval around
+            1. You have entered ", inflation, ". Are you sure this is correct?",
+            sep=""))}
 
   # Inflate all repair costs
   block.data %>%
@@ -51,21 +54,23 @@ InflateRepairBlock <- function(block.data, inflation){
 
 #' Apply inflation to the element repair costs in the element level data
 #'
-#' An inflation rate of 4.5% should be entered as 1.045.
+#' @param element.data An element-level data frame.
+#' @param inflation A number. An inflation rate of 4.5% should be entered as
+#' 1.045.
 #'
-#' @param element.data An \code{\link{element}} class object.
-#' @param inflation A number.
-#'
-#' @return An \code{\link{element}} class object with the repair costs and
-#' totals inflated by the appropriate amount.
+#' @return An element-level data frame with the repair costs and totals inflated
+#' by the appropriate amount.
+#' @examples
+#' # Apply 3% inflation to the element-level repair costs and totals.
+#' blockbuster2:::InflateRepairElement(simulated_elements, 1.03)
 InflateRepairElement <- function(element.data, inflation){
 
   if (!is.numeric(inflation)) stop("Inflation must be a number.")
-  if(inflation > 2 | inflation < 0.5) warning(paste("Inflation is usually expected to
-                                                    lie in a small interval around 1.
-                                                    You have entered ", inflation,
-                                                    ". Are you sure this is correct?",
-                                                    sep=""))
+  if(inflation > 2 | inflation < 0.5){
+    warning(
+      paste("Inflation is usually expected to lie in a small interval around 1.
+            You have entered ", inflation, ". Are you sure this is correct?",
+            sep=""))}
 
   # Inflate the repair costs and totals.
   element.data %>%

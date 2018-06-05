@@ -7,7 +7,7 @@
 Repair(element.data, repair.money, grade.order = c("E", "D", "C", "B"))
 }
 \arguments{
-\item{element.data}{An \code{\link{element}} class object.}
+\item{element.data}{An element-level data frame.}
 
 \item{repair.money}{A number.}
 
@@ -17,7 +17,7 @@ priority for repairs.  The first character gives the first grade that will
 be repaired. By default, E is repaired first, then D, then C, then B.}
 }
 \value{
-An \code{\link{element}} class object with the grade proportions
+An element-level data frame with the grade proportions
 amended accordingly.
 }
 \description{
@@ -29,11 +29,20 @@ The repairing gives priority to repairing those components with the highest
 expected cost at grade E, then grade D, then grade C, then grade B, although
 this order can be adjusted using the arguement \code{grade_order}. It calls
 the same \code{\link{RecursiveBudgeting}} recursive algorithm used by
-\code{\link{Rebuild()}}function to efficiently identify the most at risk
+\code{\link{Rebuild}} to efficiently identify the most at risk
 components within budget.
 
 This function does NOT update the repair costs, only the grade proportions.
 Therefore \code{\link{UpdateElementRepairs}} and
 \code{\link{UpdateBlockRepairs}} should be called on the element- and block-
 level objects afterwards to ensure the repair costs and totals are correct.
+}
+\examples{
+# Repair elements with a budget of £100,000
+repaired_elements <- blockbuster2:::Repair(simulated_elements, 100000)
+# IMPORTANT - This does not update repair costs
+blockbuster2:::UpdateElementRepairs(repaired_elements)
+# UpdateBlockRepairs uses the updated element-level data to update the block-
+# level data frame so it should also be run.
+blockbuster2:::UpdateBlockRepairs(simulated_blocks, repaired_elements)
 }
