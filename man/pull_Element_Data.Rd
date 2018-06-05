@@ -75,7 +75,7 @@ blockbuster call
 \examples{
 \dontrun{
 # Collate the first ten years of output from an object output by
-# Blockbuster()
+# Blockbuster
 output <- Blockbuster(simulated_elements, forecast.horizon = 15)
 pull_Block_Data(output, 10)
 pull_Element_Data(output, 10)

@@ -18,3 +18,6 @@ A vector of the repair costs for the appropriate grade.
 \description{
 Pull the backlog column for a given grade from block data
 }
+\examples{
+blockbuster2:::single_backlog(simulated_blocks, "C")
+}
