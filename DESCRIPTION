@@ -22,13 +22,13 @@ Description: This R package allows you to simulate the deterioration of school
 Depends:
     R (>= 3.3.1),
     dplyr,
+    tidyr
     xlsx
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-    readr,
-    xlsx
+    readr
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,

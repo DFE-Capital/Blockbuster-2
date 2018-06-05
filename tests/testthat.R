@@ -1,6 +1,6 @@
 ## load dependencies
 library(testthat)
-library(Blockbuster2)
+library(blockbuster2)
 
 ## test package
-test_check('Blockbuster2')
+test_check('blockbuster2')

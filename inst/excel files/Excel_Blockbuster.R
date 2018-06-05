@@ -1,4 +1,4 @@
-library(Blockbuster2)
+library(blockbuster2)
 library(readxl)
 
 print ("loading functions")
@@ -114,7 +114,7 @@ create_inputs_from_excel <- function(path = "./excel files/Excel input.xlsm"){
     # compute block rebuild costs
     left_join(data$building %>% select(buildingid, gifa), by = "buildingid") %>%
     # update the repair totals
-    Blockbuster2:::UpdateElementRepairs()
+    blockbuster2:::UpdateElementRepairs()
 
   return(inputs)
 }

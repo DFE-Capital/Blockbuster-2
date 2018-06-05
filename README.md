@@ -47,7 +47,7 @@ Inflation                 A vector containing the inflation to be applied to all
 
   Launch an R session as normal and run the following (again setting the arguments as required):
 
-  `library(Blockbuster2)`
+  `library(blockbuster2)`
   
   The beauty of package development is that the business knowledge is enshrined in the package, with the code and documentation in one place. To familiarise yourself after install you can work through the blockbuster vignette which will provide typical uses. The blockbuster-methodology vignette provides in depth detail about how the model works.
 

@@ -20,11 +20,11 @@ setCellValue(cell[[1]], R.home("bin"))
 
 #set package
 cell <- getCells(rows[15, 7]) # create object containing the cell (row 15, col 7) that needs to contain the folder path
-setCellValue(cell[[1]], find.package("Blockbuster2"))
+setCellValue(cell[[1]], find.package("blockbuster2"))
 
 # save the workbook
 saveWorkbook(wb, file)
 
-print(paste0("The file 'Excel input.xlsm' can be found in the folder ", find.package("Blockbuster2"), ". To run the blockbuster model, copy this excel sheet to a project folder, amend the model parameters within the workbook as required, and run it using the button on the first worksheet."))
+print(paste0("The file 'Excel input.xlsm' can be found in the folder ", find.package("blockbuster2"), ". To run the blockbuster model, copy this excel sheet to a project folder, amend the model parameters within the workbook as required, and run it using the button on the first worksheet."))
 
 

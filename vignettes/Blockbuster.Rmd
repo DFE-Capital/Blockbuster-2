@@ -55,7 +55,7 @@ Check you have these packages installed and then load them into memory using
 `library()` or `require()`.
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
-library(Blockbuster2)
+library(blockbuster2)
 ```
 
 To run a 10 year simulation of the provided simulated dataset, with no rebuilding and £1bn of repair funds per year, the command is
