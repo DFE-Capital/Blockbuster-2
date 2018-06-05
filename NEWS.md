@@ -1,4 +1,11 @@
 
+# version 1.0.2.9000 (excel branch)
+
+* added element_summarise_area and element_summarise_backlog functions that will
+be used within the Blockbuster function to create yearly summaries.
+* Added unit testing of element_summarise_area and element_summarise_backlog.
+* updated badges in readme
+
 # version 1.0.2
 
 * updated package authors
