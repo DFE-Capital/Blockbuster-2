@@ -8,9 +8,9 @@
 #' the \code{by} argument as variables and the area as the value.
 #' @examples
 #' # Summarising area by component type
-#' element_summarise_area(simulated_elements, elementid)
+#' blockbuster2:::element_summarise_area(simulated_elements, elementid)
 #' # Summarising area by block
-#' element_summarise_area(simulated_elements, buildingid)
+#' blockbuster2:::element_summarise_area(simulated_elements, buildingid)
 element_summarise_area <- function(element_data, by = elementid){
   by <- enquo(by)
   element_data <- element_data %>%
@@ -38,9 +38,9 @@ element_summarise_area <- function(element_data, by = elementid){
 #' the \code{by} argument as variables and the backlog as the value.
 #' @examples
 #' # Summarising backlog by component type
-#' element_summarise_backlog(simulated_elements, elementid)
+#' blockbuster2:::element_summarise_backlog(simulated_elements, elementid)
 #' # Summarising backlog by block
-#' element_summarise_backlog(simulated_elements, buildingid)
+#' blockbuster2:::element_summarise_backlog(simulated_elements, buildingid)
 element_summarise_backlog <- function(element_data, by = elementid){
   by <- enquo(by)
   element_data <- element_data %>%

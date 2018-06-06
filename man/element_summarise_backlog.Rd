@@ -21,7 +21,7 @@ Summarise the backlog at each grade for an element-level dataset
 }
 \examples{
 # Summarising backlog by component type
-element_summarise_backlog(simulated_elements, elementid)
+blockbuster2:::element_summarise_backlog(simulated_elements, elementid)
 # Summarising backlog by block
-element_summarise_backlog(simulated_elements, buildingid)
+blockbuster2:::element_summarise_backlog(simulated_elements, buildingid)
 }

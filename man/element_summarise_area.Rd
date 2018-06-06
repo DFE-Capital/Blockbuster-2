@@ -21,7 +21,7 @@ Summarise the area at each grade for an element-level dataset
 }
 \examples{
 # Summarising area by component type
-element_summarise_area(simulated_elements, elementid)
+blockbuster2:::element_summarise_area(simulated_elements, elementid)
 # Summarising area by block
-element_summarise_area(simulated_elements, buildingid)
+blockbuster2:::element_summarise_area(simulated_elements, buildingid)
 }

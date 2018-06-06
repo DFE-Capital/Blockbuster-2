@@ -56,7 +56,7 @@
 #' to repair and rebuild costs each timestep.  If a vector of length one is
 #' supplied it will be used as the inflation rate for all timesteps. Default
 #' is 1, i.e. no inflation.
-#' @param save (optional) Logical. If \code{TRUE} (the default behaviour), then
+#' @param save (optional) Logical. If \code{TRUE}, then
 #' the block and element states are saved to disc at each timestep.
 #' @param filelabel (optional) Character. The start of the file names used to
 #' save the interim outputs. Default is \code{blockbuster_output}.
@@ -91,12 +91,10 @@ Blockbuster <- function(element.data, block.data = NULL,
                         repair.money = 0,
                         block.rebuild.cost = 2000,
                         inflation = 1,
-
-                        save = TRUE,
+                        save = FALSE,
                         filelabel = "blockbuster_output",
                         path = "./output/",
-                        grade.order = c("D", "C", "B")
-){
+                        grade.order = c("E", "D", "C", "B")){
 
   # input integrity checks -------------------------------------------------
   message ("Checking inputs...")
@@ -127,13 +125,22 @@ Blockbuster <- function(element.data, block.data = NULL,
     # to have the initial state saved as part of the complete output).
     saveRDS(element.data, file = paste0(savefile, "_element_0.rds"))
     saveRDS(block.data, file = paste0(savefile, "_block_0.rds"))
-  } else {
-    # set up output list.
-    message("Setting up output.")
-    output <- vector("list", forecast.horizon + 1)
-    output[[1]]$element <- element.data
-    output[[1]]$block <- block.data
   }
+
+  # set up output list.
+  message("Setting up output.")
+  building_output <- vector("list", forecast.horizon + 1)
+  element_output <- vector("list", forecast.horizon + 1)
+  building_output[[1]] <- full_join(
+    element_summarise_backlog(element.data, buildingid),
+    element_summarise_area(element.data, buildingid)) %>%
+    mutate_at(c("area", "backlog"), replace_na, 0) %>%
+    mutate(year = 0)
+  element_output[[1]] <- full_join(
+    element_summarise_backlog(element.data, elementid),
+    element_summarise_area(element.data, elementid)) %>%
+    mutate_at(c("area", "backlog"), replace_na, 0) %>%
+    mutate(year = 0)
 
   # LOOP ----
   for (i in 1:forecast.horizon){
@@ -183,29 +190,30 @@ Blockbuster <- function(element.data, block.data = NULL,
       # save current state
       saveRDS(element.data, file = paste0(savefile, "_element_", i, ".rds"))
       saveRDS(block.data, file = paste0(savefile, "_block_", i, ".rds"))
-    } else {
-      output[[i + 1]]$element <- element.data
-      output[[i + 1]]$block <- block.data
     }
+
+    building_output[[i + 1]] <- full_join(
+      element_summarise_backlog(element.data, buildingid),
+      element_summarise_area(element.data, buildingid)) %>%
+      mutate_at(c("area", "backlog"), replace_na, 0) %>%
+      mutate(year = i)
+    element_output[[i + 1]] <- full_join(
+      element_summarise_backlog(element.data, elementid),
+      element_summarise_area(element.data, elementid)) %>%
+      mutate_at(c("area", "backlog"), replace_na, 0) %>%
+      mutate(year = i)
+
 
     # LOOP END ----
 
   }
 
   # OUTPUT ----
-  if(save){
-    # collate states, save (a backup!)
-    message(paste0("Saving output to file ", savefile, "_output.rds"))
-    output <- LoadBlockbusterOutput(forecast.horizon = forecast.horizon,
-                                    filelabel = filelabel,
-                                    path = path)
+  message("Preparing output.")
+  element <- bind_rows(element_output)
+  building <- bind_rows(building_output)
 
-    saveRDS(output, file = paste0(savefile, "_output.rds"))
-  } else {
-    message("Preparing output.")
-
-  }
-
-  return(output)
+  return(list("element summary" = element, "building summary" = building,
+              element = element.data, block = block.data))
 }
 

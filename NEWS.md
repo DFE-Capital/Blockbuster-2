@@ -1,3 +1,19 @@
+
+# version 1.0.3.9000 (excel branch)
+
+## MAJOR CHANGES
+* revamped blockbuster output.  It now outputs backlog and area summaries by elementid and buildingid along with the last element-level and block-level states
+* SAVE is now FALSE by default in Blockbuster().  Setting it to TRUE saves the
+interim element-level and block-level states. The output file collating the two is no longer saved.
+
+## Other changes
+* added input checks that the element-level and block-level objects are well-formed
+* added blockbuster2::: to the summarise_element examples as the function is not exported. This was causing the build to fail.
+* added tests for integration of summaries into main blockbuster outputs
+* changed startup Message to packageStartupMessage as good practise.
+* fixed the Blockbuster unit tests that were broken by the new output structure
+* added unit tests for the new input checks and summarisers
+
 # version 1.0.2.9001 (excel branch)
 
 * fixed typo bug in summarise_element_area which was causing the build to fail.

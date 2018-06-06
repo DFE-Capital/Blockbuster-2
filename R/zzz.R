@@ -42,7 +42,7 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
     saveWorkbook(wb, file)
 
   } else {
-    message("The excel input file within the package has not been updated. If you use the excel front end, please make sure the workbook contains the correct paths for R.home and the blockbuster2 package.")
+    packageStartupMessage("The excel input file within the package has not been updated. If you use the excel front end, please make sure the workbook contains the correct paths for R.home and the blockbuster2 package.")
   }
 
 }
