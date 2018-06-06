@@ -1,3 +1,14 @@
+# version 1.0.2.9001 (excel branch)
+
+* fixed typo bug in summarise_element_area which was causing the build to fail.
+* made the excel sheet update on load dependent on finding the sheet in the right place.  If it is not there a message is displayed.
+
+# version 1.0.2.9000 (excel branch)
+
+* added element_summarise_area and element_summarise_backlog functions that will
+be used within the Blockbuster function to create yearly summaries.
+* Added unit testing of element_summarise_area and element_summarise_backlog.
+* updated badges in readme
 
 # version 1.0.2
 

@@ -13,28 +13,36 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
                   "C.repair.cost", "D.repair.cost", "E.repair.cost"))
 
 .onLoad <- function(libname, pkgname){
-  # change the R home and package folder cells in excel sheet to the correct place
-  # load excel file into R
+  # on loading the package we change the R home and package folder cells in
+  # the excel sheet within the package to the correct place
+  # This means that if R or the package is updated or moved, the excel sheet
+  # stays current.
 
   pkg <- find.package("blockbuster2")
-
   file <- file.path(pkg, "excel files/Excel input.xlsm")
-  wb <- loadWorkbook(file)
 
-  # Create object rows that contain the cells from the second sheet (Inputs)
-  sheets <- getSheets(wb)
-  sheet <- sheets[[2]]
-  rows <- getRows(sheet)
+  if(file.exists(file)){
+    # load excel file into R
+    wb <- loadWorkbook(file)
 
-  # set R.home
-  cell <- getCells(rows[13], 7) # create object containing the cell (row 13, col 7) that needs to contain the folder path
-  setCellValue(cell[[1]], R.home("bin"))
+    # Create object rows that contain the cells from the second sheet (Inputs)
+    sheets <- getSheets(wb)
+    sheet <- sheets[[2]]
+    rows <- getRows(sheet)
 
-  #set package
-  cell <- getCells(rows[15], 7) # create object containing the cell (row 15, col 7) that needs to contain the folder path
-  setCellValue(cell[[1]], find.package("blockbuster2"))
+    # set R.home
+    cell <- getCells(rows[13], 7) # create object containing the cell (row 13, col 7) that needs to contain the folder path
+    setCellValue(cell[[1]], R.home("bin"))
 
-  # save the workbook
-  saveWorkbook(wb, file)
+    #set package
+    cell <- getCells(rows[15], 7) # create object containing the cell (row 15, col 7) that needs to contain the folder path
+    setCellValue(cell[[1]], find.package("blockbuster2"))
+
+    # save the workbook
+    saveWorkbook(wb, file)
+
+  } else {
+    message("The excel input file within the package has not been updated. If you use the excel front end, please make sure the workbook contains the correct paths for R.home and the blockbuster2 package.")
+  }
 
 }

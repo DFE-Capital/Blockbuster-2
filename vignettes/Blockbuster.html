@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Matthew Gregory and Peter Curtis" />
+
+<meta name="date" content="2018-06-06" />
+
+<title>Blockbuster modelling: wow; what a difference!</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Blockbuster modelling: wow; what a difference!</h1>
+<h4 class="author"><em>Matthew Gregory and Peter Curtis</em></h4>
+<h4 class="date"><em>2018-06-06</em></h4>
+
+
+
+<blockquote>
+<p>Can I have a P please, Bob?. (<a href="http://www.bbc.co.uk/news/entertainment-arts-16447409">via</a>)</p>
+</blockquote>
+<div id="modelling-deterioration-of-the-school-estate-using-discrete-time-markov-chains" class="section level2">
+<h2>Modelling deterioration of the School Estate using Discrete-Time Markov chains</h2>
+<p>A useful package of functions and sample data to forecast the future condition of School blocks (or buildings) in the UK.</p>
+<div id="modelling-overview" class="section level3">
+<h3>Modelling overview</h3>
+<p>Markov chains represent a class of stochastic processes of great interest for the wide spectrum of practical applications. In particular, discrete time <a href="https://cran.r-project.org/web/packages/markovchain/vignettes/an_introduction_to_markovchain_package.pdf">Markov chains</a> (DTMC) permit modelling the transition probabilities between discrete states by the aid of matrices. The states are represented by the <code>grade</code> factor which is the surveyed condition of a building element, determined by a quantity surveyor through grades (states); A, B, C, D, E. The transition probabilities are 6 by 6 matrices with the average deterioration rate per timestep between states provided by expert building consultant opinion (see documentation for full details).</p>
+</div>
+<div id="business-questions-it-can-answer" class="section level3">
+<h3>Business questions it can answer</h3>
+<p>This package is useful for decision makers as it provides a modelling approach for predicting the average condition of an individual building component (<code>elementid</code>) through time. This modelling approach can be scaled through a decision making hierarchy, with modelling the deterioration at the level of a School block (<code>buildingid</code>), for each site (<code>siteid</code>), the School (which may be made of many blocks, <code>URN</code>), at the Local Authority (LA) level (<code>LAN</code>) and at the National level given suitable input data (filter desired rows using the <code>dplyr</code> package is recommended).</p>
+<p>The <code>Blockbuster</code> function can be used on data containing one or more components in one or more school blocks. Individual component level information is stored as a data.frame with strict conditions on columns while block-level information is held in another data.frame with strictly defined columns. It produces snapshots of the component and block conditions at each timestep. The model can be applied to individual components, buildings, collections of buildings, or the entire estate. This flexibility allows decision makers to ask many and varied questions of the output data.</p>
+</div>
+</div>
+<div id="using-the-package" class="section level2">
+<h2>Using the package</h2>
+<p>Check you have these packages installed and then load them into memory using <code>library()</code> or <code>require()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(blockbuster2)</code></pre></div>
+<p>To run a 10 year simulation of the provided simulated dataset, with no rebuilding and £1bn of repair funds per year, the command is</p>
+<p><code>Blockbuster(simulated_elements, forecast.horizon = 1, rebuild.money = 0, repair.money = 1000000000)</code></p>
+<p>Note that the Blockbuster automatically saves yearly states into files called <code>blockbuster_output_element_*.rds</code> and <code>blockbuster_output_block_*.rds</code>within an <code>output</code> sub-folder of the current working directory that the function will create if it does not already exist. The complete output is saved as <code>blockbuster_output_output.rds</code>. This behaviour is customisable. Saving of outputs can be turned off with <code>save = FALSE</code> passed as an argument. Alternatively, the path and filename can be adjusted using the <code>filelabel</code> and <code>path</code> arguments.</p>
+<p>The element level output is a copy of the input, but with updated grade probabilities and repair totals. Note that the the cost of repairing an element at a given grade is given by the <code>*.repair.total</code> column. The <code>*.repair.cost</code> column is the unit cost of repairing that component type.</p>
+<p>Passing numeric vectors to the <code>rebuild.money</code> and <code>repair.money</code> arguments allows control of the amount of money available for rebuilding and repairing each year respectively.</p>
+</div>
+<div id="inputs-and-outputs-overview" class="section level2">
+<h2>Inputs and Outputs Overview</h2>
+<p>Remember to use the R help for all of the functions and data mentioned in the vignette for extra detail (e.g. try typing <code>?Blockbuster</code> into the console).</p>
+</div>
+<div id="input-format" class="section level2">
+<h2>Input format</h2>
+<p>The first argument for the Blockbuster function is a data.frame containing the data for the elements that you wish to simulate. The package contains some simulated data in the correct format under the name <code>simulated_elements</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;simulated_elements&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;blockbuster2&quot;</span>)
+dplyr<span class="op">::</span><span class="kw">glimpse</span>(simulated_elements)</code></pre></div>
+<pre><code>## Observations: 1,944
+## Variables: 21
+## $ buildingid     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ elementid      &lt;dbl&gt; 1700, 1714, 1752, 1813, 1828, 1842, 1846, 1855,...
+## $ unit_area      &lt;dbl&gt; 1310.0000, 292.5000, 420.0000, 1247.0400, 122.9...
+## $ gifa           &lt;dbl&gt; 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,...
+## $ B.repair.cost  &lt;dbl&gt; 7.68591273, 0.48514444, 13.99918179, 6.40096368...
+## $ C.repair.cost  &lt;dbl&gt; 38.4295636, 2.4257222, 69.9959090, 19.2028910, ...
+## $ D.repair.cost  &lt;dbl&gt; 153.718255, 9.702889, 279.983636, 64.009637, 25...
+## $ E.repair.cost  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ ab             &lt;dbl&gt; 0.04444273, 0.06957000, 0.02739858, 0.09999838,...
+## $ bc             &lt;dbl&gt; 0.07407752, 0.11594000, 0.04566015, 0.13333117,...
+## $ cd             &lt;dbl&gt; 0.17778038, 0.27826000, 0.10958187, 0.20000975,...
+## $ de             &lt;dbl&gt; 0.31336, 0.46377, 0.14652, 0.30769, 0.15920, 0....
+## $ A              &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,...
+## $ B              &lt;dbl&gt; 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0,...
+## $ C              &lt;dbl&gt; 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,...
+## $ D              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ E              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ B.repair.total &lt;dbl&gt; 0.0000, 141.9047, 5879.6564, 7982.2577, 0.0000,...
+## $ C.repair.total &lt;dbl&gt; 0.000, 0.000, 0.000, 0.000, 7914.369, 219117.05...
+## $ D.repair.total &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ E.repair.total &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...</code></pre>
+<p>For use with blockbuster, the data.frame must contain the following columns:</p>
+<table>
+<colgroup>
+<col width="25%"></col>
+<col width="74%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Column</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">buildingid</td>
+<td align="left">A number that uniquely identifies the building a component is part of</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">The probability the element is at grade A</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">The probability the element is at grade B</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">The probability the element is at grade C</td>
+</tr>
+<tr class="odd">
+<td align="left">D</td>
+<td align="left">The probability the element is at grade D</td>
+</tr>
+<tr class="even">
+<td align="left">E</td>
+<td align="left">The probability the element is at grade E</td>
+</tr>
+<tr class="odd">
+<td align="left">ab</td>
+<td align="left">The probability that the component will deteriorate from grade A to grade B in one year</td>
+</tr>
+<tr class="even">
+<td align="left">bc</td>
+<td align="left">The probability that the component will deteriorate from grade B to grade C in one year</td>
+</tr>
+<tr class="odd">
+<td align="left">cd</td>
+<td align="left">The probability that the component will deteriorate from grade C to grade D in one year</td>
+</tr>
+<tr class="even">
+<td align="left">de</td>
+<td align="left">The probability that the component will deteriorate from grade D to grade E in one year</td>
+</tr>
+<tr class="odd">
+<td align="left">unit_area</td>
+<td align="left">A quantification of the size of the component - this is usually an area but could be a count or length</td>
+</tr>
+<tr class="even">
+<td align="left">B.repair.cost</td>
+<td align="left">The cost to repair one unit_area of this component at grade B</td>
+</tr>
+<tr class="odd">
+<td align="left">C.repair.cost</td>
+<td align="left">The cost to repair one unit_area of this component at grade C</td>
+</tr>
+<tr class="even">
+<td align="left">D.repair.cost</td>
+<td align="left">The cost to repair one unit_area of this component at grade D</td>
+</tr>
+<tr class="odd">
+<td align="left">E.repair.cost</td>
+<td align="left">The cost to repair one unit_area of this component at grade E</td>
+</tr>
+<tr class="even">
+<td align="left">gifa</td>
+<td align="left">The Gross Internal Floor Area of the building a component is part of. This is used to generate the cost of rebuilding the entire building</td>
+</tr>
+</tbody>
+</table>
+<p>The simulated data provided with the package also contains the following column that is not used internally but could be useful when analyzing outputs:</p>
+<table style="width:85%;">
+<colgroup>
+<col width="15%"></col>
+<col width="69%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Column</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">elementid</td>
+<td align="left">A number that identifies the component type</td>
+</tr>
+</tbody>
+</table>
+<p>The package is designed to be used with PDS data which also includes the following columns that can be useful when looking at outputs:</p>
+<table>
+<colgroup>
+<col width="10%"></col>
+<col width="89%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Column</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">URN</td>
+<td align="left">A number that uniquely identifies a school</td>
+</tr>
+<tr class="even">
+<td align="left">siteid</td>
+<td align="left">A number that uniquely identifies a school site (schools may have more than one site)</td>
+</tr>
+<tr class="odd">
+<td align="left">LAN</td>
+<td align="left">A number that uniquely identifies a Local Authority</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="output-format" class="section level2">
+<h2>Output format</h2>
+<p>The model output is a nested list, with the first level indicating the year of simulation (including the original input at position 1) and within each year, data.frames for both element- and block-level data.</p>
+<p>So, <code>output[[1]]$element</code> will return the input element data (as the input is the first list element), while <code>output[[2]]$block</code> will return the block-level summary after one year of simulation.</p>
+<p>The element-level data.frames are structured in the same way as required for the input, while the block-level data.frames includes columns that total the expected repair cost for each block at each grade, the cost to rebuild the entire block and the ratio between the total repair cost and the rebuild cost.</p>
+<p>The package also includes a block-level summary of the simulated data as <code>simulated_blocks</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;simulated_blocks&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;blockbuster2&quot;</span>)
+dplyr<span class="op">::</span><span class="kw">glimpse</span>(simulated_blocks)</code></pre></div>
+<pre><code>## Observations: 50
+## Variables: 7
+## $ buildingid          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,...
+## $ block.rebuild.cost  &lt;dbl&gt; 747820, 3104000, 2808000, 602000, 2664000,...
+## $ B.block.repair.cost &lt;dbl&gt; 850903.79, 217835.45, 45405.97, 113716.14,...
+## $ C.block.repair.cost &lt;dbl&gt; 285620.9793, 12526.2609, 14682.7817, 91039...
+## $ D.block.repair.cost &lt;dbl&gt; 0.000, 0.000, 0.000, 0.000, 0.000, 6475.04...
+## $ E.block.repair.cost &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ ratio               &lt;dbl&gt; 1.51978387, 0.07421447, 0.02139913, 1.7011...</code></pre>
+<p>This is the same format as the block-level summary outputs of the model.</p>
+<p>As mentioned previously, by default the Blockbuster function saves outputs to files. Files can be loaded individually into your session using something akin to <code>load(&quot;./output/blockbuster_element_2.rds&quot;)</code> depending on where you set the <code>save</code>, <code>path</code> and <code>filelabel</code> arguments.</p>
+</div>
+<div id="example-analysis" class="section level2">
+<h2>Example analysis</h2>
+<p>Here we simulate the deterioration of one building through one year.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#  output demonstration</span>
+
+<span class="co"># construct single block input</span>
+my_output &lt;-<span class="st"> </span><span class="kw">Blockbuster</span>(simulated_elements, <span class="dt">save =</span> <span class="ot">FALSE</span>)
+## Checking inputs...
+## Constructing block summary from element.data.
+## Warning: package 'bindrcpp' was built under R version 3.4.4
+## There will be no rebuilding as rebuild.money is zero for all years.
+## There will be no repairing as repair.money is zero for all years.
+## Setting up output.
+## Deteriorating at time step 1.
+## Updating element repair totals.
+## Inflating rebuild and repair costs.
+## Rebuilding blocks.
+## Repairing blocks.
+## Preparing output.
+dplyr<span class="op">::</span><span class="kw">glimpse</span>(my_output) <span class="co"># this function makes the output nicer to read</span>
+## List of 2
+##  $ :List of 2
+##   ..$ element:Classes 'tbl_df', 'tbl' and 'data.frame':  1944 obs. of  21 variables:
+##   .. ..$ buildingid    : int [1:1944] 1 1 1 1 1 1 1 1 1 1 ...
+##   .. ..$ elementid     : num [1:1944] 1700 1714 1752 1813 1828 ...
+##   .. ..$ unit_area     : num [1:1944] 1310 292 420 1247 123 ...
+##   .. ..$ gifa          : num [1:1944] 56 56 56 56 56 56 56 56 56 56 ...
+##   .. ..$ B.repair.cost : num [1:1944] 7.686 0.485 13.999 6.401 12.877 ...
+##   .. ..$ C.repair.cost : num [1:1944] 38.43 2.43 70 19.2 64.39 ...
+##   .. ..$ D.repair.cost : num [1:1944] 153.7 9.7 280 64 257.5 ...
+##   .. ..$ E.repair.cost : num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ ab            : num [1:1944] 0.0444 0.0696 0.0274 0.1 0.0239 ...
+##   .. ..$ bc            : num [1:1944] 0.0741 0.1159 0.0457 0.1333 0.0398 ...
+##   .. ..$ cd            : num [1:1944] 0.1778 0.2783 0.1096 0.2 0.0955 ...
+##   .. ..$ de            : num [1:1944] 0.313 0.464 0.147 0.308 0.159 ...
+##   .. ..$ A             : num [1:1944] 1 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ B             : num [1:1944] 0 1 1 1 0 0 1 1 0 1 ...
+##   .. ..$ C             : num [1:1944] 0 0 0 0 1 1 0 0 1 0 ...
+##   .. ..$ D             : num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ E             : num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ B.repair.total: num [1:1944] 0 142 5880 7982 0 ...
+##   .. ..$ C.repair.total: num [1:1944] 0 0 0 0 7914 ...
+##   .. ..$ D.repair.total: num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ E.repair.total: num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..$ block  :Classes 'tbl_df', 'tbl' and 'data.frame':  50 obs. of  7 variables:
+##   .. ..$ buildingid         : int [1:50] 1 2 3 4 5 6 7 8 9 10 ...
+##   .. ..$ block.rebuild.cost : num [1:50] 747820 3104000 2808000 602000 2664000 ...
+##   .. ..$ B.block.repair.cost: num [1:50] 850904 217835 45406 113716 142206 ...
+##   .. ..$ C.block.repair.cost: num [1:50] 285621 12526 14683 910393 48315 ...
+##   .. ..$ D.block.repair.cost: num [1:50] 0 0 0 0 0 ...
+##   .. ..$ E.block.repair.cost: num [1:50] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ ratio              : num [1:50] 1.5198 0.0742 0.0214 1.7012 0.0715 ...
+##  $ :List of 2
+##   ..$ element:Classes 'tbl_df', 'tbl' and 'data.frame':  1944 obs. of  21 variables:
+##   .. ..$ buildingid    : int [1:1944] 1 1 1 1 1 1 1 1 1 1 ...
+##   .. ..$ elementid     : num [1:1944] 1700 1714 1752 1813 1828 ...
+##   .. ..$ unit_area     : num [1:1944] 1310 292 420 1247 123 ...
+##   .. ..$ gifa          : num [1:1944] 56 56 56 56 56 56 56 56 56 56 ...
+##   .. ..$ B.repair.cost : num [1:1944] 7.686 0.485 13.999 6.401 12.877 ...
+##   .. ..$ C.repair.cost : num [1:1944] 38.43 2.43 70 19.2 64.39 ...
+##   .. ..$ D.repair.cost : num [1:1944] 153.7 9.7 280 64 257.5 ...
+##   .. ..$ E.repair.cost : num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ ab            : num [1:1944] 0.0444 0.0696 0.0274 0.1 0.0239 ...
+##   .. ..$ bc            : num [1:1944] 0.0741 0.1159 0.0457 0.1333 0.0398 ...
+##   .. ..$ cd            : num [1:1944] 0.1778 0.2783 0.1096 0.2 0.0955 ...
+##   .. ..$ de            : num [1:1944] 0.313 0.464 0.147 0.308 0.159 ...
+##   .. ..$ A             : num [1:1944] 0.956 0 0 0 0 ...
+##   .. ..$ B             : num [1:1944] 0.0444 0.8841 0.9543 0.8667 0 ...
+##   .. ..$ C             : num [1:1944] 0 0.1159 0.0457 0.1333 0.9045 ...
+##   .. ..$ D             : num [1:1944] 0 0 0 0 0.0955 ...
+##   .. ..$ E             : num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ B.repair.total: num [1:1944] 447 125 5611 6918 0 ...
+##   .. ..$ C.repair.total: num [1:1944] 0 82.3 1342.3 3192.9 7158.4 ...
+##   .. ..$ D.repair.total: num [1:1944] 0 0 0 0 3024 ...
+##   .. ..$ E.repair.total: num [1:1944] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..$ block  :Classes 'tbl_df', 'tbl' and 'data.frame':  50 obs. of  7 variables:
+##   .. ..$ buildingid         : int [1:50] 1 2 3 4 5 6 7 8 9 10 ...
+##   .. ..$ block.rebuild.cost : num [1:50] 747820 3104000 2808000 602000 2664000 ...
+##   .. ..$ B.block.repair.cost: num [1:50] 841346 202846 81205 104796 140988 ...
+##   .. ..$ C.block.repair.cost: num [1:50] 517605 93343 29944 767926 91175 ...
+##   .. ..$ D.block.repair.cost: num [1:50] 191618 8740 12595 580994 23653 ...
+##   .. ..$ E.block.repair.cost: num [1:50] 0 0 0 0 0 0 0 0 0 0 ...
+##   .. ..$ ratio              : num [1:50] 0.9484 0.0329 0.0151 2.2407 0.0431 ...</code></pre></div>
+<p>The first list entry is the initial state, split into two data frames, the element-level data and the block-level summary. The second list entry is the model output after one year. If we forecast more years, there will be an addition list element for each year.</p>
+<p>For convenience there are four useful functions for managing the output. <code>pull_Element_Data</code> and <code>pull_Block_Data</code> can be used to pull out the element- and block-level data from the output. For large datasets (for example, the PDS dataset), R can hit memory limits when the <code>Blockbuster</code> function tries to construct the single output object from the saved interim files. <code>load_Block_Data</code> and <code>load_Element_Data</code> load the relevant outputs from the saved files. These functions have a dependency on the <code>tidyr</code> package, so you will need to load it if you want to use these convenient functions for looking at the outputs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyr)</code></pre></div>
+<p>We start by looking at the block-level output.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_block &lt;-<span class="st"> </span><span class="kw">pull_Block_Data</span>(my_output)
+<span class="kw">glimpse</span>(my_block)
+## Observations: 400
+## Variables: 6
+## $ buildingid         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, ...
+## $ block.rebuild.cost &lt;dbl&gt; 747820, 3104000, 2808000, 602000, 2664000, ...
+## $ ratio              &lt;dbl&gt; 1.51978387, 0.07421447, 0.02139913, 1.70117...
+## $ year               &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+## $ grade              &lt;chr&gt; &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;...
+## $ backlog            &lt;dbl&gt; 850903.79, 217835.45, 45405.97, 113716.14, ...</code></pre></div>
+<p>Note that the <code>pull_Block_Data</code> combines the outputs for all years into one data frame, adds a <code>year</code> column and places the grades and backlog into tidy format. This makes it easier to filter and plot the data.</p>
+<p>For example, let’s look at all the blocks with an expected grade D backlog after one year of over £100,000:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_block <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, grade <span class="op">==</span><span class="st"> &quot;D&quot;</span>, backlog <span class="op">&gt;</span><span class="st"> </span><span class="dv">100000</span>)</code></pre></div>
+<pre><code>## # A tibble: 11 x 6
+##    buildingid block.rebuild.cost       ratio  year grade   backlog
+##         &lt;int&gt;              &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+##  1          1             747820  0.94838670     1     D  191618.0
+##  2          4             602000  2.24073159     1     D  580994.1
+##  3          7            2620000  0.16353368     1     D  125987.2
+##  4         14            6016000  0.15937185     1     D  530154.7
+##  5         15            8382000  0.25694440     1     D  419323.6
+##  6         23            1169800  0.24805794     1     D  121034.9
+##  7         27            2838000  0.10798829     1     D  130694.7
+##  8         42            7436000  0.32218314     1     D  159589.6
+##  9         44             164000 36.10311223     1     D 3016758.4
+## 10         45           10392000  0.67213858     1     D 3445792.1
+## 11         47            3260000  0.05819698     1     D  104609.6</code></pre>
+<p>Or we could rank the blocks in order of their total backlog after one year:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_block <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(year <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(buildingid) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total =</span> <span class="kw">sum</span>(backlog)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total))</code></pre></div>
+<pre><code>## # A tibble: 50 x 2
+##    buildingid    total
+##         &lt;int&gt;    &lt;dbl&gt;
+##  1         28 79832112
+##  2         45  7190815
+##  3         44  6072017
+##  4         42  5393311
+##  5         43  4586037
+##  6         15  3781837
+##  7         13  1959172
+##  8         32  1666905
+##  9          1  1550569
+## 10          4  1453716
+## # ... with 40 more rows</code></pre>
+<p>Here we use <code>ggplot2</code> to plot the backlog for each grade over time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+my_block <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(year, grade) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">backlog =</span> <span class="kw">sum</span>(backlog)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> backlog, <span class="dt">colour =</span> grade))</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The <code>pull_Element_Data</code> and <code>load_Element_Data</code> functions work in the same way, but with an extra argument called <code>type</code>. If <code>type</code> is <code>&quot;area&quot;</code> then the resulting data frame will contain the proportional area at each grade in tidy format. If <code>type</code> is <code>&quot;backlog&quot;</code> then the backlog at each grade will be in tidy format. If <code>type</code> is anything else then the output will be the raw data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pull_Element_Data</span>(my_output) <span class="op">%&gt;%</span><span class="st"> </span>glimpse</code></pre></div>
+<pre><code>## Observations: 3,888
+## Variables: 22
+## $ buildingid     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ elementid      &lt;dbl&gt; 1700, 1714, 1752, 1813, 1828, 1842, 1846, 1855,...
+## $ unit_area      &lt;dbl&gt; 1310.0000, 292.5000, 420.0000, 1247.0400, 122.9...
+## $ gifa           &lt;dbl&gt; 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,...
+## $ B.repair.cost  &lt;dbl&gt; 7.68591273, 0.48514444, 13.99918179, 6.40096368...
+## $ C.repair.cost  &lt;dbl&gt; 38.4295636, 2.4257222, 69.9959090, 19.2028910, ...
+## $ D.repair.cost  &lt;dbl&gt; 153.718255, 9.702889, 279.983636, 64.009637, 25...
+## $ E.repair.cost  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ ab             &lt;dbl&gt; 0.04444273, 0.06957000, 0.02739858, 0.09999838,...
+## $ bc             &lt;dbl&gt; 0.07407752, 0.11594000, 0.04566015, 0.13333117,...
+## $ cd             &lt;dbl&gt; 0.17778038, 0.27826000, 0.10958187, 0.20000975,...
+## $ de             &lt;dbl&gt; 0.31336, 0.46377, 0.14652, 0.30769, 0.15920, 0....
+## $ A              &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,...
+## $ B              &lt;dbl&gt; 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0,...
+## $ C              &lt;dbl&gt; 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,...
+## $ D              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ E              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ B.repair.total &lt;dbl&gt; 0.0000, 141.9047, 5879.6564, 7982.2577, 0.0000,...
+## $ C.repair.total &lt;dbl&gt; 0.000, 0.000, 0.000, 0.000, 7914.369, 219117.05...
+## $ D.repair.total &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ E.repair.total &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ year           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pull_Element_Data</span>(my_output, <span class="dt">type =</span> <span class="st">&quot;area&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>glimpse</code></pre></div>
+<pre><code>## Observations: 19,440
+## Variables: 5
+## $ buildingid &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ elementid  &lt;dbl&gt; 1700, 1714, 1752, 1813, 1828, 1842, 1846, 1855, 186...
+## $ year       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ grade      &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;...
+## $ area       &lt;dbl&gt; 1310.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pull_Element_Data</span>(my_output, <span class="dt">type =</span> <span class="st">&quot;backlog&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>glimpse</code></pre></div>
+<pre><code>## Observations: 15,552
+## Variables: 5
+## $ buildingid &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ elementid  &lt;dbl&gt; 1700, 1714, 1752, 1813, 1828, 1842, 1846, 1855, 186...
+## $ year       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ grade      &lt;chr&gt; &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;...
+## $ backlog    &lt;dbl&gt; 0.0000, 141.9047, 5879.6564, 7982.2577, 0.0000, 0.0...</code></pre>
+<!-- This output has foreign key variables with the suffix -id, that could be joined  -->
+<!-- to other data from relevant SQL data tables (e.g. the user could find the `urn` -->
+<!-- by joining on `siteid` from an appropriate data table). The `urn` is omitted to -->
+<!-- maintain the anonymity of each school's condition included in the sample.   -->
+<!-- #### Generic methods -->
+<!-- There are currently no generic methods associated with the `blockbuster` class, -->
+<!-- but we plan to implement methods for `summary`, `print` and `plot`. -->
+<!-- ### The default arguments -->
+<!-- In the example above we passed the `blockbuster` function only one argument and -->
+<!-- it still worked. That is because if you do not explicitly state some of the -->
+<!-- arguments it will assume default values for these. We can look at the defaults -->
+<!-- using the `formals` function.   -->
+<!-- ```{r} -->
+<!-- formals(Blockbuster) -->
+<!-- ``` -->
+<!-- The default behaviour of the model is to simulate deterioration over one year -->
+<!-- without any rebuilding or repairing and no inflation.  The argument -->
+<!-- `element.data` does not have default behaviour thus we must pass it to -->
+<!-- the blockbuster function. -->
+<!-- For more detail try typing `?blockbuster` into the console.   -->
+<!-- ## The transition probability data -->
+<!-- The deterioration rates are stored in the input `element` object, allowing for  -->
+<!-- individually tailored deterioration rates if desired. Let's inspect  -->
+<!-- some rates in `test.element`. -->
+<!-- ```{r} -->
+<!-- test.element[1:2, ] %>% -->
+<!--   select(elementid, na, ab, bc, cd, de) -->
+<!-- ``` -->
+<!-- This identifies the building component through the `elementid`. Although not -->
+<!-- available yet, the `TOBEINCLUDED` file in the data folder details the element, -->
+<!-- sub-element and construction type associated with each `elementid`. The -->
+<!-- "two-letter" variables describe the transition rate or probability from the -->
+<!-- first letter condition grade to the second letter condition grade. For example, -->
+<!-- `cd` describes the proportion of the `unit_area` at `grade == C` that will -->
+<!-- transition to `grade == D` through one timestep or year (`na` means from New to -->
+<!-- A (excellent condition) and is not to be confused with `NA`).   -->
+<!-- ## The blockbuster functions -->
+<!-- We consider the first row of the sampled data which is a roof of excellent -->
+<!-- `grade` A condition with a `unit_area` of 308.4. -->
+<!-- ```{r} -->
+<!-- test.element[1, ] %>% -->
+<!--   dplyr::select(elementid, N, A, B, C, D, E, unit_area) -->
+<!-- ``` -->
+<!-- ## Deteriorating through time -->
+<!-- Typically the user will be interested in a subset of the data. Consult the -->
+<!-- `dplyr` vignette for handling and sub-setting your data based on desired filter -->
+<!-- conditions.   -->
+<!-- Here we demonstrate the deterioration of a single building component through -->
+<!-- time. We chose a critical building feature of one particular block or building -->
+<!-- we are interested in. CAVEAT: this modelling approach should be used at national -->
+<!-- level; this example is illustrative. -->
+<!-- ```{r, cache = TRUE} -->
+<!-- my_roof <- dplyr::filter(test.element, -->
+<!--                          buildingid == 4382, elementid == 1700) -->
+<!-- my_roof_next_year <- Blockbuster(my_roof, save = FALSE) -->
+<!-- my_roof_20year <- Blockbuster(my_roof, forecast.horizon = 20, save = FALSE) -->
+<!-- my_roof_20year -->
+<!-- ``` -->
+<!-- This produces a `blockbuster` object which is a list of the `element` and -->
+<!-- `block` objects providing the condition of the input tibble at that timestep. -->
+<!-- The first list entry is for the input data. -->
+<!-- ## Computation time -->
+<!-- I suggest you spend time thinking about the precise question you are asking -->
+<!-- rather than using the whole PDS dataset as input due to non-trivial computation -->
+<!-- time. A 10% sample with rebuild and repair funding can easily take a couple of -->
+<!-- hours on the DfE laptop used to produce this package (i5-6300U processor with  -->
+<!-- 8Gb RAM). -->
+<!-- The large number of components (each of which is a row in the associated -->
+<!-- `element` object) can result in memory errors.  To help with this, interim  -->
+<!-- `element` and `block` outputs are saved onto disc (by default into the ./output/ -->
+<!-- folder) and reloaded to provide the final output.  Further work is planned to  -->
+<!-- reduce the memory footprint of the model processes. -->
+<!-- ## Plotting output basics -->
+<!-- The `Blockbuster` package provides several default plot options for -->
+<!-- `blockbuster` objects, utilising `ggplot2`.  The `blockbuster` objects need to -->
+<!-- be manipulated into the long format required by `ggplot2` and this can take time -->
+<!-- for very large datasets. For this reason, we advise using the functions -->
+<!-- `LongArea` and `LongRepairBacklog` to prepare the data and then pass the results -->
+<!-- into `ggplot` directly. -->
+<!-- ### Blockbusting -->
+<!-- We can investigate the rate at which our critical elements are deteriorating or -->
+<!-- even what proportion of the `unit_area` is decommisioned. Given the flexibility -->
+<!-- of the model output we can ask anything of the data.   -->
+<!-- Here we are interested in tracking the deterioration of critical building -->
+<!-- components in our block of interest.  We recycle the `my_roof_20year` object for -->
+<!-- this question. The wall starts as all condition grade B then gradually -->
+<!-- deteriorates. Several plot methods are available for `blockbuster` outputs. The -->
+<!-- default method plots the repair backlog for all grades. -->
+<!-- ```{r} -->
+<!-- plot(my_roof_20year) -->
+<!-- ``` -->
+<!-- Adding the option `total = TRUE` plots the sum of all grade `C`, `D`, and `E` -->
+<!-- backlogs instead. -->
+<!-- ```{r} -->
+<!-- plot(my_roof_20year, total = TRUE) -->
+<!-- ``` -->
+<!-- It is also possible to produce plots tracking the area of each grade. In the -->
+<!-- following plot we can see the area at grade A has shrunk to 50% after twenty -->
+<!-- years. -->
+<!-- ```{r} -->
+<!-- plot(my_roof_20year, type = "area") -->
+<!-- ``` -->
+<!-- The key components of these plots are the `area` and `backlog` class objects -->
+<!-- generated by `LongArea()` and `LongRepairBacklog` respectively.  These are long -->
+<!-- format data objects suitable for passing to `ggplot`. -->
+<!-- ```{r} -->
+<!-- area <- LongArea(my_roof_20year) -->
+<!-- area -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- backlog <- LongRepairBacklog(my_roof_20year) -->
+<!-- backlog -->
+<!-- ``` -->
+<!-- ### Critical building elements -->
+<!-- Typically we may be more interested in critical, structural building-features  -->
+<!-- such as the roof or walls and whether the `unit_area` exceeds a critical -->
+<!-- threshold determined by expert opinion. For example, is our wall's total -->
+<!-- `unit_area` after 10 years comprised of over 20% grade D and E? -->
+<!-- We plot then inspect the numbers. -->
+<!-- ```{r warning=FALSE, message=FALSE, error=FALSE, fig.width=9, fig.height=6} -->
+<!-- my_roof_10 <- Blockbuster(my_roof, forecast.horizon = 10, save = FALSE) -->
+<!--  #  We are interested in the 10 th (+ 1) timestep -->
+<!--  df <- my_roof_10[[11]]$element -->
+<!--  #  Use gov style for plot, install these if you don't have them -->
+<!--  # devtools::install_github('mangothecat/visualTest')  #  required for govstyle -->
+<!--  # devtools::install_github("UKGov-Data-Science/govstyle") -->
+<!--  area <- LongArea(df) -->
+<!--  plot(area) -->
+<!-- ``` -->
+<!-- The proportion of each element at a grade are stored in the `N`, `A`, `B`, `C`,  -->
+<!-- `D`, and `E` columns of the associated `element` object.  It is therefore easy -->
+<!-- to gauge if we have reached the 20% threshold by summing the appropriate -->
+<!-- columns. -->
+<!-- ```{r} -->
+<!-- df$D + df$E -->
+<!-- ``` -->
+<!-- Only 4.8% of the wall area is at grade D or E. -->
+<!-- ## Costing -->
+<!-- Grade E is meant to encapsulate a decommisioned status.  However, it is more -->
+<!-- useful to attempt to approximate the grade E cost using a crude estimate. Costs -->
+<!-- for E grade are now simply the costs for D plus five percent. This approach was -->
+<!-- recommended by Adam Bray until we get empirical estimates.       -->
+<!-- Costs are calculated for each row within `element` objects. The `.repair.cost` -->
+<!-- variables hold the cost per unit area for all components.  The `.repair.total` -->
+<!-- values are simply the product of these and the unit area of each row. -->
+<!-- The `.repair.cost` totals for buildings in the `block` summary are aggregated -->
+<!-- from the `element` values. -->
+<!-- ### Blockcosting -->
+<!-- We continue with the examples from above by considering the aggregated cost of -->
+<!-- repairs through time. Let us plot the distribution of costs by condition grade  -->
+<!-- using a -->
+<!-- [Tukey box plot](https://en.wikipedia.org/wiki/Box_plot#Alternative_forms) -->
+<!-- through each year (R and ggplot make it easy to look at the data in different -->
+<!-- ways). The `CreateElementBacklog` function generates a table of the repair -->
+<!-- costs for each element at each grade.  The default plot method for the output  -->
+<!-- (an `element.backlog` object) creates a faceted boxplot of element-wise repair -->
+<!-- costs. -->
+<!-- ```{r} -->
+<!-- # deteriorate a block through 10 years -->
+<!-- my_block_10years <- Blockbuster(my_block, forecast.horizon = 10, save = FALSE) -->
+<!-- # compute the element.backlog -->
+<!-- my_block_backlog <- CreateElementBacklog(my_block_10years) -->
+<!-- # default plot method -->
+<!-- plot(my_block_backlog) -->
+<!-- ``` -->
+<!-- Repair costs from grade A and N are always be zero as they are already in -->
+<!-- excellent condition, so they are omitted from the plot. This plot shows how the median  -->
+<!-- costs for each grade steadily increase year on year with some building -->
+<!-- components in particularly deteriorating quickly and in a costly fashion -->
+<!-- (the outliers indicated by the red circles).  -->
+<!-- #### Boxplot interpretation -->
+<!-- The red "dots" at the end of the boxplot represent outliers. These observations -->
+<!-- contribute to the total cost of the block much more than others. There are a -->
+<!-- number of different rules for determining if a point is an outlier, but the -->
+<!-- method that R and ggplot use is the "1.5 rule". If a data point is:    -->
+<!-- * `less than Q1 - 1.5 x IQR`   -->
+<!-- * `greater than Q3 + 1.5 x IQR`   -->
+<!-- then that point is classed as an "outlier". The line goes to the first data -->
+<!-- point before the "1.5" cut-off. Note: the inter-quartile range; `IQR = Q3 - Q1`.   -->
+<!-- ### Total Blockcosting -->
+<!-- ### Line plot -->
+<!-- The blockbuster output is flexible and amenable to data manipulation and or  -->
+<!-- transformation prior to plotting. The user is only limited by their imagination.   -->
+<!-- Below we present a standard output that is seen in many reports of the School -->
+<!-- Estate. Here we plot the total costs aggregated by condition grade for each -->
+<!-- year and give it a slightly prettier finish. Note how grade A components do not -->
+<!-- contribute to the cost. However, the repair cost of E (set at D repair cost plus -->
+<!-- five percent) accelerates the total cost as more building components' -->
+<!-- `unit_area` transitions into grade E from D. It's important users are aware of -->
+<!-- this when interpreting these graphics as the estimated cost of B, C and D should -->
+<!-- be considered more reliable as they are based on expert opinion and bespoke -->
+<!-- costs for each building component (whereas E grade is just 5% on D which may not -->
+<!-- be appropriate for every building component).      -->
+<!-- ```{r fig.width=9, fig.height=6} -->
+<!-- plot(my_block_10years) -->
+<!-- ``` -->
+<!-- In the following plot which describes the total repair backlog of grade C and D -->
+<!-- components observe that the costs start to plateau.  This may seem  -->
+<!-- counter-intuitive until you realise that this means a substantial portion of the -->
+<!-- component is grade E and needs rebuilding, not repair. -->
+<!-- ```{r} -->
+<!-- plot(my_block_10years, total = TRUE) -->
+<!-- ``` -->
+<!-- ### Digging down -->
+<!-- > Better to draw several approximate graphics saying something about the right question than to draw one precise graphic relating to the wrong question. -->
+<!-- The `blockbuster` simulation is time expensive thus we do not want to generate -->
+<!-- every possible outcome variable that a user might need. Instead we generate -->
+<!-- variables that are required for the simulation, for decision making regarding -->
+<!-- which blocks should be rebuilt or repaired. Instead you can derive variables -->
+<!-- yourself. Be imaginative and try plenty of variety in your plots. -->
+<!-- ### Costing the rebuilding of a block -->
+<!-- The repair costs ignore decommisioned building components (grade E `unit_area` -->
+<!-- of a building component). To incorporate this into our analysis of when it is -->
+<!-- better to rebuild a block rather than to maintain it we create a new variable -->
+<!-- called `block_rebuild_cost`. This multiplies the `gifa`, of the block that the -->
+<!-- building component in question is part of, by the argument `rebuild_cost_rate`  -->
+<!-- which has a default value of £2000 per m^2^. This does not fully capture the  -->
+<!-- complexity of estimating the rebuild cost of a block and could be enhanced in  -->
+<!-- future iterations of the `blockbuster`. This value is the same for all building -->
+<!-- components in the same block as it is a function of the block's `gifa`.  -->
+<!-- In the following example we set the unit cost of rebuilding blocks at £2,507.5  -->
+<!-- and apply an inflation rate of 4% which will be automatically applied to the  -->
+<!-- repair and rebuild costs each year. -->
+<!-- ```{r} -->
+<!-- two_blocks_4_years_inflation <- Blockbuster(dplyr::filter(test.element, -->
+<!--                                                           buildingid == 4382 | -->
+<!--                                                           buildingid == 4472), -->
+<!--                                             forecast.horizon = 4, -->
+<!--                                             block.rebuild.cost = 2507.5, -->
+<!--                                             inflation = 1.04, -->
+<!--                                             save = FALSE) -->
+<!-- # initial rebuild cost -->
+<!-- sum(two_blocks_4_years_inflation[[1]]$block$block.rebuild.cost) -->
+<!-- # cost after four years of inflation at 4% -->
+<!-- sum(two_blocks_4_years_inflation[[5]]$block$block.rebuild.cost) -->
+<!-- ``` -->
+<!-- Note that deterioration does not affect the cost of rebuilding a block, only -->
+<!-- inflation. -->
+<!-- #### Total costs by building element -->
+<!-- The `element.backlog` object gives us the ability to drill into -->
+<!-- individual components.  For example, we can look at the costs related to  -->
+<!-- particular element types.  In the next example we only look at the elementid -->
+<!-- related to structural walls and roofs. -->
+<!-- ```{r fig.width=9, fig.height=6} -->
+<!-- my_block_structure_backlog <- my_block_backlog %>% -->
+<!--   filter(elementid %in% c(1863, 1830, 1983, 1862, 1826, 1829, 1984, 1827, 1828, -->
+<!--                           1864, 1701, 1985, 1700, 1865)) %>% -->
+<!--   ElementBacklog -->
+<!-- plot(my_block_structure_backlog) -->
+<!-- #p5 <- my_block_10years %>% -->
+<!-- #  purrr::map_df( -->
+<!-- #    ~ .x , -->
+<!-- #    .id = NULL -->
+<!-- #  ) %>% -->
+<!-- #  dplyr::group_by(timestep, element) %>% -->
+<!-- #  dplyr::summarise(sum_cost = sum(cost, na.rm = TRUE)) %>% -->
+<!-- #  ggplot2::ggplot(aes(x = element, y = sum_cost)) + -->
+<!-- #  ggplot2::geom_bar(stat = "identity") + -->
+<!-- #  ggplot2::facet_wrap( -->
+<!-- #    ~timestep -->
+<!-- #  ) -->
+<!-- #p5 + ylab("Total cost of repairs (£)") + xlab("Building element") + -->
+<!-- #  govstyle::theme_gov() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +  -->
+<!-- #  theme(plot.margin = unit(c(20,10,10,10),"mm")) -->
+<!-- ``` -->
+<!-- #### Subsetting the blockbuster list output for specified years of interest -->
+<!-- Perhaps we are interested in just the last couple of years of the simulation? We can subset a single year of interest or dataframe from the list using the normal R syntax.   -->
+<!-- The following graph also highlights a flaw in the earlier generation of the deterioration model which just considered the `unit_area` of a building component and ignored the building component `element`, `sub_element` or `const_type` type in its calculations. The blockbuster model considers this when estimating repair costs. In the figure below we aggregate across building `element` the total `unit_area` and `cost` of repairs and plot using the extra dimensions afforded by point area and colour. In short this identifies an interaction term between `element` and `grade` for `cost` of repairs (the trajectory of gradient is different between building components as you go between condition grades).     -->
+<!-- ```{r fig.width=9, fig.height=6} -->
+<!-- #p6 <- my_block_10years[11] %>% -->
+<!-- #  purrr::map_df( -->
+<!-- #    ~ .x , -->
+<!-- #    .id = NULL -->
+<!-- #  ) %>% -->
+<!-- #  dplyr::group_by(timestep, grade, element_shrt = as.factor(abbreviate(element, 14))) %>% -->
+<!-- #  dplyr::summarise(sum_unit_area = sum(unit_area, na.rm = TRUE), -->
+<!-- #                   sum_cost = sum(cost, na.rm = TRUE)) %>% -->
+<!-- #  ggplot2::ggplot(aes(x = grade, y = sum_cost, colour = element_shrt, size = sum_unit_area)) + -->
+<!-- #  ggplot2::geom_point(alpha = 0.7) + -->
+<!-- #  ggplot2::facet_wrap( -->
+<!-- #    ~ timestep -->
+<!-- #  ) -->
+<!-- #p6 + ylab("Cost of repairs (£)") + xlab("Condition grade")  + -->
+<!-- #  theme_economist() +  -->
+<!-- #  scale_size_continuous(breaks = c(1000, 2000, 3000), range = c(3,10)) -->
+<!-- ``` -->
+<!-- ## Rebuilding -->
+<!-- Rebuilding is carried out by the `rebuild` function which is internal to `blockbuster`. The rebuilding of the `blockbuster_tibble` you pass as an argument is dependent on two other arguments; the `rebuild_monies` and `rebuild_cost_rate`. Both can be passed as a vector equal in length to the number of years you are simulating (`forecast_horizon`) or as a number. This allows you to control for inflation in the construction industry and variable rebuilding spending from year to year. Technically the `blockbuster` function makes use of the `rebuild_cost_rate` in estimating how much it would cost to rebuild a block (`rebuild_cost_rate` multiplied by block `gifa`), this is then passed into `rebuild` for a decision on how to spend the available `rebuild_monies`. All the blocks (unique based on `buildingid`) in the `blockbuster_tibble` are ranked in descending order of the ratio of the total cost of repairs to the cost of rebuilding the block (where a score higher than one means the block is more expensive to repair than it is to rebuild). The block with the highest internal statistic of `cost_to_rebuild_ratio` is inspected for rebuilding first. If enough monies are available it is rebuilt by converting all its building components back to new and recalculating the `unit_area` (using `areafy2`). The leftover money is then cycled through the list rebuilding as appropriate until the remaining money is less than the cheapest block to rebuild, at which point it is discarded (NOT passed to `repair_monies`).   -->
+<!-- ### Example -->
+<!-- We inspect the effect of rebuilding on the cost of repairs of three buildings with a non-constant rebuilding investment profile and `rebuild_cost_rate` adjusted for 0% (year 2) then 1% inflation (year 3) (you can pass this as a vector rather than typing it manually of course). We inspect the effect of the rebuild on total repair costs using a faceted stacked bar chart for the different building elements in all the blocks (try increasing the `rebuild_monies` by one pound, what happens?). -->
+<!-- ```{r fig.width=10, fig.height=12} -->
+<!-- #  We filter our PDS sample for just three blocks to keep things simple -->
+<!-- #x <- dplyr::filter(blockbuster::blockbuster_pds,  buildingid == 4382 | buildingid == 4472 -->
+<!-- #                   | buildingid == 4487) -->
+<!-- ##  Rebuild spending profile -->
+<!-- #y <- blockbuster(x, forecast_horizon = 8, rebuild_monies = c(0, 5e6, 0, 0, 0, 0, 0, 0),  #  #five million -->
+<!-- #                 rebuild_cost_rate = c(1274, 1274 + 0, 1274 + 12.74, 1286.74, 1286.74, -->
+<!-- #                                       1286.74, 1286.74, 1286.74))   -->
+<!-- #p7 <- y %>% -->
+<!-- #  purrr::map_df( -->
+<!-- #    ~ .x , -->
+<!-- #    .id = NULL -->
+<!-- #  ) %>% -->
+<!-- #  dplyr::group_by(timestep, element, grade) %>% -->
+<!-- #  dplyr::summarise(sum_cost = sum(cost, na.rm = TRUE)) %>% -->
+<!-- #  ggplot2::ggplot(aes(x = element, y = sum_cost, fill = grade)) + -->
+<!-- #  ggplot2::geom_bar(stat = "identity") + -->
+<!-- #  ggplot2::facet_wrap( -->
+<!-- #    ~timestep -->
+<!-- #  ) + scale_fill_discrete(drop = FALSE) + scale_x_discrete(drop = FALSE)  #  gives E a colour -->
+<!-- #p7 + ylab("Total cost of repairs (£)") + xlab("Building element") + -->
+<!-- #  govstyle::theme_gov() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +  -->
+<!-- #  theme(plot.margin = unit(c(20,10,10,10),"mm")) + -->
+<!-- #  theme(legend.position = "top")  -->
+<!-- ``` -->
+<!-- This also provides a sense check. The rebuild happens during `timestep 2` (because `rebuild_monies = c(0, 5e6, 0)`), all building components are rebuilt to `grade = N` thus have  zero `cost`. During the next timestep there will be some deterioration to `grade = A`, however all building components of excellent condition do not contribute to the repair costs of a block, hence no cost of repairs in `timestep 3`. We start to see condition `grade = B & D` at `timestep 5` as expected given our working knowledge of the model.   -->
+<!-- ## Repairs -->
+<!-- Repairs are carried out by the `repair` function which is internal to `blockbuster`. The repairing of the `blockbuster_tibble` you pass as an argument is dependent on the other argument; `repair_monies`. The latter can be passed as a vector equal in length to the number of years you are simulating (`forecast_horizon`) or as a number. This allows you to control for inflation in the construction industry and variable repairs spending from year to year. Technically the `blockbuster` function makes use of the `repair_monies` by dividing it up evenly between each block in the input `blockbuster_tibble`.   -->
+<!-- All the blocks (unique based on `buildingid`) in the `blockbuster_tibble` are ranked in descending order by `buildingid`, `grade` (from E to N) and `cost` (expensive to cheapest repairs within `grade`). Each block is repaired with `repair_monies` divided by the number of blocks in the `blockbuster_tibble`. Money is spent on worse condition grade (ignoring E as it cannot be repaired [ignoring N and A also]) and most expensive repairs first until the remaining money is less than the cheapest building component to repair, at which point it is discarded (NOT passed to `rebuild_monies`; assumed spent by the school on other things) (see the help function `what_needs_repair_within_block()` for details on the decision making). -->
+<!-- ### Example - compare different spending profiles on condition of blocks -->
+<!-- The purpose of this package is to inform policy decision making to determine which out of competing spending profiles will better meet the assessment criteria. Here we aim to minimise the total condition cost of repairs in the 3 school blocks. We develop two spending profiles using the same amount of money over five years (ignoring inflation for simplicity). Remember, the user is free to develop their own assessment criteria given the flexibility of the model output (e.g. you could use the `unit_area` of critical building components).   -->
+<!-- We could compare using some graphics already demonstrated in the vignette. Instead we prefer to reorganise the data to answer our specific question: which of our competing spending profiles produces the lowest estimated total repairs cost in year 5? We use arbitary blocks and total repair spend profile (this is not intended to be realistic but instead demonstrative). Inspect the code chunk, specifically the `repair_monies` argument for each spending profile, as it is where they differ.   -->
+<!-- * Drip - slow and steady - consistent amount spent each year. -->
+<!-- * Flood - sooner rather than later - spending more sooner, less later. -->
+<!-- #### Run the simulations -->
+<!-- ```{r } -->
+<!-- #  We filter our PDS sample for just three blocks to keep things simple -->
+<!-- #  using identical blocks to our rebuild example above. -->
+<!-- # -->
+<!-- #x <- dplyr::filter(blockbuster::blockbuster_pds,  buildingid == 4382 | buildingid == 4472 -->
+<!-- #                   | buildingid == 4487) -->
+<!-- ##  Repair spending profile of different strategies -->
+<!-- #drip_repairs <- blockbuster(x, forecast_horizon = 5,  #  sum(rep(3e4, 5)) -->
+<!-- #                            repair_monies = rep(3e4, 5))  #  £10k / block / year = £ 15e5 -->
+<!-- # -->
+<!-- #flood_repairs <- blockbuster(x, forecast_horizon = 5, -->
+<!-- #                             repair_monies = c(6e4, 6e4, -->
+<!-- #                                               1e4, 1e4, 1e4))   -->
+<!-- ##  (20k, 20k, 5k, 5k, 5k)* 3 blocks = £ 10.5e5# -->
+<!-- # -->
+<!-- ``` -->
+<!-- Sometimes it is convenient to save these objects and then use them again later. If we were to `saveRDS` then `readRDS` we could use the `attributes()` function to find out the spending profile inputs of the `blockbuster_list`. -->
+<!-- ```{r} -->
+<!-- #attributes(drip_repairs) -->
+<!-- #attributes(flood_repairs) -->
+<!-- ``` -->
+<!-- #### Manipulate data for assessment statistic of interest (total cost of repairs) -->
+<!-- This consistent repair spend profile can be visually compared by the user to a spending profile that invests more heavily sooner rather than later. However, we need to organise the data into a convenient form for comparison.   -->
+<!-- First we convert our list of dataframes into one dataframe (for each spending profile).   -->
+<!-- ```{r} -->
+<!-- #drip <- dplyr::bind_rows(drip_repairs) -->
+<!-- #flood <- dplyr::bind_rows(flood_repairs) -->
+<!-- ``` -->
+<!-- Then we group by timestep and sum the total cost of repairs across all the blocks. We pretend you might want to compare many spending profiles here and thus demonstrate an approach that can be scaled. The model comparison of spending profiles suggests that the flood approach is slightly better when judged by the year 5 `total_cost` of repairs statistic generated using simple data manipulation and aggregation by the analyst. Not much difference at year 1 suggests that the "spend early" strategy may have over spent at year 1. This could be explored by further investigation or even automation to optimise the problem, given enough time or computation power.   -->
+<!-- ```{r} -->
+<!-- #dripping <- drip %>%  #  extracat::visna(drip, sort = "b") -->
+<!-- #  group_by(timestep) %>%  #  drip_missing <- drip %>% filter(!complete.cases(.)) -->
+<!-- #  #  table(drip_missing$timestep)  #  the originals rows are not being given this variable -->
+<!-- #  #  maybe this is OK and makes sense, block can't be rebuilt at timestep 0, therefore NA cost -->
+<!-- #  summarise(total_cost = sum(cost))# -->
+<!-- # -->
+<!-- #flooding <- flood %>% -->
+<!-- #  group_by(timestep) %>% -->
+<!-- #  summarise(total_cost = sum(cost))# -->
+<!-- #  we can join them and create an ID variable -->
+<!-- #spending_profile_ts <- dplyr::bind_rows("drip" = dripping, "flood" = flooding, -->
+<!-- #                                        .id = "spend_profiles") -->
+<!-- #spending_profile_ts -->
+<!-- ``` -->
+<!-- #### Visualise -->
+<!-- ```{r} -->
+<!-- #p8 <- ggplot(spending_profile_ts, aes(timestep, -->
+<!-- #                                total_cost, -->
+<!-- #                                colour = spend_profiles, -->
+<!-- #                                group = spend_profiles)) + -->
+<!-- #  geom_line(size = 2)# -->
+<!-- # -->
+<!-- #  p8 <- p8 + ylab("Total cost of repairs (£)") + xlab("Years") + -->
+<!-- #  govstyle::theme_gov() +  -->
+<!-- #  theme(plot.margin = unit(c(20,10,10,10),"mm")) + -->
+<!-- #  theme(legend.position = "top") -->
+<!-- # -->
+<!-- ``` -->
+<!-- ```{r fig.width=10, fig.height=12} -->
+<!-- #print(p8) -->
+<!-- ``` -->
+<!-- The simulations suggest that on average investing sooner rather than later with the "flood" strategy is slightly superior at reducing total repair costs in five years time.   -->
+<!-- ## Rebuilding versus repairing - how to best invest? -->
+<!-- Now we have both the `rebuild` and `repair` functions we can assess spending profiles that prioritise rebuilding over repairing or vice versa. Again to compare meaningfully we need an assessment criteria to compare our different approaches.   -->
+<!-- Let's use all our money to rebuild one of the blocks or use all the money to repair each block over the five years instead.   -->
+<!-- * Rebuild one block at year one then do nothing   -->
+<!-- * Repair each block over the five years using block rebuild investment   -->
+<!-- We use the same arbitary grouping of blocks to demonstrate. We do our analysis in one code chunk this now that you are familiar.   -->
+<!-- ```{r } -->
+<!-- #  Repair spending profile of different strategies -->
+<!-- #  rebuild most expensive block in first year -->
+<!-- #rebuild_once <- blockbuster(x, forecast_horizon = 5,   -->
+<!-- #                            rebuild_monies = c(2440984, rep(0, 4))) %>% -->
+<!-- #  dplyr::bind_rows() %>% -->
+<!-- #  group_by(timestep) %>% -->
+<!-- #  summarise(total_cost = sum(cost, na.rm = TRUE)) -->
+<!-- #  repair funding using same funds spread over five years -->
+<!-- #drip_fix <- blockbuster(x, forecast_horizon = 5, -->
+<!-- #                             repair_monies = rep(2440984/5, 5)) %>%  -->
+<!-- #  dplyr::bind_rows() %>% -->
+<!-- #  group_by(timestep) %>% -->
+<!-- #  summarise(total_cost = sum(cost, na.rm = TRUE))# -->
+<!-- #  we can join them and create an ID variable -->
+<!-- #spending_profile_ts <- dplyr::bind_rows("Repairs only" = drip_fix, -->
+<!-- #                                        "Rebuild only" = rebuild_once, -->
+<!-- #                                        .id = "spend_profiles") -->
+<!-- #p9 <- ggplot(spending_profile_ts, aes(timestep, -->
+<!-- #                                total_cost, -->
+<!-- #                                colour = spend_profiles, -->
+<!-- #                                group = spend_profiles)) + geom_line(size = 2) -->
+<!-- #  p9 <- p9 + ylab("Total cost of repairs (£)") + xlab("Years") + -->
+<!-- #  govstyle::theme_gov() +  -->
+<!-- #  theme(plot.margin = unit(c(20,10,10,10),"mm")) + -->
+<!-- #  theme(legend.position = "top") -->
+<!-- ``` -->
+<!-- ```{r fig.width=10, fig.height=12} -->
+<!-- #print(p9) -->
+<!-- ``` -->
+<!-- The rebuild takes care of the one rebuilt block but not the other two! As a result the costs of repair begin to accelerate without any money invested in repairing the blocks. The repair focused spending profile quickly brings the condition cost down to zero after two years. The repair profile is probably overspending in the subsequent years and funding could be reduced further with some investigation.   -->
+<!-- CAVEAT: this is just a demonstration and should not be considered a general rule. The best strategy will depend on your assessment criteria and the blocks of interest.   -->
+<!-- ## Summary -->
+<!-- * This modelling approach has the potential to make use of all the data.   -->
+<!-- * It uses a robust statistical modelling approach.   -->
+<!-- * The input structure is preserved in the output tibbles.   -->
+<!-- * The model can be iteratively improved as more data is collected.   -->
+<!-- * There is flexibility in the transition matrices that are used that should be estimated empirically in the future, data collection permitting. -->
+<!-- * The writing of a package allows us to enshrine business knowledge into a corpus of code that is inseparable from the documentation of that code. -->
+<!-- * Quality assurance is built in through the use of continuous integration and the test driven development.   -->
+<!-- ```{r} -->
+<!-- sessionInfo() -->
+<!-- ``` -->
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
