@@ -17,31 +17,26 @@ my_output <- Blockbuster(simulated_elements, save = FALSE)
 dplyr::glimpse(my_output) # this function makes the output nicer to read
 
 ## ------------------------------------------------------------------------
-library(tidyr)
-
-## ---- collapse = TRUE----------------------------------------------------
-my_block <- pull_Block_Data(my_output)
-glimpse(my_block)
+sum(my_output$"element summary"$backlog[my_output$"element summary"$year == 0])
+sum(my_output$"element summary"$backlog[my_output$"element summary"$year == 1])
 
 ## ------------------------------------------------------------------------
-my_block %>% filter(year == 1, grade == "D", backlog > 100000)
-
-## ------------------------------------------------------------------------
-my_block %>%
-  filter(year == 1) %>%
-  group_by(buildingid) %>%
-  summarise(total = sum(backlog)) %>%
-  arrange(desc(total))
+my_output$"element summary" %>%
+  group_by(year) %>%
+  summarise(backlog = sum(backlog))
 
 ## ------------------------------------------------------------------------
 library(ggplot2)
-my_block %>% group_by(year, grade) %>%
+my_output$"element summary" %>%
+  group_by(year, grade) %>%
   summarise(backlog = sum(backlog)) %>%
   ggplot() +
   geom_line(aes(x = year, y = backlog, colour = grade))
 
 ## ------------------------------------------------------------------------
-pull_Element_Data(my_output) %>% glimpse
-pull_Element_Data(my_output, type = "area") %>% glimpse
-pull_Element_Data(my_output, type = "backlog") %>% glimpse
+formals(Blockbuster)
+
+## ------------------------------------------------------------------------
+simulated_elements[1:2, ] %>%
+  select(elementid, ab, bc, cd, de, B.repair.cost, C.repair.cost, D.repair.cost, E.repair.cost)
 

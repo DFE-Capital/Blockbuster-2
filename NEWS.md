@@ -1,4 +1,9 @@
 
+# version 1.0.3.9001 (excel branch)
+
+* updated vignette so it describes new outputs.
+* amended installation instructions so dialog window no longer displays password in plaintext.
+
 # version 1.0.3.9000 (excel branch)
 
 ## MAJOR CHANGES

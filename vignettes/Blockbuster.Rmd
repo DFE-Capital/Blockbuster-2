@@ -60,22 +60,13 @@ library(blockbuster2)
 
 To run a 10 year simulation of the provided simulated dataset, with no rebuilding and £1bn of repair funds per year, the command is
 
-`Blockbuster(simulated_elements, forecast.horizon = 1, rebuild.money = 0, repair.money = 1000000000)`
-
- Note that the Blockbuster automatically saves yearly states into files called
-  `blockbuster_output_element_*.rds` and `blockbuster_output_block_*.rds`within
-  an `output` sub-folder of the current working directory that the function will
-  create if it does not already exist.  The complete output is saved as 
-  `blockbuster_output_output.rds`.  This behaviour is customisable.  Saving of
-  outputs can be turned off with `save = FALSE` passed as an argument. Alternatively, the path and filename can be adjusted using the `filelabel` and `path` arguments.
+`Blockbuster(simulated_elements, forecast.horizon = 10, rebuild.money = 0, repair.money = 1000000000)`
   
-  The element level output is a copy of the input, but with updated grade probabilities and repair totals.  Note that the the cost of repairing an element at
-  a given grade is given by the `*.repair.total` column.  The `*.repair.cost` column is the unit cost of repairing that component type.
+Passing numeric vectors to the `rebuild.money` and `repair.money` arguments allows control of the amount of money available for rebuilding and repairing each year respectively, and `forecast.horizon` allows you to specify the number of years to simulate.
+
+The model outputs a list containing a summary of the area and backlog at each grade by component, by building along with the raw state of all individual components at the end of the simulation.  It is possible to save to file the states of individual components in interim years by passing `save = TRUE` as an
+argument.
   
-  Passing numeric vectors to the `rebuild.money` and `repair.money` arguments allows control of the amount of money available for rebuilding and repairing each year respectively.
-
-## Inputs and Outputs Overview
-
 Remember to use the R help for all of the functions and data mentioned in the
 vignette for extra detail (e.g. try typing `?Blockbuster` into the console).
 
@@ -143,7 +134,6 @@ Column     Description
 elementid  A number that identifies the component type
 -----------------------------
 
-
 The package is designed to be used with PDS data which also includes the following columns that can be useful when looking at outputs:
 
 --------------------------------
@@ -156,14 +146,6 @@ siteid  A number that uniquely identifies a school site (schools may have more t
 LAN     A number that uniquely identifies a Local Authority
 ----------------------------------
 
-## Output format
-
-The model output is a nested list, with the first level indicating the year of simulation (including the original input at position 1) and within each year, data.frames for both element- and block-level data.
-
-So, `output[[1]]$element` will return the input element data (as the input is the first list element), while `output[[2]]$block` will return the block-level summary after one year of simulation.
-
-The element-level data.frames are structured in the same way as required for the input, while the block-level data.frames includes columns that total the expected repair cost for each block at each grade, the cost to rebuild the entire block and the ratio between the total repair cost and the rebuild cost.
-
 The package also includes a block-level summary of the simulated data as `simulated_blocks`
 
 ```{r}
@@ -173,7 +155,22 @@ dplyr::glimpse(simulated_blocks)
 
 This is the same format as the block-level summary outputs of the model.
 
-As mentioned previously, by default the Blockbuster function saves outputs to files.  Files can be loaded individually into your session using something akin to `load("./output/blockbuster_element_2.rds")` depending on where you set the `save`, `path` and `filelabel` arguments.
+## Output format
+
+The model output is a list with four entries: 
+
+- `element summary` A tidy format data frame of area and backlog by component type, grade and year.
+- `building summary` A tidy format data frame of area and backlog by building, grade and year.
+- `element` A data frame containing the final state of all simulated element.
+- `block` A data frame containing the final state of all simulated buildings.
+
+So - presuming the output has been saved as an object called `output` - the command `output$"element summary"` will return the element-level summary, `output$"building summary"` will return the block-level summary and so on.
+
+The element-level data frame in the output will contain the same columns as the data frame passed to the `element.data` argument, so additional data irrelevant to the model (such as `siteid`) will be passed through unchanged.
+
+The block-level data frame will contain the columns `buildingid`, `block.rebuild.cost`, `*.block.repair.cost` and `ratio`.  If a data frame is passed to the `block.data` argument then other columns will be passed through unchanged.
+
+If you want to access the raw element-level data for interim years, it is possible to set the Blockbuster function to save interim states to file.  Setting `save = TRUE` will turn this feature on and the `filelabel` and `path` arguments allow you to set the path and labels for the saved files.  Due to memory restrictions, separate files are saved for each year. Files can be loaded individually into your session using something akin to `load("./output/blockbuster_element_2.rds")` depending on where you set the `save`, `path` and `filelabel` arguments.
 
 ## Example analysis
 
@@ -187,104 +184,64 @@ my_output <- Blockbuster(simulated_elements, save = FALSE)
 dplyr::glimpse(my_output) # this function makes the output nicer to read
 ```
 
-The first list entry is the initial state, split into two data frames, the element-level data and the block-level summary.  The second list entry is the model output after one year.  If we forecast more years, there will be an addition list element for each year.
-
-For convenience there are four useful functions for managing the output.  `pull_Element_Data` and `pull_Block_Data` can be used to pull out the element- and block-level data from the output. For large datasets (for example, the PDS dataset), R can hit memory limits when the `Blockbuster` function tries to construct the single output object from the saved interim files. `load_Block_Data` and `load_Element_Data` load the relevant outputs from the saved files.  These functions have a dependency on the `tidyr` package, so you will need to load it if you want to use these convenient functions for looking at the outputs.
+We start by comparing the initial overall backlog and the backlog after one year.
 
 ```{r}
-library(tidyr)
+sum(my_output$"element summary"$backlog[my_output$"element summary"$year == 0])
+sum(my_output$"element summary"$backlog[my_output$"element summary"$year == 1])
 ```
 
-We start by looking at the block-level output.
-
-```{r, collapse = TRUE}
-my_block <- pull_Block_Data(my_output)
-glimpse(my_block)
-```
-
-Note that the `pull_Block_Data` combines the outputs for all years into one data frame, adds a `year` column and places the grades and backlog into tidy format. This makes it easier to filter and plot the data.  
-
-For example, let's look at all the blocks with an expected grade D backlog after one year of over £100,000:
+We recommend using the pipe operator `%>%` for coding, as used in `dplyr` as it results in code that is much simpler and easier to read.  For example, the above code can be replaced with
 
 ```{r}
-my_block %>% filter(year == 1, grade == "D", backlog > 100000)
-```
-Or we could rank the blocks in order of their total backlog after one year:
-
-```{r}
-my_block %>%
-  filter(year == 1) %>%
-  group_by(buildingid) %>%
-  summarise(total = sum(backlog)) %>%
-  arrange(desc(total))
+my_output$"element summary" %>%
+  group_by(year) %>%
+  summarise(backlog = sum(backlog))
 ```
 
-Here we use `ggplot2` to plot the backlog for each grade over time.
+We suggest using the same style code for visualisations.  The following uses the `ggplot2` to plot the change in expected cost of repairing all components at the associated grade.
 
 ```{r}
 library(ggplot2)
-my_block %>% group_by(year, grade) %>%
+my_output$"element summary" %>%
+  group_by(year, grade) %>%
   summarise(backlog = sum(backlog)) %>%
   ggplot() +
   geom_line(aes(x = year, y = backlog, colour = grade))
 ```
 
-The `pull_Element_Data` and `load_Element_Data` functions work in the same way, but with 
-an extra argument called `type`.  If `type` is `"area"` then the resulting data frame will contain the proportional area at each grade in tidy format.  If `type` is `"backlog"` then the backlog at each grade will be in tidy format.  If `type` is anything else then the output will be the raw data.
+Although the output groups summary statistics by element or building, any analysis related to component type or buildings will be highly suspect.  This is because the Blockbuster model does not differentiate between different buildings, schools or components when making repair and rebuild decisions at present. In reality the decisions on what funds are spent on what projects is highly dependent on school-level factors and the deterioration and repair of components is also correlated.  We therefore strongly recommend aggregating outputs across the complete simulated estate.
+
+### The default arguments
+
+In the example above we passed the `blockbuster` function only one argument and
+it still worked. That is because if you do not explicitly state some of the
+arguments it will assume default values for these. We can look at the defaults
+using the `formals` function.
 
 ```{r}
-pull_Element_Data(my_output) %>% glimpse
-pull_Element_Data(my_output, type = "area") %>% glimpse
-pull_Element_Data(my_output, type = "backlog") %>% glimpse
+formals(Blockbuster)
 ```
 
-<!-- This output has foreign key variables with the suffix -id, that could be joined  -->
-<!-- to other data from relevant SQL data tables (e.g. the user could find the `urn` -->
-<!-- by joining on `siteid` from an appropriate data table). The `urn` is omitted to -->
-<!-- maintain the anonymity of each school's condition included in the sample.   -->
+The default behaviour of the model is to simulate deterioration over one year
+without any rebuilding or repairing and no inflation.  The argument
+`element.data` does not have default behaviour thus we must pass it to
+the blockbuster function.
 
-<!-- #### Generic methods -->
+For more details try typing `?blockbuster` into the console.
 
-<!-- There are currently no generic methods associated with the `blockbuster` class, -->
-<!-- but we plan to implement methods for `summary`, `print` and `plot`. -->
+## The transition probabilities and the component repair costs
 
-<!-- ### The default arguments -->
+The deterioration rates and component repair costs are passed to blockbuster within the input `element.data` data.frame, allowing for individually tailored deterioration rates for all components if desired. Let's inspect some rates and costs in `simulated_elements`.
 
-<!-- In the example above we passed the `blockbuster` function only one argument and -->
-<!-- it still worked. That is because if you do not explicitly state some of the -->
-<!-- arguments it will assume default values for these. We can look at the defaults -->
-<!-- using the `formals` function.   -->
+```{r}
+simulated_elements[1:2, ] %>%
+  select(elementid, ab, bc, cd, de, B.repair.cost, C.repair.cost, D.repair.cost, E.repair.cost)
+```
 
-<!-- ```{r} -->
-<!-- formals(Blockbuster) -->
-<!-- ``` -->
+Every component type is identified by `elementid`. The "two-letter" variables describe the transition rate or probability from the first letter condition grade to the second letter condition grade. For example,`cd` describes the proportion of the `unit_area` at grade "C" that will transition to grade `D` through one timestep or year.
 
-<!-- The default behaviour of the model is to simulate deterioration over one year -->
-<!-- without any rebuilding or repairing and no inflation.  The argument -->
-<!-- `element.data` does not have default behaviour thus we must pass it to -->
-<!-- the blockbuster function. -->
-
-<!-- For more detail try typing `?blockbuster` into the console.   -->
-
-<!-- ## The transition probability data -->
-
-<!-- The deterioration rates are stored in the input `element` object, allowing for  -->
-<!-- individually tailored deterioration rates if desired. Let's inspect  -->
-<!-- some rates in `test.element`. -->
-
-<!-- ```{r} -->
-<!-- test.element[1:2, ] %>% -->
-<!--   select(elementid, na, ab, bc, cd, de) -->
-<!-- ``` -->
-
-<!-- This identifies the building component through the `elementid`. Although not -->
-<!-- available yet, the `TOBEINCLUDED` file in the data folder details the element, -->
-<!-- sub-element and construction type associated with each `elementid`. The -->
-<!-- "two-letter" variables describe the transition rate or probability from the -->
-<!-- first letter condition grade to the second letter condition grade. For example, -->
-<!-- `cd` describes the proportion of the `unit_area` at `grade == C` that will -->
-<!-- transition to `grade == D` through one timestep or year (`na` means from New to -->
-<!-- A (excellent condition) and is not to be confused with `NA`).   -->
+The `*.repair.cost` columns contain the unit cost of repairing components at the associated grades. The individual expected component repair costs - stored in the `*.repair.total` columns - are computed by multiplying these by `unit_area` and the probability of being at that grade (columns `A`, `B`, `C`, `D`, and `E`).
 
 <!-- ## The blockbuster functions -->
 
