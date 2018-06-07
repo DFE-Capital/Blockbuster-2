@@ -147,7 +147,7 @@ results <- blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
 
 print("producing summary")
 
-summary <- results$"element summary" %>%
+results$"element summary" %>%
   filter(grade %in% c("C", "D", "E")) %>%
   group_by(year) %>%
   summarise(backlog = sum(backlog)) %>%
@@ -156,7 +156,7 @@ summary <- results$"element summary" %>%
              sheetName = "Summary",
              row.names = FALSE)
 
-totals <- results$"element summary" %>%
+results$"element summary" %>%
   group_by(year, grade) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
   as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
@@ -165,12 +165,15 @@ totals <- results$"element summary" %>%
              row.names = FALSE,
              append = TRUE)
 
+readline(prompt = "Backlog summaries created. Press any key to continue")
 building_gifa <- results$"element" %>%
   group_by(buildingid) %>%
   slice(1) %>%
   select(buildingid, gifa)
 
-buildings <- results$"building summary" %>%
+readline(prompt = "Building gifa found. Press any key to continue")
+message("Creating building summary")
+results$"building summary" %>%
   group_by(year, buildingid) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
   left_join(building_gifa) %>%
@@ -180,8 +183,9 @@ buildings <- results$"building summary" %>%
              sheetName = "Buildings",
              row.names = FALSE,
              append = TRUE)
+message("Creating element summary")
 
-elements <- results$"element summary" %>%
+results$"element summary" %>%
   group_by(year, elementid) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
   as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
@@ -189,3 +193,6 @@ elements <- results$"element summary" %>%
              sheetName = "Elements",
              row.names = FALSE,
              append = TRUE)
+
+readline(prompt = "Finished. Press enter to continue")
+
