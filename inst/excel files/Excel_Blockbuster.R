@@ -151,15 +151,18 @@ summary <- results$"element summary" %>%
   filter(grade %in% c("C", "D", "E")) %>%
   group_by(year) %>%
   summarise(backlog = sum(backlog)) %>%
+  as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
   write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
-             sheetName = "Summary")
+             sheetName = "Summary",
+             row.names = FALSE)
 
 totals <- results$"element summary" %>%
   group_by(year, grade) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
-  ungroup %>%
+  as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
   write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
              sheetName = "Totals",
+             row.names = FALSE,
              append = TRUE)
 
 building_gifa <- results$"element" %>%
@@ -170,17 +173,19 @@ building_gifa <- results$"element" %>%
 buildings <- results$"building summary" %>%
   group_by(year, buildingid) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
-  ungroup() %>%
   left_join(building_gifa) %>%
   mutate(backlog_per_sq_m = backlog / gifa) %>%
+  as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
   write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
              sheetName = "Buildings",
+             row.names = FALSE,
              append = TRUE)
 
 elements <- results$"element summary" %>%
   group_by(year, elementid) %>%
   summarise(area = sum(area), backlog = sum(backlog)) %>%
-  ungroup() %>%
+  as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
   write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
              sheetName = "Elements",
+             row.names = FALSE,
              append = TRUE)

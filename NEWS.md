@@ -1,3 +1,14 @@
+# version 1.0.3.9002 (excel branch)
+
+## MAJOR CHANGES
+
+* Excel_Blockbuster does not save yearly outputs, but instead saves an excel workbook called "output[DATE].xlsx" in the same folder as the input. This workbook contains total backlog (C,D,E) by year, backlog per grade by year, and breakdowns by buildingid and elementid.
+
+## Minor changes
+* Excel_Blockbuster no longer sets the working directory. It is not good practise to set the working directory.
+* Added brief descriptions of what the excel files scripts are used for and do.
+* removed unnecessary "update excel file with folders.R" script that has been incorporated into .onLoad in zzz.R
+
 
 # version 1.0.3.9001 (excel branch)
 
