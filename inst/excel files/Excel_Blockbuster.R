@@ -1,3 +1,6 @@
+# This script is run when the button is pushed on Excel input.xlsm.
+# It loads the input parameters from the excel sheet and runs the blockbuster model.
+
 library(blockbuster2)
 library(readxl)
 
@@ -5,9 +8,9 @@ print ("loading functions")
 args <- commandArgs(trailingOnly = TRUE)
 
 working_dir <- file.path(args[1])
-setwd(working_dir)
+excel_path <- file.path(working_dir, "excel files/Excel input.xlsm")
 
-load_forecast_horizon <- function(path = "./excel files/Excel input.xlsm"){
+load_forecast_horizon <- function(path = excel_path){
   read_excel(path, range = "Inputs!G1", col_names = "forecast_horizon") %>% pull()
 }
 
@@ -66,7 +69,7 @@ load_repair_costs <- function(path ="./excel files/Excel input.xlsm"){
            E.repair.cost = "E repair cost")
 }
 
-load_excel_inputs <- function(path = "./excel files/Excel input.xlsm"){
+load_excel_inputs <- function(path = excel_path){
 
   # load inputs
   forecast_horizon <- load_forecast_horizon(path)
@@ -99,7 +102,7 @@ load_excel_inputs <- function(path = "./excel files/Excel input.xlsm"){
               repair_costs = repair_costs))
 }
 
-create_inputs_from_excel <- function(path = "./excel files/Excel input.xlsm"){
+create_inputs_from_excel <- function(path = excel_path){
   inputs <- load_excel_inputs(path)
   data <- readRDS(file.path(inputs$data_path, "PDS_three_tables.rds"))
 
@@ -137,9 +140,47 @@ blockbuster_excel <- function(path){
               grade.order = inputs$grade_order)
 }
 
+time <- Sys.Date()
 print("running blockbuster")
 
-blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
+results <- blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
 
-save(args, file = file.path(args[1], "test.rda"))
+print("producing summary")
 
+summary <- results$"element summary" %>%
+  filter(grade %in% c("C", "D", "E")) %>%
+  group_by(year) %>%
+  summarise(backlog = sum(backlog)) %>%
+  write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
+             sheetName = "Summary")
+
+totals <- results$"element summary" %>%
+  group_by(year, grade) %>%
+  summarise(area = sum(area), backlog = sum(backlog)) %>%
+  ungroup %>%
+  write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
+             sheetName = "Totals",
+             append = TRUE)
+
+building_gifa <- results$"element" %>%
+  group_by(buildingid) %>%
+  slice(1) %>%
+  select(buildingid, gifa)
+
+buildings <- results$"building summary" %>%
+  group_by(year, buildingid) %>%
+  summarise(area = sum(area), backlog = sum(backlog)) %>%
+  ungroup() %>%
+  left_join(building_gifa) %>%
+  mutate(backlog_per_sq_m = backlog / gifa) %>%
+  write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
+             sheetName = "Buildings",
+             append = TRUE)
+
+elements <- results$"element summary" %>%
+  group_by(year, elementid) %>%
+  summarise(area = sum(area), backlog = sum(backlog)) %>%
+  ungroup() %>%
+  write.xlsx(file = file.path(working_dir, paste0("output", time, ".xlsx")),
+             sheetName = "Elements",
+             append = TRUE)

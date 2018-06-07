@@ -1,3 +1,8 @@
+# This script is intended to be passed to those who wish to run the blockbuster model on their own computer using the excel front end.
+
+# It will set the DfE proxy and install the blockbuster2 package. The library containing blockbuster2 will have a folder "excel files" that will contain
+# "Excel input.xlsm".  Copy this file into a folder and run it from there, after checking it is pointing to all the correct folders.
+
 # packages required: httr and devtools
 # NOTE: 64 bit Java will need to be installed - this may or may not appear in
 # the software center so a service request may be necessary
