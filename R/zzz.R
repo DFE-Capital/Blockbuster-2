@@ -31,12 +31,14 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
     rows <- getRows(sheet)
 
     # set R.home
-    cell <- getCells(rows[13], 7) # create object containing the cell (row 13, col 7) that needs to contain the folder path
-    setCellValue(cell[[1]], R.home("bin"))
+    # create object containing the cell (row 10, col 2) to contain the path to Rscript
+    cell1 <- getCells(rows[9], 2)
+    setCellValue(cell1[[1]], R.home("bin"))
 
     #set package
-    cell <- getCells(rows[15], 7) # create object containing the cell (row 15, col 7) that needs to contain the folder path
-    setCellValue(cell[[1]], find.package("blockbuster2"))
+    # create object containing the cell (row 11, col 2) to contain the path to the blockbuster2 library
+    cell2 <- getCells(rows[10], 2)
+    setCellValue(cell2[[1]], find.package("blockbuster2"))
 
     # save the workbook
     saveWorkbook(wb, file)

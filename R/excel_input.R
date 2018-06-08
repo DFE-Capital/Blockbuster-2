@@ -1,86 +1,37 @@
-load_forecast_horizon <- function(path = "./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G1", col_names = "forecast_horizon") %>% pull()
-}
-
-load_block_unit_rebuild <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G2", col_names = "unit_rebuild_cost") %>% pull()
-}
-
-load_grade_order <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G3", col_names = "grade_order") %>% pull() %>%
-    strsplit("") %>% unlist()
-}
-
-load_location_factor <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G4", col_names = "location_factor") %>% pull()
-}
-
-load_save_path <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G6", col_names = "save_path") %>% pull()
-}
-
-load_file_label <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G7", col_names = "file_label") %>% pull()
-}
-
-load_data_path <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Inputs!G9", col_names = "data_path") %>% pull()
-}
-
-load_project_path <- function(path ="./excel files/"){
-  read_excel(path, range = "Inputs!G11", col_names = "project_path") %>% pull()
-}
-
-load_repair_budget <- function(path ="./excel files/Excel input.xlsm", years){
-  read_excel(path, range = paste0("Inputs!B2:B", years + 1), col_names = "repair_budget") %>% pull()
-}
-
-load_rebuild_budget <- function(path ="./excel files/Excel input.xlsm", years){
-  read_excel(path, range = paste0("Inputs!C2:C", years + 1), col_names = "rebuild_budget") %>% pull()
-}
-
-load_inflation <- function(path ="./excel files/Excel input.xlsm", years){
-  read_excel(path, range = paste0("Inputs!D2:D", years + 1), col_names = "inflation") %>% pull()
-}
-
-load_det_rates <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Deterioration rates!A1:E129") %>%
-    rename(elementid = "Element ID")
-}
-
-load_repair_costs <- function(path ="./excel files/Excel input.xlsm"){
-  read_excel(path, range = "Repair costs!A1:E129") %>%
-    rename(elementid = "Element ID",
-           B.repair.cost = "B repair cost",
-           C.repair.cost = "C repair cost",
-           D.repair.cost = "D repair cost",
-           E.repair.cost = "E repair cost")
-}
-
-load_excel_inputs <- function(path = "./excel files/Excel input.xlsm"){
+load_excel_inputs <- function(path){
 
   # load inputs
-  forecast_horizon <- load_forecast_horizon(path)
-  unit_rebuild_cost <- load_block_unit_rebuild(path)
-  grade_order <- load_grade_order(path)
-  location_factor <- load_location_factor(path)
-  save_path <- load_save_path(path)
-  file_label <- load_file_label(path)
-  data_path <- load_data_path(path)
-  project_path <- load_project_path(path)
-  repair_budget <- load_repair_budget(path, forecast_horizon)
-  rebuild_budget <- load_rebuild_budget(path, forecast_horizon)
-  inflation <- load_inflation(path, forecast_horizon)
-  det_rates <- load_det_rates(path)
-  repair_costs <- load_repair_costs(path)
+  inputs <- read.xlsx(path, sheetName = "Model", colIndex = 2, stringsAsFactors = FALSE, header = FALSE)
+  forecast_horizon <- as.numeric(inputs[2, 1])
+  unit_rebuild_cost <- as.numeric(inputs[3, 1])
+  grade_order <- inputs[4, 1]
+  location_factor <- as.logical(inputs[5, 1])
+  save <- as.logical(inputs[6, 1])
+  data_path <- inputs[1, 1]
+
+  # load input budgets
+  budgets <- read.xlsx(path, sheetName = "Inputs", colIndex = 2:4)
+  repair_budget <- budgets$Repair.budget[1:forecast_horizon]
+  rebuild_budget <- budgets$Rebuild.budget[1:forecast_horizon]
+  inflation <- budgets$Inflation[1:forecast_horizon]
+
+  # load deterioration rates
+  det_rates <- read.xlsx(path, sheetName = "Deterioration rates",
+                         colIndex = 1:8, stringsAsFactors = FALSE) %>%
+    rename(elementid = "Element.ID")
+
+  # load repair costs
+  repair_costs <- read.xlsx(path, sheetName = "Repair costs",
+                            colIndex = 1:8, stringsAsFactors = FALSE) %>%
+    rename(elementid = "Element.ID")
 
   # return as list
-  return(list(forecast_horizon = forecast_horizon,
+  return(list(element_data = element_data,
+              forecast_horizon = forecast_horizon,
               unit_rebuild_cost = unit_rebuild_cost,
               grade_order = grade_order,
               location_factor = location_factor,
-              save_path = save_path,
-              file_label = file_label,
+              save = save,
               data_path = data_path,
               repair_budget = repair_budget,
               rebuild_budget = rebuild_budget,
@@ -89,7 +40,7 @@ load_excel_inputs <- function(path = "./excel files/Excel input.xlsm"){
               repair_costs = repair_costs))
 }
 
-create_inputs_from_excel <- function(path = "./excel files/Excel input.xlsm"){
+create_input_element_from_excel <- function(path = "./excel files/Excel input.xlsm"){
   inputs <- load_excel_inputs(path)
   data <- readRDS(file.path(inputs$data_path, "PDS_three_tables.rds"))
 
@@ -113,7 +64,9 @@ blockbuster_excel <- function(path){
 
   # pull inputs from excel
   inputs <- create_inputs_from_excel(path)
+  message(paste0("output will be saved in", getwd()))
 
+  sys.sleep(10)
   # run Blockbuster
   Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
@@ -121,7 +74,6 @@ blockbuster_excel <- function(path){
               repair.money = inputs$repair_budget,
               block.rebuild.cost = inputs$unit_rebuild_cost,
               inflation = inputs$inflation,
-              filelabel = inputs$file_label,
-              path = file.path(inputs$project_path, inputs$save_path),
+              save = inputs$save,
               grade.order = inputs$grade_order)
 }
