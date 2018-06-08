@@ -1,3 +1,10 @@
+#' Title
+#'
+#' @param path
+#'
+#' @return
+#'
+#' @examples
 load_excel_inputs <- function(path){
 
   # load inputs
@@ -26,8 +33,7 @@ load_excel_inputs <- function(path){
     rename(elementid = "Element.ID")
 
   # return as list
-  return(list(element_data = element_data,
-              forecast_horizon = forecast_horizon,
+  return(list(forecast_horizon = forecast_horizon,
               unit_rebuild_cost = unit_rebuild_cost,
               grade_order = grade_order,
               location_factor = location_factor,
@@ -40,6 +46,13 @@ load_excel_inputs <- function(path){
               repair_costs = repair_costs))
 }
 
+#' Title
+#'
+#' @param path
+#'
+#' @return
+#'
+#' @examples
 create_input_element_from_excel <- function(path = "./excel files/Excel input.xlsm"){
   inputs <- load_excel_inputs(path)
   data <- readRDS(file.path(inputs$data_path, "PDS_three_tables.rds"))
@@ -60,13 +73,20 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
   return(inputs)
 }
 
+#' Title
+#'
+#' @param path
+#'
+#' @return
+#' @export
+#'
+#' @examples
 blockbuster_excel <- function(path){
 
   # pull inputs from excel
-  inputs <- create_inputs_from_excel(path)
-  message(paste0("output will be saved in", getwd()))
+  inputs <- create_input_element_from_excel(path)
 
-  sys.sleep(10)
+  Sys.sleep(10)
   # run Blockbuster
   Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
