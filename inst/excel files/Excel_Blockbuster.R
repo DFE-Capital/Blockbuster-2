@@ -8,10 +8,9 @@ print ("loading functions")
 args <- commandArgs(trailingOnly = TRUE)
 
 working_dir <- file.path(args[1])
-excel_path <- file.path(working_dir, "excel files/Excel input.xlsm")
 
 time <- Sys.Date()
-print("running blockbuster")
+print(paste0("running blockbuster from ", working_dir))
 
 results <- blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
 
@@ -46,6 +45,6 @@ results$"element summary" %>%
              row.names = FALSE,
              append = TRUE)
 
-readline(prompt = "Finished. Press enter to continue")
+readline(prompt = "Finished")
 Sys.sleep(10)
 

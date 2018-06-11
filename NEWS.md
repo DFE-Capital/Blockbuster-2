@@ -1,3 +1,11 @@
+# version 1.0.3.9003 (excel branch)
+
+* tidied up data creation from simulated or other data so duplicated columns don't cause trouble
+* added simulated_data.rds to excel files for quick testing of excel sheet
+* excel input and writing now uses xlsx package exclusively so readxl package is no longer needed
+* moved some things around in the excel sheet so have changed the references in .onLoad appropriately
+* moved excel functions into R folder.
+
 # version 1.0.3.9002 (excel branch)
 
 ## MAJOR CHANGES

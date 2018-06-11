@@ -7,6 +7,10 @@
 #' @examples
 load_excel_inputs <- function(path){
 
+  if(!file.exists(path)) {
+    print(paste0("ERROR: Cannot access ", path))
+  }
+  message("Loading blockbuster inputs from excel sheet.")
   # load inputs
   inputs <- read.xlsx(path, sheetName = "Model", colIndex = 2, stringsAsFactors = FALSE, header = FALSE)
   forecast_horizon <- as.numeric(inputs[2, 1])
@@ -32,6 +36,8 @@ load_excel_inputs <- function(path){
                             colIndex = 1:8, stringsAsFactors = FALSE) %>%
     rename(elementid = "Element.ID")
 
+  message("Inputs loaded")
+
   # return as list
   return(list(forecast_horizon = forecast_horizon,
               unit_rebuild_cost = unit_rebuild_cost,
@@ -54,15 +60,35 @@ load_excel_inputs <- function(path){
 #'
 #' @examples
 create_input_element_from_excel <- function(path = "./excel files/Excel input.xlsm"){
+
   inputs <- load_excel_inputs(path)
-  data <- readRDS(file.path(inputs$data_path, "PDS_three_tables.rds"))
+
+  if(!file.exists(inputs$data_path)) {
+    message(paste0("ERROR: Cannot access ", path))
+    Sys.sleep(10)
+  }
+
+  message(paste0("Loading data from ", inputs$data_path))
+
+  data <- readRDS(file.path(inputs$data_path))
+
+  # remove det rates and repair costs if already in the data
+  if("B.repair.cost" %in% names(data$element)){
+    data$element <- data$element %>%
+      select(-B.repair.cost, -C.repair.cost, -D.repair.cost, -E.repair.cost)
+  }
+
+  if("ab" %in% names(data$element)){
+    data$element <- data$element %>%
+      select(-ab, -bc, -cd, -de)
+  }
 
   # add the deterioration rates and repair costs to the data. Note that this
   #  will leave NAs as rates and costs aren't defined for some
   # elements (e.g. decorations - unpainted) so we omit NA rows to remove them.
   inputs$element <- data$element %>%
-    left_join(inputs$det_rates, by = "elementid") %>%
-    left_join(inputs$repair_costs, by = "elementid") %>%
+    left_join(inputs$det_rates) %>%
+    left_join(inputs$repair_costs) %>%
     na.omit() %>%
     # add in the building gifa from the data$building table as this is needed to
     # compute block rebuild costs
@@ -86,7 +112,6 @@ blockbuster_excel <- function(path){
   # pull inputs from excel
   inputs <- create_input_element_from_excel(path)
 
-  Sys.sleep(10)
   # run Blockbuster
   Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
