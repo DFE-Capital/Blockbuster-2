@@ -1,3 +1,9 @@
+# version 1.0.3.9004 (excel branch)
+
+* loading package now sets the data path in the excel sheet to point to the simulated data.
+* moved creation of excel sheets into function instead of script.
+* running from excel creates output log.txt to see where problems happen
+
 # version 1.0.3.9003 (excel branch)
 
 * tidied up data creation from simulated or other data so duplicated columns don't cause trouble

@@ -114,7 +114,7 @@ blockbuster_excel <- function(path){
   inputs <- create_input_element_from_excel(path)
 
   # run Blockbuster
-  Blockbuster(element.data = inputs$element,
+  results <- Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
               rebuild.money = inputs$rebuild_budget,
               repair.money = inputs$repair_budget,
@@ -122,4 +122,35 @@ blockbuster_excel <- function(path){
               inflation = inputs$inflation,
               save = inputs$save,
               grade.order = inputs$grade_order)
+  message("producing summary")
+
+  results$"element summary" %>%
+    filter(grade %in% c("C", "D", "E")) %>%
+    group_by(year) %>%
+    summarise(backlog = sum(backlog)) %>%
+    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
+    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+               sheetName = "Summary",
+               row.names = FALSE)
+
+  results$"element summary" %>%
+    group_by(year, grade) %>%
+    summarise(area = sum(area), backlog = sum(backlog)) %>%
+    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
+    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+               sheetName = "Totals",
+               row.names = FALSE,
+               append = TRUE)
+
+  message("Creating element summary")
+
+  results$"element summary" %>%
+    group_by(year, elementid) %>%
+    summarise(area = sum(area), backlog = sum(backlog)) %>%
+    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
+    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+               sheetName = "Elements",
+               row.names = FALSE,
+               append = TRUE)
+
 }
