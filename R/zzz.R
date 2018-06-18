@@ -40,6 +40,11 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
     cell2 <- getCells(rows[10], 2)
     setCellValue(cell2[[1]], find.package("blockbuster2"))
 
+    #set simulated data path
+    # create object containing the cell (row 1, col 2) to contain the path to simulated data
+    cell3 <- getCells(rows, 2)
+    setCellValue(cell3$`1.2`, file.path(find.package("blockbuster2"), "excel files", "simulated_data.rds"))
+
     # save the workbook
     saveWorkbook(wb, file)
 

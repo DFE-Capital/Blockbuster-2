@@ -21,7 +21,7 @@ getLoginDetails <- function(){
   entry.Name <- tkentry(tt,width="20", textvariable=Name)
   entry.Password <- tkentry(tt, width="20", show="*",
                             textvariable=Password)
-  tkgrid(tklabel(tt, text="Please enter your login details."))
+  tkgrid(tklabel(tt, text="Please enter your usual login details."))
   tkgrid(entry.Name)
   tkgrid(entry.Password)
 

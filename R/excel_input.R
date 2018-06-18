@@ -8,7 +8,8 @@
 load_excel_inputs <- function(path){
 
   if(!file.exists(path)) {
-    print(paste0("ERROR: Cannot access ", path))
+    print(paste0("ERROR: Cannot access excel sheet at ", path))
+    Sys.sleep(10)
   }
   message("Loading blockbuster inputs from excel sheet.")
   # load inputs
@@ -64,7 +65,7 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
   inputs <- load_excel_inputs(path)
 
   if(!file.exists(inputs$data_path)) {
-    message(paste0("ERROR: Cannot access ", path))
+    message(paste0("ERROR: Cannot load estate data from ", inputs$data_path))
     Sys.sleep(10)
   }
 
