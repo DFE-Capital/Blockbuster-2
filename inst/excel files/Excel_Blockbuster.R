@@ -4,14 +4,13 @@
 library(blockbuster2)
 library(readxl)
 
-print ("loading functions")
+message ("loading functions")
 args <- commandArgs(trailingOnly = TRUE)
 
 working_dir <- file.path(args[1])
 
 sink(file = file.path(working_dir, "log.txt"), type = "message")
 
-time <- Sys.Date()
 print(paste0("running blockbuster from ", working_dir))
 
 blockbuster_excel(file.path(working_dir, "Excel input.xlsm"))
