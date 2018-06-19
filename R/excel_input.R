@@ -110,18 +110,26 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
 #' @examples
 blockbuster_excel <- function(path){
 
+  excel_path <- file.path(path, "Excel input.xlsm")
+
+  message("pulling inputs from excel")
   # pull inputs from excel
-  inputs <- create_input_element_from_excel(path)
+  inputs <- create_input_element_from_excel(excel_path)
+  time <- Sys.Date()
 
   # run Blockbuster
-  results <- Blockbuster(element.data = inputs$element,
+  message("Running Blockbuster model")
+  results <- try(Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
               rebuild.money = inputs$rebuild_budget,
               repair.money = inputs$repair_budget,
               block.rebuild.cost = inputs$unit_rebuild_cost,
               inflation = inputs$inflation,
               save = inputs$save,
-              grade.order = inputs$grade_order)
+              grade.order = inputs$grade_order),
+              outFile = file.path(path, "blockbusterlog.txt"))
+
+
   message("producing summary")
 
   results$"element summary" %>%
