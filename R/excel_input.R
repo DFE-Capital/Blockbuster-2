@@ -110,6 +110,7 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
 #' @examples
 blockbuster_excel <- function(path){
 
+  lib_path <- file.path(find.package("blockbuster2"))
   excel_path <- file.path(path, "Excel input.xlsm")
 
   message("pulling inputs from excel")
@@ -160,5 +161,23 @@ blockbuster_excel <- function(path){
                sheetName = "Elements",
                row.names = FALSE,
                append = TRUE)
+
+  message("Creating output charts")
+
+
+  # TODO auto generate knitted document
+  rmarkdown::render(file.path(lib_path, "excel files/output_template.Rmd"),
+                    encoding = "UTF-8",
+                    output_file = file.path(path, paste0("output", time, ".docx")),
+                    params = list(title = "Blockbuster Deterioration Model Output",
+                                  subtitle = format(time, "%d %B %Y"),
+                                  path = file.path(path, paste0("output", time, ".xlsx")),
+                                  forecast_horizon = inputs$forecast_horizon,
+                                  block_rebuild_cost = inputs$unit_rebuild_cost,
+                                  repair_order = inputs$grade_order,
+                                  inflation = ifelse(max(inputs$inflation) > 0, "yes", "no"),
+                                  repair_money = paste(inputs$repair_budget, collapse = ", "),
+                                  rebuild_money =paste(inputs$repair_budget, collapse = ", "))
+                    )
 
 }

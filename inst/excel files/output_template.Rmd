@@ -2,6 +2,7 @@
 output: dfeR::official_statistic
 params:
     title: "Blockbuster output"
+    subtitle: "June 2018"
     path: "output2018-06-09.xlsx"
     forecast_horizon: 10
     block_rebuild_cost: 2000
@@ -12,10 +13,12 @@ params:
     repair_money : "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
     rebuild_money: "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
 always_allow_html: yes 
+title: "`r params$title`"
+subtitle: "`r params$subtitle`"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 # It is recommended that you load in any scripts your require in the markdown here. E.g:
 library(ggplot2)
@@ -50,15 +53,17 @@ The following outputs are from a Blockbuster Deterioration model run over `r par
 
 ```{r params, results = "asis"}
 
-knitr::kable(data.frame(Parameter = c("Deterioration rates", "Repair costs", 
+knitr::kable(data.frame(Parameter = c(#"Deterioration rates", "Repair costs", 
                                       "Inflation on repair and rebuild costs",
                                       "Block rebuild unit cost", "Repair order"),
-                        "Value" = c(params$det_rates, params$repair_costs,
+                        "Value" = c(#params$det_rates, params$repair_costs,
                                params$inflation, params$block_rebuild_cost,
                                params$repair_order)))
 
+# repair_money <- inputs$repair_budget
+# rebuild_money <- inputs$rebuild_budget
 repair_money <- strsplit(params$repair_money, ", ")[[1]] %>% as.numeric
-rebuild_money <- strsplit(params$rebuild_money, ", ")[[1]] %>% as.numeric  
+rebuild_money <- strsplit(params$rebuild_money, ", ")[[1]] %>% as.numeric
 ```
 
 ##
@@ -139,6 +144,12 @@ backlog %>%
 total_area <- totals %>% filter(year == 0) %>% pull(area) %>% sum
 
 totals %>%
+  mutate(grade = case_when(       # combine grades D and E as E is model internal
+    grade %in% c("D", "E") ~ "D",
+    TRUE                   ~ as.character(grade))) %>%
+  group_by(grade, year) %>%
+  summarise(backlog = sum(backlog),
+            area = sum(area)) %>%
   ggplot(aes(x = year, area/total_area, fill = grade)) + 
   geom_area() + 
   theme_gov() +

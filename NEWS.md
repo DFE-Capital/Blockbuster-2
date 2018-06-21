@@ -1,6 +1,6 @@
 # version 1.0.3.9005 (excel branch)
 
-* 
+* Created a markdown document that is the template for auto-generating a word document output. It needs to be connected to the excel_blockbuster code though.
 
 # version 1.0.3.9004 (excel branch)
 
