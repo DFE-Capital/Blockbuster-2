@@ -1,0 +1,150 @@
+---
+output: dfeR::official_statistic
+params:
+    title: "Blockbuster output"
+    path: "output2018-06-09.xlsx"
+    forecast_horizon: 10
+    block_rebuild_cost: 2000
+    repair_order: "EDCB"
+    det_rates: "default"
+    repair_costs : "default"
+    inflation: "yes"
+    repair_money : "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+    rebuild_money: "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+always_allow_html: yes 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# It is recommended that you load in any scripts your require in the markdown here. E.g:
+library(ggplot2)
+library(xlsx)
+library(dplyr)
+library(govstyle)
+library(scales)
+
+format_money <- function(m, digits = 2){
+  if(length(digits) != 1 && length(m) != length(digits)) stop("The two arguments must be of the same length.")
+  neg <- m < 0 & !is.na(m) # to identify negative values (NAs are false)
+  m <- m * (-1)^ neg
+  exponent <- floor(log10(m) / 3)
+  exponent[exponent < 0] <- 0
+  suffix <- c("", "K", "M", "B", "T")[exponent + 1]
+  results <- paste0("£", signif(m, digits) / (10 ^ (exponent * 3)), suffix)
+  results[is.na(m)] <- NA
+  results[neg] <- paste0("-", results)
+  return(results)
+}
+```
+
+```{r data, echo = FALSE, warning = FALSE, message = FALSE}
+backlog <- read.xlsx(file.path(params$path), 1) %>%
+  mutate(`Year on year change` = backlog - c(NA, backlog[-length(backlog)]))
+totals <- read.xlsx(file.path(params$path), 2)
+```
+
+# Model parameters
+
+The following outputs are from a Blockbuster Deterioration model run over `r params$forecast_horizon` years. A summary of the model parameters in provided below, but full details can be found in the accompanying **Excel input.xlsm** file.
+
+```{r params, results = "asis"}
+
+knitr::kable(data.frame(Parameter = c("Deterioration rates", "Repair costs", 
+                                      "Inflation on repair and rebuild costs",
+                                      "Block rebuild unit cost", "Repair order"),
+                        "Value" = c(params$det_rates, params$repair_costs,
+                               params$inflation, params$block_rebuild_cost,
+                               params$repair_order)))
+
+repair_money <- strsplit(params$repair_money, ", ")[[1]] %>% as.numeric
+rebuild_money <- strsplit(params$rebuild_money, ", ")[[1]] %>% as.numeric  
+```
+
+##
+
+The yearly budgets available for rebuilding and repairing are:
+
+```{r budgets}
+
+knitr::kable(data.frame(Year = seq_len(params$forecast_horizon),
+                        `Repair budget` = format_money(repair_money),
+                        `Rebuild budget` = format_money(rebuild_money)))
+
+```
+
+# Model results
+
+## Expected backlog per year
+
+```{r backlog_table, fig.align = "center", fig.cap = "Yearly backlog forecasts"}
+knitr::kable(backlog %>%
+               mutate(`Year on year change` = format_money(`Year on year change`),
+                      backlog = format_money(backlog)),
+             row.names = FALSE,
+             col.names = c("Year", "Backlog", "Year on year change"))
+```
+
+## Expected backlog per year
+
+```{r backlog, echo = FALSE, warning = FALSE}
+backlog %>%
+  ggplot(aes(x = factor(year), y = backlog, group = 1)) + 
+  geom_line() + 
+  theme_gov() +
+  xlab("Year") +
+  ylab("Backlog") +
+  scale_y_continuous(label = format_money)
+```
+
+## Expected backlog by condition grades
+
+```{r stacked_backlog, echo = FALSE, warning = FALSE}
+axis_breaks <- seq(0, max(totals$year), max(totals$year) / 10)
+totals %>%
+  filter(grade != "A") %>%
+  mutate(grade = case_when(       # combine grades D and E as E is model internal
+    grade %in% c("D", "E") ~ "D",
+    TRUE                   ~ as.character(grade))) %>%
+  group_by(grade, year) %>%
+  summarise(backlog = sum(backlog),
+            area = sum(area)) %>%
+  ggplot(aes(x = year, backlog, fill = grade)) + 
+  geom_area() + 
+  theme_gov() +
+  xlab("Year") +
+  ylab("Backlog") + 
+  theme(legend.position = "top") +
+  scale_y_continuous(labels=format_money) +
+  scale_x_continuous(labels = as.integer, breaks = axis_breaks)
+```
+
+
+
+## Yearly change in expected backlog
+
+```{r yearonyear, warning = FALSE}
+backlog %>%
+  ggplot(aes(x = factor(year), y = `Year on year change`, group = 1)) + 
+  geom_line() + 
+  theme_gov() +
+  xlab("Year") +
+  scale_y_continuous(label = format_money) +
+  expand_limits(y = 0)
+```
+
+## Expected proportion by condition grades
+
+```{r area, echo = FALSE, warning = FALSE}
+total_area <- totals %>% filter(year == 0) %>% pull(area) %>% sum
+
+totals %>%
+  ggplot(aes(x = year, area/total_area, fill = grade)) + 
+  geom_area() + 
+  theme_gov() +
+  xlab("Year") +
+  ylab("Percentage of estate") + 
+  theme(legend.position = "top") +
+  scale_y_continuous(labels=scales::percent) +
+  scale_x_continuous(breaks = axis_breaks)
+```
