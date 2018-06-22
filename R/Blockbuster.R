@@ -117,7 +117,7 @@ Blockbuster <- function(element.data, block.data = NULL,
   # save initial state ------------------------------------------------------
 
   if(save){
-    message(paste0("Saving initial state to file. Path: ", path)
+    message(paste0("Saving initial state to file. Path: ", path))
     # set up output directory if necessary
     if(!dir.exists(path)) dir.create(path)
 
