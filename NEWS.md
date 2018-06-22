@@ -1,6 +1,10 @@
 # version 1.0.3.9005 (excel branch)
 
-* Created a markdown document that is the template for auto-generating a word document output. It needs to be connected to the excel_blockbuster code though.
+* Created a markdown document that is the template for auto-generating a word document output.
+* Launching the model from excel now also auto-generates the word document.
+* fixed bug with grade orders and saving
+* excel sheet now allows saving interim states
+
 
 # version 1.0.3.9004 (excel branch)
 

@@ -16,7 +16,7 @@ load_excel_inputs <- function(path){
   inputs <- read.xlsx(path, sheetName = "Model", colIndex = 2, stringsAsFactors = FALSE, header = FALSE)
   forecast_horizon <- as.numeric(inputs[2, 1])
   unit_rebuild_cost <- as.numeric(inputs[3, 1])
-  grade_order <- inputs[4, 1]
+  grade_order <- strsplit(inputs[4, 1], "")[[1]]
   location_factor <- as.logical(inputs[5, 1])
   save <- as.logical(inputs[6, 1])
   data_path <- inputs[1, 1]
@@ -126,7 +126,8 @@ blockbuster_excel <- function(path){
               repair.money = inputs$repair_budget,
               block.rebuild.cost = inputs$unit_rebuild_cost,
               inflation = inputs$inflation,
-              save = inputs$save,
+              save = as.logical(inputs$save),
+              path = path,
               grade.order = inputs$grade_order),
               outFile = file.path(path, "blockbusterlog.txt"))
 
