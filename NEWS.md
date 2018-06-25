@@ -4,6 +4,9 @@
 * Launching the model from excel now also auto-generates the word document.
 * fixed bug with grade orders and saving
 * excel sheet now allows saving interim states
+* fixed bug where most data was ignored (this was because of non-matching character types in fields of the input data)
+* fixed issue with pandoc not being found (NOTE: this may not work on other computers)
+
 
 
 # version 1.0.3.9004 (excel branch)

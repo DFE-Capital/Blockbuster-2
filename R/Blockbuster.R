@@ -112,14 +112,15 @@ Blockbuster <- function(element.data, block.data = NULL,
   inflation <- inputs$inflation
 
   # set filepath
+  savepath <- file.path(path, "output")
   savefile <- file.path(path, "output", filelabel)
 
   # save initial state ------------------------------------------------------
 
   if(save){
-    message(paste0("Saving initial state to file. Path: ", path))
+    message(paste0("Saving initial state to file: ", savefile))
     # set up output directory if necessary
-    if(!dir.exists(path)) dir.create(path)
+    if(!dir.exists(savepath)) dir.create(savepath)
 
     # save initial state (this may seem odd since it is an input, but it is useful
     # to have the initial state saved as part of the complete output).

@@ -7,4 +7,7 @@ NULL
 #' @import xlsx
 NULL
 
+#' @import rmarkdown
+NULL
+
 

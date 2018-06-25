@@ -84,13 +84,10 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
       select(-ab, -bc, -cd, -de)
   }
 
-  # add the deterioration rates and repair costs to the data. Note that this
-  #  will leave NAs as rates and costs aren't defined for some
-  # elements (e.g. decorations - unpainted) so we omit NA rows to remove them.
+  # add the deterioration rates and repair costs to the data.
   inputs$element <- data$element %>%
-    left_join(inputs$det_rates) %>%
-    left_join(inputs$repair_costs) %>%
-    na.omit() %>%
+    left_join(inputs$det_rates, by = "elementid", suffix= c("", "_IGNORE")) %>%
+    left_join(inputs$repair_costs, by = "elementid", suffix = c("", "_IGNORE")) %>%
     # add in the building gifa from the data$building table as this is needed to
     # compute block rebuild costs
     left_join(data$building %>% select(buildingid, gifa), by = "buildingid") %>%
@@ -165,9 +162,10 @@ blockbuster_excel <- function(path){
 
   message("Creating output charts")
 
+  Sys.setenv(RSTUDIO_PANDOC = "C:/Program Files/RStudio/bin/pandoc") # This so the script looks for pandoc in the right place
 
   # TODO auto generate knitted document
-  rmarkdown::render(file.path(lib_path, "excel files/output_template.Rmd"),
+  render(file.path(lib_path, "excel files/output_template.Rmd"),
                     encoding = "UTF-8",
                     output_file = file.path(path, paste0("output", time, ".docx")),
                     params = list(title = "Blockbuster Deterioration Model Output",
@@ -178,7 +176,7 @@ blockbuster_excel <- function(path){
                                   repair_order = inputs$grade_order,
                                   inflation = ifelse(max(inputs$inflation) > 0, "yes", "no"),
                                   repair_money = paste(inputs$repair_budget, collapse = ", "),
-                                  rebuild_money =paste(inputs$repair_budget, collapse = ", "))
+                                  rebuild_money =paste(inputs$rebuild_budget, collapse = ", "))
                     )
 
 }
