@@ -22,7 +22,7 @@ element_summarise_area <- function(element_data, by = elementid){
     gather("grade", "area", A, B, C, D, E) %>%
     group_by(!!by, grade) %>%
     summarise(area = sum(area)) %>%
-    # filter(area > 0) %>%
+    filter(area > 0) %>%
     ungroup %>%
     select(grade, !!by, area)
   return(element_data)
@@ -52,7 +52,7 @@ element_summarise_backlog <- function(element_data, by = elementid){
     gather("grade", "backlog", B, C, D, E) %>%
     group_by(!!by, grade) %>%
     summarise(backlog = sum(backlog)) %>%
-    # filter(backlog > 0) %>%
+    filter(backlog > 0) %>%
     ungroup %>%
     select(grade, !!by, backlog)
   return(element_data)

@@ -64,7 +64,6 @@ knitr::kable(data.frame(Parameter = c(#"Deterioration rates", "Repair costs",
 # rebuild_money <- inputs$rebuild_budget
 repair_money <- strsplit(params$repair_money, ", ")[[1]] %>% as.numeric
 rebuild_money <- strsplit(params$rebuild_money, ", ")[[1]] %>% as.numeric
-prev <- repair_money + rebuild_money
 ```
 
 ##
@@ -84,12 +83,9 @@ knitr::kable(data.frame(Year = seq_len(params$forecast_horizon),
 ## Expected backlog per year
 
 ```{r backlog_table, fig.align = "center", fig.cap = "Yearly backlog forecasts"}
-prev <- c(NA, prev)
-
 knitr::kable(backlog %>%
                mutate(`Year on year change` = format_money(`Year on year change`),
-                      backlog = format_money(backlog),
-                      previous = prev),
+                      backlog = format_money(backlog)),
              row.names = FALSE,
              col.names = c("Year", "Backlog", "Year on year change", "Previous year's investment in estate"))
 ```
