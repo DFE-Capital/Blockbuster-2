@@ -12,7 +12,8 @@ working_dir <- file.path(args[1])
 message(paste0("running blockbuster from ", working_dir))
 
 zz <- file(file.path(working_dir, paste0(format(Sys.time(), "%h%m%d%b%y"), "log.txt")), open = "wt")
-sink(file = zz, type = "message", split = TRUE)
+sink(file = zz, type = "message")
+sink(file = zz, split = TRUE)
 
 message(paste0("Started at", Sys.time()))
 
@@ -22,3 +23,4 @@ try(blockbuster_excel(working_dir), outFile = file.path(working_dir, "blockbuste
 message(paste0("Finished at", Sys.time()))
 
 sink()
+sink(type = "message")

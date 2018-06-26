@@ -43,7 +43,7 @@ format_money <- function(m, digits = 2){
 
 ```{r data, echo = FALSE, warning = FALSE, message = FALSE}
 backlog <- read.xlsx(file.path(params$path), 1) %>%
-  mutate(`Year on year change` = backlog - c(NA, backlog[-length(backlog)]))
+  mutate(`Year on year change` = backlog - c(0, backlog[-length(backlog)]))
 totals <- read.xlsx(file.path(params$path), 2)
 ```
 
