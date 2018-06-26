@@ -124,7 +124,7 @@ blockbuster_excel <- function(path){
               block.rebuild.cost = inputs$unit_rebuild_cost,
               inflation = inputs$inflation,
               save = as.logical(inputs$save),
-              path = path,
+              path = file.path(path, "output"),
               grade.order = inputs$grade_order),
               outFile = file.path(path, "blockbusterlog.txt"))
 

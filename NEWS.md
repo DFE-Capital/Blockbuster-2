@@ -6,6 +6,7 @@
 * excel sheet now allows saving interim states
 * fixed bug where most data was ignored (this was because of non-matching character types in fields of the input data)
 * fixed issue with pandoc not being found (NOTE: this may not work on other computers)
+* fixed conflict betwwen normal and excel modes about where save files were placed 
 
 
 

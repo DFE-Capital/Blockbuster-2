@@ -112,8 +112,8 @@ Blockbuster <- function(element.data, block.data = NULL,
   inflation <- inputs$inflation
 
   # set filepath
-  savepath <- file.path(path, "output")
-  savefile <- file.path(path, "output", filelabel)
+  savepath <- file.path(path)
+  savefile <- file.path(path, filelabel)
 
   # save initial state ------------------------------------------------------
 
