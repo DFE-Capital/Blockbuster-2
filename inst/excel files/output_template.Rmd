@@ -87,7 +87,7 @@ knitr::kable(backlog %>%
                mutate(`Year on year change` = format_money(`Year on year change`),
                       backlog = format_money(backlog)),
              row.names = FALSE,
-             col.names = c("Year", "Backlog", "Year on year change", "Previous year's investment in estate"))
+             col.names = c("Year", "Backlog", "Year on year change"))
 ```
 
 ## Expected backlog per year
