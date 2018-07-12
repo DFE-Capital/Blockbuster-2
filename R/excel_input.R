@@ -174,7 +174,7 @@ blockbuster_excel <- function(path){
                                   forecast_horizon = inputs$forecast_horizon,
                                   block_rebuild_cost = inputs$unit_rebuild_cost,
                                   repair_order = inputs$grade_order,
-                                  inflation = ifelse(max(inputs$inflation) > 0, "yes", "no"),
+                                  inflation = ifelse(all(inputs$inflation == 1), "no", "yes"),
                                   repair_money = paste(inputs$repair_budget, collapse = ", "),
                                   rebuild_money =paste(inputs$rebuild_budget, collapse = ", "))
                     )

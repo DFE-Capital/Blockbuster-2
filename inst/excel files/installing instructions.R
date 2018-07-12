@@ -54,6 +54,9 @@ rm(credentials)
 # install blockbuster2
 devtools::install_github("DFE-Capital/blockbuster-2", ref = "excel")
 
+# install dfeR for the DfE word document template
+devtools::install_github("dfe-analytical-services/dfeR")
+
 # note that by loading the package, the excel sheet is automatically set to the
 # correct folder locations
 
