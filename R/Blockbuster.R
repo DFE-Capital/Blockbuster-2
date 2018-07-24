@@ -96,6 +96,17 @@ Blockbuster <- function(element.data, block.data = NULL,
                         path = "./output/",
                         grade.order = c("E", "D", "C", "B")){
 
+
+  # critical component list -------------------------------------------------
+  # At some point this needs to be fed to the function as an argument
+  # It is drawn from the CDC relative need model Severity Impact Rating
+
+  critical_elements <- c(1700, 1701, 1706, 1707, 1708, 1752, 1756, 1769, 1773,
+                         1774, 1775, 1786, 1787, 1788, 1826, 1827, 1828, 1829,
+                         1830, 1883, 1885, 1887, 1889, 1892, 1893, 1900, 1903,
+                         1905, 1983, 1984, 1985)
+
+
   # input integrity checks -------------------------------------------------
   message ("Checking inputs...")
   inputs <- input_checks(element.data,
@@ -142,6 +153,7 @@ Blockbuster <- function(element.data, block.data = NULL,
     element_summarise_area(element.data, elementid)) %>%
     mutate_at(c("area", "backlog"), replace_na, 0) %>%
     mutate(year = 0)
+  building_failures <- 0
 
   # LOOP ----
   for (i in 1:forecast.horizon){
@@ -203,6 +215,7 @@ Blockbuster <- function(element.data, block.data = NULL,
       element_summarise_area(element.data, elementid)) %>%
       mutate_at(c("area", "backlog"), replace_na, 0) %>%
       mutate(year = i)
+    building_failures[[i+1]] <- buildings_expected_failures(element.data, critical_elements)
 
 
     # LOOP END ----
@@ -213,8 +226,10 @@ Blockbuster <- function(element.data, block.data = NULL,
   message("Preparing output.")
   element <- bind_rows(element_output)
   building <- bind_rows(building_output)
+  building_failures
 
   return(list("element summary" = element, "building summary" = building,
-              element = element.data, block = block.data))
+              element = element.data, block = block.data,
+              "building failures" = building_failures))
 }
 
