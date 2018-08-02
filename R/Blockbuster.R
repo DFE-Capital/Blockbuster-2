@@ -153,7 +153,10 @@ Blockbuster <- function(element.data, block.data = NULL,
     element_summarise_area(element.data, elementid)) %>%
     mutate_at(c("area", "backlog"), replace_na, 0) %>%
     mutate(year = 0)
-  building_failures <- 0
+  building_failures <- 0 # number of expected failed buildings (at least one critical component in E)
+  rebuilds <- 0 # number of rebuilds performed in the year
+  in_need <- length(which(block.data$ratio >= 1)) # number of blocks in need of rebuilding
+  cost <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum # cost of rebuilding in need blocks
 
   # LOOP ----
   for (i in 1:forecast.horizon){
@@ -182,6 +185,8 @@ Blockbuster <- function(element.data, block.data = NULL,
     element.data <- Rebuild(element.data = element.data,
                             block.data = block.data,
                             rebuild.money = rebuild.money[i])
+    rebuilds[[i+1]] <- attr(element.data, "No. of rebuilds")
+
 
     # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
@@ -216,7 +221,8 @@ Blockbuster <- function(element.data, block.data = NULL,
       mutate_at(c("area", "backlog"), replace_na, 0) %>%
       mutate(year = i)
     building_failures[[i+1]] <- buildings_expected_failures(element.data, critical_elements)
-
+    in_need[[i+1]] <- length(which(block.data$ratio > 1))
+    cost[[i+1]] <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum
 
     # LOOP END ----
 
@@ -229,6 +235,9 @@ Blockbuster <- function(element.data, block.data = NULL,
 
   return(list("element summary" = element, "building summary" = building,
               element = element.data, block = block.data,
-              "building failures" = building_failures))
+              "building failures" = building_failures,
+              "Number of rebuilds" = rebuilds,
+              "Number of buildings in need of rebuilding" = in_need,
+              "Cost of rebuilding in need buildings" = cost))
 }
 

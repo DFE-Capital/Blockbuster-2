@@ -531,7 +531,8 @@ test_that("Blockbuster outputs contains area and backlog summaries for all years
   test_output <- Blockbuster(element, forecast.horizon = 2, save = FALSE)
 
   expect_named(test_output,
-               c("element summary", "building summary", "element", "block", "building failures"),
+               c("element summary", "building summary", "element", "block", "building failures",
+                 "Number of buildings in need of rebuilding", "Number of rebuilds", "Cost of rebuilding in need buildings"),
                ignore.order = TRUE)
 })
 

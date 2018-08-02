@@ -45,7 +45,10 @@ Rebuild <- function(element.data, block.data, rebuild.money){
                                          will be used.")
 
   # If there is no money then no need to rebuild.
-  if (rebuild.money == 0) return(element.data)
+  if (rebuild.money == 0){
+    attr(element.data, "No. of rebuilds") <- 0
+    return(element.data)
+  }
 
   # identify blocks which need repairs and arrange in descending ratio order.
   # Then send relevant columns to the recursive function that outputs the
@@ -57,6 +60,8 @@ Rebuild <- function(element.data, block.data, rebuild.money){
   buildings <- RecursiveBudgeting(rebuild.order$block.rebuild.cost,
                                  rebuild.order$buildingid,
                                  rebuild.money)$state
+
+  attr(element.data, "No. of rebuilds") <- length(buildings)
 
   if(length(buildings) < 1) return(element.data)
 

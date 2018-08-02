@@ -68,7 +68,7 @@ last_year <- totals %>% filter(year == max(year)) %>%
 total_area <- sum(last_year$area)
 last_year <- last_year %>% mutate(area = area / total_area)
 
-`Level of investment` <- format_money(sum(rebuild_money))
+`Level of investment` <- format_money(sum(rebuild_money + repair_money))
 `Value of backlog` <- backlog %>% filter(year == max(year)) %>% pull(backlog) %>% format_money
 `Number of schools rebuilt` <- NA
 `Number of schools in need of rebuilding` <- NA
@@ -163,8 +163,7 @@ knitr::kable(format = "markdown", data.frame(Year = seq_len(params$forecast_hori
 ```{r backlog_table, fig.align = "center", fig.cap = "Yearly backlog forecasts"}
 knitr::kable(format = "markdown", backlog %>%
                mutate(`Year on year change` = format_money(`Year on year change`),
-                      backlog = format_money(backlog),
-                      year = year + start_year),
+                      backlog = format_money(backlog)),
              row.names = FALSE,
              col.names = c("Year", "Backlog", "Year on year change"))
 ```

@@ -1,3 +1,15 @@
+# version 1.0.3.9007 (excel branch)
+
+* fixed incorrectly calculated investment level in Word output
+* fixed incorrect years in Expected backlog table in Word output
+* Rebuild() now adds attribute to the element data counting the number of blocks rebuilt.
+* Blockbuster() now returns the number of expected building failures, the number of rebuilds each year, how many buildings each year are in need of rebuilding (rebuild cost < repair cost) and the cost of rebuilding the in need buildings.
+* The excel front-end now includes building failures, and rebuild stats in the excel output.
+* Corrected rebuild tests so they ignore the new attributes when they are irrelevant to the tests
+* Corrected blockbuster tests so they check for the new outputs.
+
+
+
 # version 1.0.3.9006 (excel branch)
 
 * added inflation adjusted repair costs with date stamps to excel input.  Useful

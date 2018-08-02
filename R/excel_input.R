@@ -160,6 +160,18 @@ blockbuster_excel <- function(path){
                row.names = FALSE,
                append = TRUE)
 
+  data.frame(Year = 0:length(inputs$forecast_horizon),
+             "Building failures" = results$"building failures",
+             "Number of rebuilds" = results$"Number of rebuilds",
+             "Number of buildings in need of rebuilding" = results$"Number of buildings in need of rebuilding",
+             "Cost of rebuilding in need buildings" = results$"Cost of rebuilding in need buildings"
+             ) %>%
+    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
+    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+               sheetName = "Rebuild data",
+               row.names = FALSE,
+               append = TRUE)
+
   message("Creating output charts")
 
   Sys.setenv(RSTUDIO_PANDOC = "C:/Program Files/RStudio/bin/pandoc") # This so the script looks for pandoc in the right place
