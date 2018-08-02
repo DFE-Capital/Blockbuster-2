@@ -1,3 +1,9 @@
+# version 1.0.3.9006 (excel branch)
+
+* added inflation adjusted repair costs with date stamps to excel input.  Useful
+as reference
+* overhauled Word output from excel front-end
+
 # version 1.0.3.9005 (excel branch)
 
 * Created a markdown document that is the template for auto-generating a word document output.
@@ -9,7 +15,6 @@
 * fixed conflict betwwen normal and excel modes about where save files were placed 
 * document now correctly states whether inflation was applied
 * added installation of DfeR to install instructions as it is necessary for the document template.
-
 
 
 # version 1.0.3.9004 (excel branch)

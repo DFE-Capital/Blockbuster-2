@@ -226,7 +226,6 @@ Blockbuster <- function(element.data, block.data = NULL,
   message("Preparing output.")
   element <- bind_rows(element_output)
   building <- bind_rows(building_output)
-  building_failures
 
   return(list("element summary" = element, "building summary" = building,
               element = element.data, block = block.data,
