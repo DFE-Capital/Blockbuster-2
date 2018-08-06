@@ -220,9 +220,9 @@ Blockbuster <- function(element.data, block.data = NULL,
       element_summarise_area(element.data, elementid)) %>%
       mutate_at(c("area", "backlog"), replace_na, 0) %>%
       mutate(year = i)
-    building_failures[[i+1]] <- buildings_expected_failures(element.data, critical_elements)
-    in_need[[i+1]] <- length(which(block.data$ratio > 1))
-    cost[[i+1]] <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum
+    building_failures[i+1] <- buildings_expected_failures(element.data, critical_elements) %>% pull(Expected_building_failures)
+    in_need[i+1] <- length(which(block.data$ratio > 1))
+    cost[i+1] <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum
 
     # LOOP END ----
 

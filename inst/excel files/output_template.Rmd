@@ -3,15 +3,16 @@ output: dfeR::official_statistic
 params:
     title: "Blockbuster output"
     subtitle: "June 2018"
-    path: "output2018-06-09.xlsx"
-    forecast_horizon: 10
+    path: "output2018-08-02.xlsx"
+    forecast_horizon: 5
     block_rebuild_cost: 2000
     repair_order: "EDCB"
     det_rates: "default"
     repair_costs : "default"
     inflation: "yes"
-    repair_money : "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
-    rebuild_money: "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+    repair_money : "0, 0, 0, 0, 0"
+    rebuild_money: "0, 0, 0, 0, 0"
+    start_year: 2020
 always_allow_html: yes 
 title: "`r params$title`"
 subtitle: "`r params$subtitle`"
@@ -36,20 +37,20 @@ format_money <- function(m, digits = 2){
   suffix <- c("", "K", "M", "B", "T")[exponent + 1]
   results <- paste0("£", signif(m, digits) / (10 ^ (exponent * 3)), suffix)
   results[is.na(m)] <- NA
-  results[neg] <- paste0("-", results)
+  results[neg] <- paste0("-", results[neg])
   return(results)
 }
 ```
 
 ```{r data, echo = FALSE, warning = FALSE, message = FALSE}
 
-start_year <- 2020
-
 backlog <- read.xlsx(file.path(params$path), 1) %>%
   mutate(`Year on year change` = backlog - c(NA, backlog[-length(backlog)]),
-         year = year + start_year)
+         year = year + params$start_year)
 totals <- read.xlsx(file.path(params$path), 2) %>%
-  mutate(year = year + start_year)
+  mutate(year = year + params$start_year)
+builds <- read.xlsx(file.path(params$path), 4) %>%
+  mutate(Year = Year + params$start_year)
 ```
 
 # Output matrix
@@ -70,16 +71,17 @@ last_year <- last_year %>% mutate(area = area / total_area)
 
 `Level of investment` <- format_money(sum(rebuild_money + repair_money))
 `Value of backlog` <- backlog %>% filter(year == max(year)) %>% pull(backlog) %>% format_money
-`Number of schools rebuilt` <- NA
-`Number of schools in need of rebuilding` <- NA
+`Number of buildings rebuilt` <- sum(builds$Number.of.rebuilds)
+`Number of buildings in need of rebuilding` <- builds$Number.of.buildings.in.need.of.rebuilding[nrow(builds)]
+`Cost to rebuild in need buildings` <- builds$Cost.of.rebuilding.in.need.buildings[nrow(builds)] %>% format_money
 `Estate at A` <- last_year %>% filter(grade == "A") %>%
-  pull(area)
+  pull(area) %>% ifelse(length(.) < 1, 0, .)
 `Estate at B` <- last_year %>% filter(grade == "B") %>%
-  pull(area)
+  pull(area) %>% ifelse(length(.) < 1, 0, .)
 `Estate at C` <- last_year %>% filter(grade == "C") %>%
-  pull(area)
+  pull(area) %>% ifelse(length(.) < 1, 0, .)
 `Estate at D` <- last_year %>% filter(grade == "D") %>%
-  pull(area)
+  pull(area) %>% ifelse(length(.) < 1, 0, .)
 
 pupils <-  c(8406181, 8520189, 8605301, 8677929, 8738575, 8771860, 8789721,
              8784848, 8781830, 8766692, 8736775, 8689746, 8658017, 8635628,
@@ -101,7 +103,8 @@ pupils <- data.frame(year = 2020:2056, pupils) %>%
 `Estate at D` <- paste(round(`Estate at D` * 100, 1), "%", sep = "")
 
 output_matrix <- data.frame(`Level of investment`, `Value of backlog`,
-                            `Number of schools rebuilt`, `Number of schools rebuilt`,
+                            `Number of buildings rebuilt`, `Number of buildings in need of rebuilding`,
+                            `Cost to rebuild in need buildings`,
                             `Estate at A`,
                             `Estate at B`,
                             `Estate at C`,
@@ -115,7 +118,8 @@ output_matrix <- data.frame(`Level of investment`, `Value of backlog`,
 
 knitr::kable(output_matrix, format = "markdown", format.args = list(big.mark = ","),
              col.names = c("Level of investment", "Value of backlog",
-                            "Number of schools rebuilt", "Number of schools in need of rebuilding",
+                            "Number of buildings rebuilt", "Number of buildings in need of rebuilding",
+                            "Cost to rebuild in need buildings",
                             "Estate at A",
                             "Estate at B",
                             "Estate at C",
@@ -123,6 +127,8 @@ knitr::kable(output_matrix, format = "markdown", format.args = list(big.mark = "
                             "Pupils in A or B", "Pupils in C", "Pupils in D"))
 
 ```
+Backlog is defined as the cost to repair or replace all grade C and D need components.
+
 
 # Model parameters
 
@@ -150,7 +156,7 @@ The yearly budgets available for rebuilding and repairing are:
 
 ```{r budgets}
 
-knitr::kable(format = "markdown", data.frame(Year = seq_len(params$forecast_horizon) + start_year,
+knitr::kable(format = "markdown", data.frame(Year = seq_len(params$forecast_horizon) + params$start_year,
                         `Repair budget` = format_money(repair_money),
                         `Rebuild budget` = format_money(rebuild_money)))
 
@@ -162,10 +168,10 @@ knitr::kable(format = "markdown", data.frame(Year = seq_len(params$forecast_hori
 
 ```{r backlog_table, fig.align = "center", fig.cap = "Yearly backlog forecasts"}
 knitr::kable(format = "markdown", backlog %>%
-               mutate(`Year on year change` = format_money(`Year on year change`),
+               mutate(spend = format_money(c(NA, repair_money + rebuild_money)), `Year on year change` = format_money(`Year on year change`),
                       backlog = format_money(backlog)),
              row.names = FALSE,
-             col.names = c("Year", "Backlog", "Year on year change"))
+             col.names = c("Year", "Backlog after investment", "Year on year change", "Investment"))
 ```
 
 ## Expected backlog per year
@@ -173,9 +179,9 @@ knitr::kable(format = "markdown", backlog %>%
 ```{r backlog, echo = FALSE, warning = FALSE, fig.height=4.5, fig.width = 6}
 backlog %>%
   ggplot(aes(x = factor(year), y = backlog, group = 1)) + 
-  geom_hline(yintercept = 1:7 * 1e10, linetype = "dotted", alpha = 0.3) +
   geom_bar(stat= "identity", fill = "#2B8CC4") + 
   theme_gov() +
+  theme(panel.grid.major.y = element_line(colour = "grey", linetype = "dotted")) +
   xlab("Year") +
   ylab("Backlog") +
   scale_y_continuous(label = format_money)
@@ -184,7 +190,6 @@ backlog %>%
 ## Expected backlog by condition grades
 
 ```{r stacked_backlog, echo = FALSE, warning = FALSE, fig.height=4.5, fig.width = 6}
-axis_breaks <- seq(0, max(totals$year), max(totals$year) / 10)
 totals %>%
   filter(grade != "A") %>%
   mutate(grade = case_when(       # combine grades D and E as E is model internal
@@ -196,7 +201,7 @@ totals %>%
             area = sum(area)) %>%
   mutate(label = paste(grade, ": ", format_money(backlog), sep = "")) %>%
   ggplot(aes(x = factor(year), backlog, fill = grade)) + 
-  geom_hline(yintercept = 1:7 * 1e10, linetype = "dotted", alpha = 0.3) +
+  theme(panel.grid.major.y = element_line(colour = "grey", linetype = "dotted")) +
   geom_bar(stat = "identity") + 
   theme_gov() +
   xlab("Year") +
@@ -206,7 +211,6 @@ totals %>%
   geom_text(aes(label = label), vjust = 1, position = "stack")
   
   
-  # scale_x_discrete(labels = as.integer, breaks = axis_breaks)
 ```
 
 
@@ -214,12 +218,14 @@ totals %>%
 ## Yearly change in expected backlog
 
 ```{r yearonyear, warning = FALSE, fig.height=4.5, fig.width = 6}
+
+
 backlog %>%
   ggplot(aes(x = factor(year), y = `Year on year change`, group = 1)) + 
-  geom_hline(yintercept = -0:7 * 1e9, linetype = "dashed", alpha = 0.3) +
+  theme(panel.grid.major.y = element_line(colour = "grey", linetype = "dotted")) + 
   geom_line() + 
   geom_point() +
-  geom_text(aes(label = year), vjust = 1, nudge_y = -1e8) + 
+  geom_text(aes(label = year), nudge_y = diff(range(backlog$`Year on year change`, na.rm = TRUE) / 20)) + 
   theme_gov() +
   xlab("Year") +
   scale_y_continuous(label = format_money) +
@@ -244,6 +250,7 @@ totals %>%
   geom_bar(stat="identity") + 
   geom_text(aes(label = label), vjust = 1, position = "stack") +
   theme_gov() +
+  theme(panel.grid.major.y = element_line(colour = "grey", linetype = "dotted")) + 
   xlab("Year") +
   ylab("Percentage of estate") + 
   scale_y_continuous(labels=scales::percent) +

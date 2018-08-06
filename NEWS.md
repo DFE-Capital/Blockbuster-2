@@ -1,4 +1,4 @@
-# version 1.0.3.9007 (excel branch)
+# version 1.0.4.9000 (excel branch)
 
 * fixed incorrectly calculated investment level in Word output
 * fixed incorrect years in Expected backlog table in Word output
@@ -7,6 +7,9 @@
 * The excel front-end now includes building failures, and rebuild stats in the excel output.
 * Corrected rebuild tests so they ignore the new attributes when they are irrelevant to the tests
 * Corrected blockbuster tests so they check for the new outputs.
+* added start year label cell to the excel sheet to label word outputs
+* added inputs table to the excel output
+* backlog now uses C&D(&E) only in docx output
 
 
 

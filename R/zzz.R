@@ -31,18 +31,19 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
     rows <- getRows(sheet)
 
     # set R.home
-    # create object containing the cell (row 10, col 2) to contain the path to Rscript
-    cell1 <- getCells(rows[9], 2)
+    # create object containing the cell (row 11, col 2) to contain the path to Rscript
+    cell1 <- getCells(rows[10], 2)
     setCellValue(cell1[[1]], R.home("bin"))
 
+
     #set package
-    # create object containing the cell (row 11, col 2) to contain the path to the blockbuster2 library
-    cell2 <- getCells(rows[10], 2)
+    # create object containing the cell (row 12, col 2) to contain the path to the blockbuster2 library
+    cell2 <- getCells(rows[11], 2)
     setCellValue(cell2[[1]], pkg)
 
     #set simulated data path
     # create object containing the cell (row 1, col 2) to contain the path to simulated data
-    cell3 <- getCells(rows, 2)
+    cell3 <- getCells(rows[1], 2)
     setCellValue(cell3$`1.2`, file.path(pkg, "excel files", "simulated_data.rds"))
 
     # save the workbook

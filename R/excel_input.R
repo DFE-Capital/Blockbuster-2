@@ -20,6 +20,7 @@ load_excel_inputs <- function(path){
   location_factor <- as.logical(inputs[5, 1])
   save <- as.logical(inputs[6, 1])
   data_path <- inputs[1, 1]
+  start_year <- as.numeric(inputs[7, 1])
 
   # load input budgets
   budgets <- read.xlsx(path, sheetName = "Inputs", colIndex = 2:4)
@@ -50,7 +51,8 @@ load_excel_inputs <- function(path){
               rebuild_budget = rebuild_budget,
               inflation = inflation,
               det_rates = det_rates,
-              repair_costs = repair_costs))
+              repair_costs = repair_costs,
+              start_year = start_year))
 }
 
 #' Title
@@ -160,7 +162,8 @@ blockbuster_excel <- function(path){
                row.names = FALSE,
                append = TRUE)
 
-  data.frame(Year = 0:length(inputs$forecast_horizon),
+  data.frame(Year = 0:inputs$forecast_horizon,
+             "Rebuild budget" = c(NA, inputs$rebuild_budget),
              "Building failures" = results$"building failures",
              "Number of rebuilds" = results$"Number of rebuilds",
              "Number of buildings in need of rebuilding" = results$"Number of buildings in need of rebuilding",
@@ -169,6 +172,14 @@ blockbuster_excel <- function(path){
     as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
     write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
                sheetName = "Rebuild data",
+               row.names = FALSE,
+               append = TRUE)
+
+  data.frame(Year = 1:inputs$forecast_horizon,
+             "Rebuild budget" = inputs$rebuild_budget,
+             "Repair budget" = inputs$repair_budget) %>%
+    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+               sheetName = "Inputs",
                row.names = FALSE,
                append = TRUE)
 
@@ -188,7 +199,8 @@ blockbuster_excel <- function(path){
                                   repair_order = inputs$grade_order,
                                   inflation = ifelse(all(inputs$inflation == 1), "no", "yes"),
                                   repair_money = paste(inputs$repair_budget, collapse = ", "),
-                                  rebuild_money =paste(inputs$rebuild_budget, collapse = ", "))
+                                  rebuild_money =paste(inputs$rebuild_budget, collapse = ", "),
+                                  start_year = inputs$start_year)
                     )
 
 }
