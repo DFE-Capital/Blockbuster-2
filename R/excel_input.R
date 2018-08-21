@@ -93,6 +93,8 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
     # add in the building gifa from the data$building table as this is needed to
     # compute block rebuild costs
     left_join(data$building %>% select(buildingid, gifa), by = "buildingid") %>%
+    # drop rows with no repair cost or det rate
+    drop_na(ab, bc, cd, de, B.repair.cost, C.repair.cost, D.repair.cost, E.repair.cost) %>%
     # update the repair totals
     UpdateElementRepairs()
 
@@ -204,3 +206,33 @@ blockbuster_excel <- function(path){
                     )
 
 }
+
+
+#' Render output word document from output excel
+#'
+#' @return Generates a word document
+#' @export
+#'
+#' @examples
+render_blockbuster <- function(input, output, file){
+
+  time <- Sys.Date()
+  inputs <- create_input_element_from_excel(input)
+
+  render(file.path(find.package("blockbuster2"), "excel files/output_template.Rmd"),
+         encoding = "UTF-8",
+         output_file = file,
+         params = list(
+           title = "Blockbuster Deterioration Model Output",
+           subtitle = format(time, "%d %B %Y"),
+           path = output,
+           forecast_horizon = inputs$forecast_horizon,
+           block_rebuild_cost = inputs$unit_rebuild_cost,
+           repair_order = inputs$grade_order,
+           inflation = ifelse(all(inputs$inflation == 1), "no", "yes"),
+           repair_money = paste(inputs$repair_budget, collapse = ", "),
+           rebuild_money =paste(inputs$rebuild_budget, collapse = ", "),
+           start_year = inputs$start_year)
+         )
+}
+

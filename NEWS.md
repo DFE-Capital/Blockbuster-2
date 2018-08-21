@@ -1,3 +1,7 @@
+# version 1.0.4.9001 (excel branch)
+
+* fixed problem with excel where NAs are introduced from missing det rates which could potentially result in the output not rebuilding properly.
+
 # version 1.0.4.9000 (excel branch)
 
 * fixed incorrectly calculated investment level in Word output
