@@ -1,6 +1,7 @@
 # version 1.0.4.9001 (excel branch)
 
 * fixed problem with excel where NAs are introduced from missing det rates which could potentially result in the output not rebuilding properly.
+* redesigned Excel input.xlsm so it is easier to use. Added buttons to copy in repair costs, rewritten instructions, that sort of thing.
 
 # version 1.0.4.9000 (excel branch)
 
