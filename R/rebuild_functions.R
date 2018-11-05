@@ -57,7 +57,7 @@ Rebuild <- function(element.data, block.data, rebuild.money){
   rebuild.order <- block.data %>%
     filter(block.rebuild.cost != 0) %>%
     arrange(desc(ratio))
-  buildings <- RecursiveBudgeting(rebuild.order$block.rebuild.cost,
+  buildings <- RecursiveBudgeting2(rebuild.order$block.rebuild.cost,
                                  rebuild.order$buildingid,
                                  rebuild.money)$state
 

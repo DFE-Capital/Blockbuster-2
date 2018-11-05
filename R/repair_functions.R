@@ -98,7 +98,7 @@ repairGrade <- function(element.data, grade){
   cost <- cost[ord]
   candidates <- candidates[ord]
   # pass to function that identifies which will be repaired
-  repairing <- RecursiveBudgeting(cost, candidates, repair.money)
+  repairing <- RecursiveBudgeting2(cost, candidates, repair.money)
   # update element.data with repairs by calling repairComponent
   element.data <- repairComponent(element.data, repairing$state, grade)
   attr(element.data, "repair_money") <- repairing$budget
