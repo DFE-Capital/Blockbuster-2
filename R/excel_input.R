@@ -112,15 +112,15 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
 blockbuster_excel <- function(path){
 
   lib_path <- file.path(find.package("blockbuster2"))
-  excel_path <- file.path(path, "Excel input.xlsm")
+  excel_path <- file.path(Sys.getenv("TEMP"), "blockbuster_excel.xlsm")
 
-  message("pulling inputs from excel")
+  log_line("pulling inputs from excel")
   # pull inputs from excel
   inputs <- create_input_element_from_excel(excel_path)
   time <- Sys.Date()
 
   # run Blockbuster
-  message("Running Blockbuster model")
+  log_line("Running Blockbuster model")
   results <- try(Blockbuster(element.data = inputs$element,
               forecast.horizon = inputs$forecast_horizon,
               rebuild.money = inputs$rebuild_budget,
@@ -133,7 +133,7 @@ blockbuster_excel <- function(path){
               outFile = file.path(path, "blockbusterlog.txt"))
 
 
-  message("producing summary")
+  log_line("producing summary")
 
   results$"element summary" %>%
     filter(grade %in% c("C", "D", "E")) %>%
@@ -153,7 +153,7 @@ blockbuster_excel <- function(path){
                row.names = FALSE,
                append = TRUE)
 
-  message("Creating element summary")
+  log_line("Creating element summary")
 
   results$"element summary" %>%
     group_by(year, elementid) %>%
@@ -185,11 +185,11 @@ blockbuster_excel <- function(path){
                row.names = FALSE,
                append = TRUE)
 
-  message("Creating output charts")
+  log_line("Creating output charts")
 
   Sys.setenv(RSTUDIO_PANDOC = "C:/Program Files/RStudio/bin/pandoc") # This so the script looks for pandoc in the right place
 
-  # TODO auto generate knitted document
+  # auto generate knitted document
   render(file.path(lib_path, "excel files/output_template.Rmd"),
                     encoding = "UTF-8",
                     output_file = file.path(path, paste0("output", time, ".docx")),
@@ -204,7 +204,7 @@ blockbuster_excel <- function(path){
                                   rebuild_money =paste(inputs$rebuild_budget, collapse = ", "),
                                   start_year = inputs$start_year)
                     )
-
+return(list(excel = file.path(path, paste0("output", time, ".xlsx")), doc = file.path(path, paste0("output", time, ".docx"))))
 }
 
 

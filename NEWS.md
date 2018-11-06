@@ -1,3 +1,8 @@
+
+# version 1.0.5.9001 (excel branch)
+
+* dramatically sped up model using better recursive budgeting function.
+
 # version 1.0.4.9001 (excel branch)
 
 * fixed problem with excel where NAs are introduced from missing det rates which could potentially result in the output not rebuilding properly.
