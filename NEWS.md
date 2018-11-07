@@ -2,6 +2,10 @@
 # version 1.0.5.9001 (excel branch)
 
 * dramatically sped up model using better recursive budgeting function.
+* excel input now copies itself into the temp folder and deposits necessary installation info there.  This gets around the problem with One Drive syncing working folders into the cloud where R/Excel cannot find them.
+* excel picks up R installation from registry and if it can't looks for a R_HOME environmental variable.
+* added button to excel which fills in correct path to simulated data for convenience
+
 
 # version 1.0.4.9001 (excel branch)
 
