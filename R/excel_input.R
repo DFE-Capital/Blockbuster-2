@@ -113,6 +113,7 @@ blockbuster_excel <- function(path){
 
   lib_path <- file.path(find.package("blockbuster2"))
   excel_path <- file.path(Sys.getenv("TEMP"), "blockbuster_excel.xlsm")
+  temp_path <- file.path(Sys.getenv("TEMP"))
 
   log_line("pulling inputs from excel")
   # pull inputs from excel
@@ -140,7 +141,7 @@ blockbuster_excel <- function(path){
     group_by(year) %>%
     summarise(backlog = sum(backlog)) %>%
     as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
                sheetName = "Summary",
                row.names = FALSE)
 
@@ -148,7 +149,7 @@ blockbuster_excel <- function(path){
     group_by(year, grade) %>%
     summarise(area = sum(area), backlog = sum(backlog)) %>%
     as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
                sheetName = "Totals",
                row.names = FALSE,
                append = TRUE)
@@ -159,7 +160,7 @@ blockbuster_excel <- function(path){
     group_by(year, elementid) %>%
     summarise(area = sum(area), backlog = sum(backlog)) %>%
     as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
                sheetName = "Elements",
                row.names = FALSE,
                append = TRUE)
@@ -172,7 +173,7 @@ blockbuster_excel <- function(path){
              "Cost of rebuilding in need buildings" = results$"Cost of rebuilding in need buildings"
              ) %>%
     as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
                sheetName = "Rebuild data",
                row.names = FALSE,
                append = TRUE)
@@ -180,7 +181,7 @@ blockbuster_excel <- function(path){
   data.frame(Year = 1:inputs$forecast_horizon,
              "Rebuild budget" = inputs$rebuild_budget,
              "Repair budget" = inputs$repair_budget) %>%
-    write.xlsx(file = file.path(path, paste0("output", time, ".xlsx")),
+    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
                sheetName = "Inputs",
                row.names = FALSE,
                append = TRUE)
@@ -192,10 +193,10 @@ blockbuster_excel <- function(path){
   # auto generate knitted document
   render(file.path(lib_path, "excel files/output_template.Rmd"),
                     encoding = "UTF-8",
-                    output_file = file.path(path, paste0("output", time, ".docx")),
+                    output_file = file.path(temp_path, paste0("output", time, ".docx")),
                     params = list(title = "Blockbuster Deterioration Model Output",
                                   subtitle = format(time, "%d %B %Y"),
-                                  path = file.path(path, paste0("output", time, ".xlsx")),
+                                  path = file.path(temp_path, paste0("output", time, ".xlsx")),
                                   forecast_horizon = inputs$forecast_horizon,
                                   block_rebuild_cost = inputs$unit_rebuild_cost,
                                   repair_order = inputs$grade_order,
@@ -204,7 +205,10 @@ blockbuster_excel <- function(path){
                                   rebuild_money =paste(inputs$rebuild_budget, collapse = ", "),
                                   start_year = inputs$start_year)
                     )
-return(list(excel = file.path(path, paste0("output", time, ".xlsx")), doc = file.path(path, paste0("output", time, ".docx"))))
+return(list(temp_excel = file.path(temp_path, paste0("output", time, ".xlsx")),
+            temp_doc = file.path(temp_path, paste0("output", time, ".docx")),
+            excel = file.path(path, paste0("output", time, ".xlsx")),
+            doc = file.path(path, paste0("output", time, ".docx"))))
 }
 
 

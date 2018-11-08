@@ -30,16 +30,41 @@ log_line("Running blockbuster")
 file.remove(file.path(temp, "blockbuster error.txt"))
 res <- try(blockbuster_excel(args[2]), outFile = file.path(temp, "blockbuster error.txt"))
 
+# If output files exist in temp try to copy them to working directory
+try(file.copy(res$temp_excel, res$excel))
+try(file.copy(res$temp_doc, res$doc))
+
+# Create error or success message in blockbuster_out file
 if(file.exists(file.path(temp, "blockbuster error.txt"))){
-  file.copy(file.path(temp, "blockbuster error.txt"),
-            file.path(args[2], "blockbuster error.txt"))
-  log_line(paste0("Blockbuster returned error, see ", file.path(args[2], "blockbuster error.txt"), " for more details"))
+
+  log_line("The deterioration model has not completed successfully")
   writeLines("Blockbuster has returned an error.", results_file)
-  writeLines(paste0("See ", file.path(args[2], "blockbuster error.txt"), " for more details"), results_file)
-} else {
-  writeLines("Blockbuster has run successfully.", results_file)
-  writeLines(paste0("A high level overview can be found in ", res$doc), results_file)
-  writeLines(paste0("More detailed data is in ", res$excel), results_file)
+
+  # copy error log to working directory
+  try(file.copy(file.path(temp, "blockbuster error.txt"),
+                file.path(args[2], "blockbuster error.txt")))
+
+  # write appropriate path to excel output text
+  if(file.exists(file.path(args[2], "blockbuster error.txt"))) {
+    writeLines(
+      paste0("See ", file.path(args[2], "blockbuster error.txt"), " for more details"),
+      results_file)
+    } else {
+      writeLines(
+        paste0("See ", file.path(temp, "blockbuster error.txt"), " for more details"),
+        results_file)
+      }
+  } else {
+    writeLines("Blockbuster has run successfully.", results_file)
+  }
+
+if(file.exists(res$excel)){
+  writeLines(paste0("Model output is available at ", res$excel), results_file)
+} else if(file.exists(res$temp_excel)){
+  writeLines(paste0("The file ", res$temp_excel, " contains some model output."), results_file)
 }
+if(file.exists(res$doc)){
+  writeLines(paste0("High level output summary is available at ", res$doc), results_file)
+} else if(file.exists(res$temp_doc)) writeLines(paste0("The high-level summary is available at ", temp_doc), results_file)
 
 log_line(paste0("Finished at ", Sys.time()))
