@@ -6,8 +6,8 @@
 \usage{
 Blockbuster(element.data, block.data = NULL, forecast.horizon = 1,
   rebuild.money = 0, repair.money = 0, block.rebuild.cost = 2000,
-  inflation = 1, save = TRUE, filelabel = "blockbuster_output",
-  path = "./output/", grade.order = c("D", "C", "B"))
+  inflation = 1, save = FALSE, filelabel = "blockbuster_output",
+  path = "./output/", grade.order = c("E", "D", "C", "B"))
 }
 \arguments{
 \item{element.data}{A data frame containing the element-level initial state.}
@@ -33,7 +33,7 @@ to repair and rebuild costs each timestep.  If a vector of length one is
 supplied it will be used as the inflation rate for all timesteps. Default
 is 1, i.e. no inflation.}
 
-\item{save}{(optional) Logical. If \code{TRUE} (the default behaviour), then
+\item{save}{(optional) Logical. If \code{TRUE}, then
 the block and element states are saved to disc at each timestep.}
 
 \item{filelabel}{(optional) Character. The start of the file names used to
