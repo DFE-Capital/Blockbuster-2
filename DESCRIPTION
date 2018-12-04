@@ -1,7 +1,7 @@
 Package: blockbuster2
 Type: Package
 Title: Deterioration Model of the School Estate
-Version: 1.0.5.9001
+Version: 1.1.0.0
 Authors@R: c(
     person("Matthew", "Gregory", email = "matthew.gregory@teachfirst.org.uk",
     role = c("aut", "rev"), comment = "Dr. Matthew Gregory coded the first
@@ -36,5 +36,6 @@ RoxygenNote: 6.0.1
 Suggests: knitr,
     data.table,
     ggplot2,
-    testthat
+    testthat,
+    govstyle
 VignetteBuilder: knitr
