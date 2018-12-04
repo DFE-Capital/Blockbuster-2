@@ -25,7 +25,6 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(ggplot2)
 library(xlsx)
 library(dplyr)
-library(govstyle)
 library(scales)
 
 format_money <- function(m, digits = 2){

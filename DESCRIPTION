@@ -36,6 +36,5 @@ RoxygenNote: 6.0.1
 Suggests: knitr,
     data.table,
     ggplot2,
-    testthat,
-    govstyle
+    testthat
 VignetteBuilder: knitr
