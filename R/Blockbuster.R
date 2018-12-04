@@ -56,7 +56,7 @@
 #' to repair and rebuild costs each timestep.  If a vector of length one is
 #' supplied it will be used as the inflation rate for all timesteps. Default
 #' is 1, i.e. no inflation.
-#' @param save (optional) Logical. If \code{TRUE}, then
+#' @param save (optional) Logical. If \code{TRUE} (the default behaviour), then
 #' the block and element states are saved to disc at each timestep.
 #' @param filelabel (optional) Character. The start of the file names used to
 #' save the interim outputs. Default is \code{blockbuster_output}.
@@ -91,19 +91,12 @@ Blockbuster <- function(element.data, block.data = NULL,
                         repair.money = 0,
                         block.rebuild.cost = 2000,
                         inflation = 1,
-                        save = FALSE,
+
+                        save = TRUE,
                         filelabel = "blockbuster_output",
                         path = "./output/",
-                        grade.order = c("E", "D", "C", "B")){
-
-
-  # critical component list -------------------------------------------------
-  # At some point this needs to be fed to the function as an argument
-  # It is drawn from the CDC relative need model Severity Impact Rating
-
-  critical_elements <- c(1826, 1827, 1828, 1829,
-                         1830)
-
+                        grade.order = c("D", "C", "B")
+){
 
   # input integrity checks -------------------------------------------------
   message ("Checking inputs...")
@@ -121,40 +114,26 @@ Blockbuster <- function(element.data, block.data = NULL,
   inflation <- inputs$inflation
 
   # set filepath
-  savepath <- file.path(path)
   savefile <- file.path(path, filelabel)
 
   # save initial state ------------------------------------------------------
 
   if(save){
-    message(paste0("Saving initial state to file: ", savefile))
+    message("Saving initial state to file.")
     # set up output directory if necessary
-    if(!dir.exists(savepath)) dir.create(savepath)
+    if(!dir.exists(path)) dir.create(path)
 
     # save initial state (this may seem odd since it is an input, but it is useful
     # to have the initial state saved as part of the complete output).
     saveRDS(element.data, file = paste0(savefile, "_element_0.rds"))
     saveRDS(block.data, file = paste0(savefile, "_block_0.rds"))
+  } else {
+    # set up output list.
+    message("Setting up output.")
+    output <- vector("list", forecast.horizon + 1)
+    output[[1]]$element <- element.data
+    output[[1]]$block <- block.data
   }
-
-  # set up output list.
-  message("Setting up output.")
-  building_output <- vector("list", forecast.horizon + 1)
-  element_output <- vector("list", forecast.horizon + 1)
-  building_output[[1]] <- full_join(
-    element_summarise_backlog(element.data, buildingid),
-    element_summarise_area(element.data, buildingid)) %>%
-    mutate_at(c("area", "backlog"), replace_na, 0) %>%
-    mutate(year = 0)
-  element_output[[1]] <- full_join(
-    element_summarise_backlog(element.data, elementid),
-    element_summarise_area(element.data, elementid)) %>%
-    mutate_at(c("area", "backlog"), replace_na, 0) %>%
-    mutate(year = 0)
-  building_failures <- 0 # number of expected failed buildings (at least one critical component in E)
-  rebuilds <- 0 # number of rebuilds performed in the year
-  in_need <- length(which(block.data$ratio >= 1)) # number of blocks in need of rebuilding
-  cost <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum # cost of rebuilding in need blocks
 
   # LOOP ----
   for (i in 1:forecast.horizon){
@@ -183,8 +162,6 @@ Blockbuster <- function(element.data, block.data = NULL,
     element.data <- Rebuild(element.data = element.data,
                             block.data = block.data,
                             rebuild.money = rebuild.money[i])
-    rebuilds[[i+1]] <- attr(element.data, "No. of rebuilds")
-
 
     # update repair costs ----
     element.data <- UpdateElementRepairs(element.data)
@@ -206,36 +183,29 @@ Blockbuster <- function(element.data, block.data = NULL,
       # save current state
       saveRDS(element.data, file = paste0(savefile, "_element_", i, ".rds"))
       saveRDS(block.data, file = paste0(savefile, "_block_", i, ".rds"))
+    } else {
+      output[[i + 1]]$element <- element.data
+      output[[i + 1]]$block <- block.data
     }
-
-    building_output[[i + 1]] <- full_join(
-      element_summarise_backlog(element.data, buildingid),
-      element_summarise_area(element.data, buildingid)) %>%
-      mutate_at(c("area", "backlog"), replace_na, 0) %>%
-      mutate(year = i)
-    element_output[[i + 1]] <- full_join(
-      element_summarise_backlog(element.data, elementid),
-      element_summarise_area(element.data, elementid)) %>%
-      mutate_at(c("area", "backlog"), replace_na, 0) %>%
-      mutate(year = i)
-    building_failures[i+1] <- buildings_expected_failures(element.data, critical_elements) %>% pull(Expected_building_failures)
-    in_need[i+1] <- length(which(block.data$ratio > 1))
-    cost[i+1] <- block.data %>% filter(ratio >= 1) %>% pull(block.rebuild.cost) %>% sum
 
     # LOOP END ----
 
   }
 
   # OUTPUT ----
-  message("Preparing output.")
-  element <- bind_rows(element_output)
-  building <- bind_rows(building_output)
+  if(save){
+    # collate states, save (a backup!)
+    message(paste0("Saving output to file ", savefile, "_output.rds"))
+    output <- LoadBlockbusterOutput(forecast.horizon = forecast.horizon,
+                                    filelabel = filelabel,
+                                    path = path)
 
-  return(list("element summary" = element, "building summary" = building,
-              element = element.data, block = block.data,
-              "building failures" = building_failures,
-              "Number of rebuilds" = rebuilds,
-              "Number of buildings in need of rebuilding" = in_need,
-              "Cost of rebuilding in need buildings" = cost))
+    saveRDS(output, file = paste0(savefile, "_output.rds"))
+  } else {
+    message("Preparing output.")
+
+  }
+
+  return(output)
 }
 

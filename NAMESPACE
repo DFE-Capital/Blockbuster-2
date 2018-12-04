@@ -2,13 +2,9 @@
 
 export(Blockbuster)
 export(backlog)
-export(blockbuster_excel)
 export(load_Block_Data)
 export(load_Element_Data)
 export(pull_Block_Data)
 export(pull_Element_Data)
-export(render_blockbuster)
 import(dplyr)
-import(rmarkdown)
 import(tidyr)
-import(xlsx)

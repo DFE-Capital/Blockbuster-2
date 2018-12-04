@@ -51,17 +51,9 @@ input_checks <- function(element.data = NULL,
                          inflation = NULL
                          ){
 
-  if(!is_element_level(element.data)){
-    stop("element.data is not valid. Please check it is a data.frame containing all the necessary columns.")
-  }
-
   if(length(block.data) < 1){
     message("Constructing block summary from element.data.")
     block.data <- ConvertPdsToBlock(element.data, block.rebuild.cost)
-  }
-
-  if(!is_block_level(block.data)){
-    stop("block.data is not valid.  Please check it is a data.frame containing all the necessary columns.")
   }
 
   if(length(forecast.horizon) > 1 | !is.numeric(forecast.horizon)){
