@@ -14,14 +14,14 @@ test_that("Check toy example for correct decisions",
                                   D = 9,
                                   E = 9)
 
-            expect_equal(Rebuild(element, block, 0), element) # no rebuild ( block 1 has no cost so is not eligble for rebuilding)
-            expect_equal(Rebuild(element, block, 1)$A, c(9, 1, 9, 9)) # block 2 rebuilt (first affordable)
-            expect_equal(Rebuild(element, block, 2)$A, c(9, 9, 1, 9)) # block 3 rebuilt (first affordable)
-            expect_equal(Rebuild(element, block, 3)$A, c(9, 9, 9, 1)) # block 4 rebuilt (first affordable)
-            expect_equal(Rebuild(element, block, 4)$A, c(9, 1, 9, 1)) # block 2, 4 rebuilt (first affordable, can't afford 3, can afford 2)
-            expect_equal(Rebuild(element, block, 5)$A, c(9, 9, 1, 1)) # block 3, 4 rebuilt (first affordable, can afford 3, can't afford 2)
-            expect_equal(Rebuild(element, block, 6)$A, c(9, 1, 1, 1)) # block 2, 3, 4 rebuilt (afford 2, 3, and 4)
-            expect_equal(Rebuild(element, block, 7)$A, c(9, 1, 1, 1)) # block 2, 3, 4 rebuilt (even with more money, block 1 has no rebuild cost so is not rebuilt)
+            expect_equal(Rebuild(element, block, 0), element, check.attributes = FALSE) # no rebuild ( block 1 has no cost so is not eligble for rebuilding)
+            expect_equal(Rebuild(element, block, 1)$A, c(9, 1, 9, 9), check.attributes = FALSE) # block 2 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 2)$A, c(9, 9, 1, 9), check.attributes = FALSE) # block 3 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 3)$A, c(9, 9, 9, 1), check.attributes = FALSE) # block 4 rebuilt (first affordable)
+            expect_equal(Rebuild(element, block, 4)$A, c(9, 1, 9, 1), check.attributes = FALSE) # block 2, 4 rebuilt (first affordable, can't afford 3, can afford 2)
+            expect_equal(Rebuild(element, block, 5)$A, c(9, 9, 1, 1), check.attributes = FALSE) # block 3, 4 rebuilt (first affordable, can afford 3, can't afford 2)
+            expect_equal(Rebuild(element, block, 6)$A, c(9, 1, 1, 1), check.attributes = FALSE) # block 2, 3, 4 rebuilt (afford 2, 3, and 4)
+            expect_equal(Rebuild(element, block, 7)$A, c(9, 1, 1, 1), check.attributes = FALSE) # block 2, 3, 4 rebuilt (even with more money, block 1 has no rebuild cost so is not rebuilt)
           })
 
 test_that("Check toy example with nothing to rebuild for correct decisions",
@@ -38,14 +38,14 @@ test_that("Check toy example with nothing to rebuild for correct decisions",
                                   D = 9,
                                   E = 9)
 
-            expect_equal(Rebuild(element, block, 0), element) # no rebuild
-            expect_equal(Rebuild(element, block, 1), element) # no rebuild
-            expect_equal(Rebuild(element, block, 2), element) # no rebuild
-            expect_equal(Rebuild(element, block, 3), element) # no rebuild
-            expect_equal(Rebuild(element, block, 4), element) # no rebuild
-            expect_equal(Rebuild(element, block, 5), element) # no rebuild
-            expect_equal(Rebuild(element, block, 6), element) # no rebuild
-            expect_equal(Rebuild(element, block, 7), element) # no rebuild
+            expect_equal(Rebuild(element, block, 0), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 1), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 2), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 3), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 4), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 5), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 6), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 7), element, check.attributes = FALSE) # no rebuild
           })
 
 test_that("Check toy example with two tied blocks - it should fix the one with the highest ratio first",
@@ -62,9 +62,30 @@ test_that("Check toy example with two tied blocks - it should fix the one with t
                                   D = 9,
                                   E = 9)
 
-            expect_equal(Rebuild(element, block, 0), element) # no rebuild
-            expect_equal(Rebuild(element, block, 1)$A, c(1, 9)) # rebuild 1 as it has higest ratio
-            expect_equal(Rebuild(element, block, 2)$A, c(1, 1)) # rebuild 2 and 1
+            expect_equal(Rebuild(element, block, 0), element, check.attributes = FALSE) # no rebuild
+            expect_equal(Rebuild(element, block, 1)$A, c(1, 9), check.attributes = FALSE) # rebuild 1 as it has higest ratio
+            expect_equal(Rebuild(element, block, 2)$A, c(1, 1), check.attributes = FALSE) # rebuild 2 and 1
+          })
+
+test_that("Rebuild is reporting number of rebuilds correctly",
+          {
+            # construct toy element
+            block <- data.frame(buildingid = 1:4,
+                                block.rebuild.cost = 0:3,
+                                ratio = 0:3)
+            element <- data.frame(buildingid = 1:4,
+                                  elementid = 1,
+                                  A = 9, # this value is never checked
+                                  B = 9,
+                                  C = 9,
+                                  D = 9,
+                                  E = 9)
+            expect_equal(attr(Rebuild(element, block, 1), "No. of rebuilds"), 1)
+            expect_equal(attr(Rebuild(element, block, 2), "No. of rebuilds"), 1)
+            expect_equal(attr(Rebuild(element, block, 3), "No. of rebuilds"), 1)
+            expect_equal(attr(Rebuild(element, block, 4), "No. of rebuilds"), 2)
+            expect_equal(attr(Rebuild(element, block, 5), "No. of rebuilds"), 2)
+            expect_equal(attr(Rebuild(element, block, 6), "No. of rebuilds"), 3)
           })
 
 context("Testing RebuildBlock")
@@ -125,8 +146,8 @@ test_that("Nothing is rebuilt when there is less money than the cheapest block",
                                 E.block.repair.cost = 4,
                                 ratio = 1)
 
-            expect_equal(Rebuild(element, block, 0), element)
-            expect_equal(Rebuild(element, block, 5), element)
+            expect_equal(Rebuild(element, block, 0), element, check.attributes = FALSE)
+            expect_equal(Rebuild(element, block, 5), element, check.attributes = FALSE)
             })
 
 test_that("Blocks are rebuilt in the element.data",

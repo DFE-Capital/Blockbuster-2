@@ -237,3 +237,31 @@ load_Block_Data <- function(forecast.horizon, path = "./output/",
 
   return(output)
 }
+
+
+#' Count the number of expected building failures
+#'
+#' @param element Data frame. Element level data. Any data frame will work as
+#'  long as it contains \code{buildingid}, \code{elementid} and \code{E} columns.
+#' @param critical Numeric.  A vector of numbers indicating the
+#'  \code{elementid} values used to filter \code{element}.
+#'
+#' @return The expected number of buildings that will fail.  A failed
+#' building is defined as one in which at least one of the critical elements has
+#' reached grade E.  If $p_i$ is the probability that the $i$th component has
+#' failed then the probability a building with $n$ critical components has
+#' failed is $1-\prod_{i=1}^n\left(1-p_i\right)$.
+#'
+#' @examples
+#' critical_elements <- c(1700, 1701, 1706, 1707, 1708, 1752, 1756, 1769, 1773,
+#'                        1774, 1775, 1786, 1787, 1788, 1826, 1827, 1828, 1829,
+#'                        1830, 1883, 1885, 1887, 1889, 1892, 1893, 1900, 1903,
+#'                        1905, 1983, 1984, 1985)
+#' buildings_expected_failures(simulated_elements, critical_elements)
+buildings_expected_failures <- function(element, critical){
+  element %>%
+    filter(elementid %in% critical) %>%
+    group_by(buildingid) %>%
+    summarise(p_failure = 1 - prod(1-E)) %>%
+    summarise(Expected_building_failures = sum(p_failure))
+}
