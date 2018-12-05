@@ -1,10 +1,10 @@
-#' Title
+#' Loads deterioration model inputs from the input excel sheet
 #'
-#' @param path
+#' @param path character. The path to the input excel sheet containing the
+#' deterioration model inputs
 #'
-#' @return
-#'
-#' @examples
+#' @return A list of inputs to pass to the
+#'  \code{\link{create_input_element_from_excel}} function
 load_excel_inputs <- function(path){
 
   if(!file.exists(path)) {
@@ -13,7 +13,7 @@ load_excel_inputs <- function(path){
   }
   message("Loading blockbuster inputs from excel sheet.")
   # load inputs
-  inputs <- read.xlsx(path, sheetName = "Model", colIndex = 2, stringsAsFactors = FALSE, header = FALSE)
+  inputs <- openxlsx::read.xlsx(path, sheet = "Model", cols = 2, colNames = FALSE)
   forecast_horizon <- as.numeric(inputs[2, 1])
   unit_rebuild_cost <- as.numeric(inputs[3, 1])
   grade_order <- strsplit(inputs[4, 1], "")[[1]]
@@ -23,19 +23,19 @@ load_excel_inputs <- function(path){
   start_year <- as.numeric(inputs[7, 1])
 
   # load input budgets
-  budgets <- read.xlsx(path, sheetName = "Inputs", colIndex = 2:4)
+  budgets <- openxlsx::read.xlsx(path, sheet = "Inputs", cols = 2:4)
   repair_budget <- budgets$Repair.budget[1:forecast_horizon]
   rebuild_budget <- budgets$Rebuild.budget[1:forecast_horizon]
   inflation <- budgets$Inflation[1:forecast_horizon]
 
   # load deterioration rates
-  det_rates <- read.xlsx(path, sheetName = "Deterioration rates",
-                         colIndex = 1:8, stringsAsFactors = FALSE) %>%
+  det_rates <- openxlsx::read.xlsx(path, sheet = "Deterioration rates",
+                         cols = 1:8) %>%
     rename(elementid = "Element.ID")
 
   # load repair costs
-  repair_costs <- read.xlsx(path, sheetName = "Repair costs",
-                            colIndex = 1:8, stringsAsFactors = FALSE) %>%
+  repair_costs <- openxlsx::read.xlsx(path, sheet = "Repair costs",
+                            cols = 1:8) %>%
     rename(elementid = "Element.ID")
 
   message("Inputs loaded")
@@ -55,13 +55,15 @@ load_excel_inputs <- function(path){
               start_year = start_year))
 }
 
-#' Title
+#' Loads and processes the deterioration model inputs from an excel sheet
 #'
-#' @param path
+#' @param path character. The path to the excel sheet containing the
+#' deterioration model inputs.
 #'
-#' @return
-#'
-#' @examples
+#' @return A list of deterioration model inputs to pass to
+#'  \code{\link{Blockbuster}}.  This function loads the data using the helper
+#'  \code{\link{load_excel_inputs}} then processes the inputs (e.g. joining the
+#'  deterioration rates and component costs)
 create_input_element_from_excel <- function(path = "./excel files/Excel input.xlsm"){
 
   inputs <- load_excel_inputs(path)
@@ -101,14 +103,15 @@ create_input_element_from_excel <- function(path = "./excel files/Excel input.xl
   return(inputs)
 }
 
-#' Title
+#' Run the deterioration model from an excel sheet
 #'
-#' @param path
+#' @param path character. The path where you want to save the output files
 #'
-#' @return
+#' @return The locations of the output excel workbook and word document, along
+#' with the corresponding files in the temp folder in case something goes wrong
+#' with file permissions.
+#'
 #' @export
-#'
-#' @examples
 blockbuster_excel <- function(path){
 
   lib_path <- file.path(find.package("blockbuster2"))
@@ -136,55 +139,45 @@ blockbuster_excel <- function(path){
 
   log_line("producing summary")
 
+  # create workbook
+  workbook <- openxlsx::createWorkbook()
+  worksheet_names <- c("Summary", "Totals", "Elements", "Rebuild data", "Inputs")
+  sapply(worksheet_names, openxlsx::addWorksheet, wb = workbook)
+
+
   results$"element summary" %>%
     filter(grade %in% c("C", "D", "E")) %>%
     group_by(year) %>%
     summarise(backlog = sum(backlog)) %>%
-    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
-               sheetName = "Summary",
-               row.names = FALSE)
+    openxlsx::writeData(wb = workbook, sheet = "Summary", .)
 
   results$"element summary" %>%
     group_by(year, grade) %>%
     summarise(area = sum(area), backlog = sum(backlog)) %>%
-    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
-               sheetName = "Totals",
-               row.names = FALSE,
-               append = TRUE)
+    openxlsx::writeData(wb = workbook, sheet = "Totals", .)
 
   log_line("Creating element summary")
 
   results$"element summary" %>%
     group_by(year, elementid) %>%
     summarise(area = sum(area), backlog = sum(backlog)) %>%
-    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
-               sheetName = "Elements",
-               row.names = FALSE,
-               append = TRUE)
+    openxlsx::writeData(wb = workbook, sheet = "Elements", .)
 
   data.frame(Year = 0:inputs$forecast_horizon,
              "Rebuild budget" = c(NA, inputs$rebuild_budget),
-             "Building failures" = results$"building failures",
+             "Building failures" = results$"expected blocks with external wall at E",
              "Number of rebuilds" = results$"Number of rebuilds",
              "Number of buildings in need of rebuilding" = results$"Number of buildings in need of rebuilding",
              "Cost of rebuilding in need buildings" = results$"Cost of rebuilding in need buildings"
              ) %>%
-    as.data.frame() %>% # write.xlsx doesn't like tbl_df for some things
-    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
-               sheetName = "Rebuild data",
-               row.names = FALSE,
-               append = TRUE)
+    openxlsx::writeData(wb = workbook, sheet = "Rebuild data", .)
 
   data.frame(Year = 1:inputs$forecast_horizon,
              "Rebuild budget" = inputs$rebuild_budget,
              "Repair budget" = inputs$repair_budget) %>%
-    write.xlsx(file = file.path(temp_path, paste0("output", time, ".xlsx")),
-               sheetName = "Inputs",
-               row.names = FALSE,
-               append = TRUE)
+    openxlsx::writeData(wb = workbook, sheet = "Inputs", .)
+
+  openxlsx::saveWorkbook(workbook, file = file.path(temp_path, paste0("output", time, ".xlsx")), overwrite = TRUE)
 
   log_line("Creating output charts")
 
@@ -216,8 +209,6 @@ return(list(temp_excel = file.path(temp_path, paste0("output", time, ".xlsx")),
 #'
 #' @return Generates a word document
 #' @export
-#'
-#' @examples
 render_blockbuster <- function(input, output, file){
 
   time <- Sys.Date()

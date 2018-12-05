@@ -1,8 +1,16 @@
+# version 1.1.0.1 (HOTFIX - xlsx) *incomplete*
 
+* remove xlsx dependency by replacing with openxlsx
+* changed xlsx in DESCRIPTION to openxlsx
+* output_template.Rmd switched to use openxlsx to read excel output
+* dependencies.R changed from xlsx to openxlsx
+* moved openxlsx and rmarkdown into suggests
+* rewritten excel_input so it uses openxlsx to save outputs rather than xlsx
+* added missing gov_cols vector
 
 # version 1.1.0.0
 
-* TODO merge into master branch
+*  merge into master branch
 
 # version 1.0.5.9001 (excel branch)
 
