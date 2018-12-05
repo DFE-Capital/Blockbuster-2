@@ -1,8 +1,11 @@
+# version 1.1.0.1 (output branch) *incomplete*
+
+* moved xlsx and rmarkdown in suggested in DESCRIPTION as these are only used for optional excel front end
 
 
 # version 1.1.0.0
 
-* TODO merge into master branch
+*  merge into master branch
 
 # version 1.0.5.9001 (excel branch)
 

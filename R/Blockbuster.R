@@ -233,7 +233,7 @@ Blockbuster <- function(element.data, block.data = NULL,
 
   return(list("element summary" = element, "building summary" = building,
               element = element.data, block = block.data,
-              "building failures" = building_failures,
+              "expected blocks with external wall at E" = building_failures,
               "Number of rebuilds" = rebuilds,
               "Number of buildings in need of rebuilding" = in_need,
               "Cost of rebuilding in need buildings" = cost))
