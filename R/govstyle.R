@@ -34,7 +34,6 @@
 #' )
 #'
 #' @export
-
 check_pal <- function(
   x = gov_cols
 ) {
@@ -106,8 +105,6 @@ check_pal <- function(
 #' @import ggplot2
 #' @export
 #'
-
-
 theme_gov <- function(
   base_size = 12,
   base_colour = "gray40",
@@ -198,64 +195,46 @@ theme_gov <- function(
   )
 }
 
-
-
-## This fails for some inexplicable reason. Would be good to revisit this at
-## some point to create a complete DfE style!
-
-# theme_DfE <- function(base_size = 12, base_family = "Arial", base_colour = "gray40") {
-#   theme(
-#     # Elements in this first block aren't used directly, but are inherited
-#     # by others
-#     line =               element_line(colour = base_colour, size = 0.5, linetype = 1, lineend = "butt"),
-#     rect =               element_rect(fill = "white", colour = "black", size = 0.5, linetype = 1),
-#     text =               element_text(family = base_family, face = "plain",
-#                                       colour = base_family, size = base_size,
-#                                       hjust = 0.5, vjust = 0.5, angle = 0, lineheight = 0.8),
-#     axis.text =          element_text(),
-#     strip.text =         element_text(),
-#     axis.line =          element_blank(),
-#     axis.line.y =        element_line(colour = "white"),
-#     axis.text.x =        element_text(),
-#     axis.text.y =        element_text(),
-#
-#     axis.ticks =         element_line(colour = "white"),
-#     axis.title.x =       axis.title.x = element_text(hjust = 1, vjust = 6),
-#     axis.title.y =       element_text(angle = 0, hjust = 20, vjust = 1),
-#     axis.ticks.length =  grid::unit(0.15, "cm"),
-#     axis.ticks.margin =  grid::unit(0.1, "cm"),
-#
-#     legend.background =  element_blank(),
-#     legend.margin =      grid::unit(0.2, "cm"),
-#     legend.key =         element_blank(),
-#     legend.key.size =    grid::unit(1.2, "lines"),
-#     legend.key.height =  NULL,
-#     legend.key.width =   NULL,
-#     legend.text =        element_text(),
-#     legend.text.align =  NULL,
-#     legend.title =       element_text(face = "bold", hjust = 0),
-#     legend.title.align = NULL,
-#     legend.position =    "right",
-#     legend.direction =   NULL,
-#     legend.justification = "center",
-#     legend.box =         NULL,
-#
-#     panel.background =   element_blank(),
-#     panel.border =       element_blank(),
-#     panel.grid.major =   element_blank(),
-#     panel.grid.minor =   element_blank(),
-#     panel.margin =       grid::unit(0.25, "lines"),
-#     panel.margin.x =     NULL,
-#     panel.margin.y =     NULL,
-#
-#     strip.background =   element_rect(fill = "grey80", colour = NA),
-#     strip.text.x =       element_text(),
-#     strip.text.y =       element_text(angle = -90),
-#
-#     plot.background =    element_blank(),
-#     plot.title =         element_text(face = "bold", hjust = 1, colour = "black", vjust = -2.5),
-#     plot.margin =        grid::unit(c(0,5,5,-30), "mm"),
-#
-#     complete = TRUE
-#   )
-# }
+#' @title A vector of the gov.uk approved colours
+#'
+#' @description \code{\link{gov_cols}} Provides a vector of named colours
+#' from the approved gov.uk colour list available \url{here}.
+#'
+#' @return A list of named hexadecimal colours.
+#'
+#' @examples
+#'
+#' library(ggplot2)
+#' library(govstyle)
+#' library(dplyr)
+#'
+#' mtcars %>%
+#'    ggplot +
+#'    aes(
+#'    x = mpg,
+#'    y = wt
+#'    ) +
+#'    geom_point(
+#'    colour = gov_cols["green"]
+#'    ) +
+#'    theme_gov()
+#'
+#' @export
+#'
+gov_cols <- c(
+  purple      = "#2E358B",
+  pink        = "#D53880",
+  mellow_red  = "#DF3034",
+  yellow      = "#FFBF47",
+  turquoise   = "#28A197",
+  mauve       = "#6F72AF",
+  baby_pink   = "#F499BE",
+  orange      = "#F47738",
+  green       = "#006435",
+  light_blue  = "#2B8CC4",
+  fuschia     = "#912B88",
+  red         = "#B10E1E",
+  brown       = "#B58840",
+  grass_green = "#85994B",
+  govuk_blue  = "#005EA5"
+)
