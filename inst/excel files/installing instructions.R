@@ -52,7 +52,7 @@ set_config(
 rm(credentials)
 
 # install blockbuster2
-devtools::install_github("DFE-Capital/blockbuster-2", ref = "excel")
+devtools::install_github("DFE-Capital/blockbuster-2")
 
 # install dfeR for the DfE word document template
 devtools::install_github("dfe-analytical-services/dfeR")

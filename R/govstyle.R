@@ -76,7 +76,7 @@ check_pal <- function(
 #' (only y axis), or \code{xy} (both axes shown).
 #'
 #' @return Will not return anything of itself, but when used in conjuntion
-#' with \code{\link{ggplot}} and (e.g.) \code{\link{geom_point}} from the
+#' with \code{ggplot2} and (e.g.) \code{geom_point} from the
 #' package \code{ggplot2}, will apply styling to a plot.
 #'
 #' @examples
@@ -102,7 +102,6 @@ check_pal <- function(
 #' p +
 #'  theme_gov()
 #'
-#' @import ggplot2
 #' @export
 #'
 theme_gov <- function(
@@ -205,7 +204,6 @@ theme_gov <- function(
 #' @examples
 #'
 #' library(ggplot2)
-#' library(govstyle)
 #' library(dplyr)
 #'
 #' mtcars %>%
