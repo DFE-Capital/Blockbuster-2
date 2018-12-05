@@ -4,7 +4,7 @@ NULL
 #' @import tidyr
 NULL
 
-#' @import xlsx
+#' @import openxlsx
 NULL
 
 #' @import rmarkdown

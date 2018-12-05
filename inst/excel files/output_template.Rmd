@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 # It is recommended that you load in any scripts your require in the markdown here. E.g:
 library(ggplot2)
-library(xlsx)
+library(openxlsx)
 library(dplyr)
 library(scales)
 
@@ -43,12 +43,12 @@ format_money <- function(m, digits = 2){
 
 ```{r data, echo = FALSE, warning = FALSE, message = FALSE}
 
-backlog <- read.xlsx(file.path(params$path), 1) %>%
+backlog <- openxlsx::read.xlsx(file.path(params$path), 1) %>%
   mutate(`Year on year change` = backlog - c(NA, backlog[-length(backlog)]),
          year = year + params$start_year)
-totals <- read.xlsx(file.path(params$path), 2) %>%
+totals <- openxlsx::read.xlsx(file.path(params$path), 2) %>%
   mutate(year = year + params$start_year)
-builds <- read.xlsx(file.path(params$path), 4) %>%
+builds <- openxlsx::read.xlsx(file.path(params$path), 4) %>%
   mutate(Year = Year + params$start_year)
 ```
 
