@@ -184,7 +184,7 @@ blockbuster_excel <- function(path){
   Sys.setenv(RSTUDIO_PANDOC = "C:/Program Files/RStudio/bin/pandoc") # This so the script looks for pandoc in the right place
 
   # auto generate knitted document
-  render(file.path(lib_path, "excel files/output_template.Rmd"),
+  rmarkdown::render(file.path(lib_path, "excel files/output_template.Rmd"),
                     encoding = "UTF-8",
                     output_file = file.path(temp_path, paste0("output", time, ".docx")),
                     params = list(title = "Blockbuster Deterioration Model Output",
@@ -214,7 +214,7 @@ render_blockbuster <- function(input, output, file){
   time <- Sys.Date()
   inputs <- create_input_element_from_excel(input)
 
-  render(file.path(find.package("blockbuster2"), "excel files/output_template.Rmd"),
+  rmarkdown::render(file.path(find.package("blockbuster2"), "excel files/output_template.Rmd"),
          encoding = "UTF-8",
          output_file = file,
          params = list(
@@ -231,3 +231,28 @@ render_blockbuster <- function(input, output, file){
          )
 }
 
+
+
+#' Writes to a file and include a timestamp
+#'
+#' A helper function intended for generating a text log.  It writes a text line
+#' to a file, and includes a time-stamp#'
+#'
+#' @param x character.  The text to write
+#'
+#' @param log_file A file connection
+#'
+#' @return No return.
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' log_file <- file("log.txt, open = "wt")
+#' log_line("Hello World")
+#'}
+#'
+log_line <- function(x, log_file = log_file){
+  writeLines(paste(Sys.time(), x, sep = " - "), log_file)
+  cat(x, sep = "\n")
+}

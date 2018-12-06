@@ -28,5 +28,5 @@ critical_elements <- c(1700, 1701, 1706, 1707, 1708, 1752, 1756, 1769, 1773,
                        1774, 1775, 1786, 1787, 1788, 1826, 1827, 1828, 1829,
                        1830, 1883, 1885, 1887, 1889, 1892, 1893, 1900, 1903,
                        1905, 1983, 1984, 1985)
-buildings_expected_failures(simulated_elements, critical_elements)
+blockbuster2:::buildings_expected_failures(simulated_elements, critical_elements)
 }
