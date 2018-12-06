@@ -10,7 +10,8 @@ globalVariables(c("elementid", "buildingid", "grade", "unit_area", "year",
                   "E.block.repair.cost", "ab", "bc", "cd", "de", "A", "B", "C",
                   "D", "E", "area", "backlog", "block.rebuild.cost", "strategy",
                   "ratio", "aes", "plot", "timestep", "B.repair.cost",
-                  "C.repair.cost", "D.repair.cost", "E.repair.cost"))
+                  "C.repair.cost", "D.repair.cost", "E.repair.cost",
+                  "Expected_building_failures", "p_failure"))
 
 # .onLoad <- function(libname, pkgname){
 #   # on loading the package we change the R home and package folder cells in

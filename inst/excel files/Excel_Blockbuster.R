@@ -11,12 +11,6 @@ temp <- Sys.getenv("TEMP")
 log_file <- file(file.path(temp, paste0("blockbuster_log_", format(Sys.time(), "%a%d%b%Y %H%M"), ".txt")), open = "wt")
 results_file <- file(file.path(temp, "blockbuster_out.txt"), open = "wt")
 
-# helper function to print to text log
-log_line <- function(x){
-  writeLines(paste(Sys.time(), x, sep = " - "), log_file)
-  cat(x, sep = "\n")
-}
-
 log_line(paste0("Started at ", Sys.time()))
 
 log_line("Loading arguments")

@@ -18,7 +18,6 @@ from the approved gov.uk colour list available \url{here}.
 \examples{
 
 library(ggplot2)
-library(govstyle)
 library(dplyr)
 
 mtcars \%>\%

@@ -20,7 +20,7 @@ Must be one of \code{n} (no axes), \code{x} (only x axis), \code{y}
 }
 \value{
 Will not return anything of itself, but when used in conjuntion
-with \code{\link{ggplot}} and (e.g.) \code{\link{geom_point}} from the
+with \code{ggplot2} and (e.g.) \code{geom_point} from the
 package \code{ggplot2}, will apply styling to a plot.
 }
 \description{

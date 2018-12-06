@@ -142,7 +142,7 @@ theme_gov <- function(
 
   }
 
-  theme(
+  ggplot2::theme(
     legend.position = "none",
 
     ## Adjust tick marks
